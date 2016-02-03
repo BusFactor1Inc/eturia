@@ -1,0 +1,19 @@
+#!/bin/bash
+MAKEOPTS=${MAKEOPTS-DEBUG=1}
+watchdir=${1-.}
+shift;
+cmd="${@}"
+if [[ -z $cmd ]]; then
+    cmd="node $(find -name server.js)"
+fi
+pidfile=$(tempfile -p makemon)
+trap "rm $pidfile" EXIT
+echo "Using command: $cmd"
+while true; do
+    if make $MAKEOPTS; then
+        $cmd &
+        echo $! > $pidfile
+    fi
+    inotifywait -r -q -e modify "$watchdir"
+    kill $(<$pidfile) >/dev/null 2>&1
+done  
