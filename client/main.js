@@ -34,14 +34,24 @@ var Skynet = (function() {
     var WindowView = new View({
         type: "WindowView",
         model: "appView",
+        style: {
+            position: "absolute",
+            top: "0px",
+            left: "0px",
+            width: "100%",
+            height: "100%",
+        },
+
         init: function(model) {
             this.create('appView', this.appView); // embed model
         },
+
         render: function () {
-            console.log(this.appView().$el);
             return this.$el.html(this.appView().$el);
         }
     });
+    
+    var applications = new Applications();
 
     return new View({
         type: "Skynet",
@@ -49,25 +59,31 @@ var Skynet = (function() {
         contains: "WindowView",
 
         style: {
-            border: "1px solid red"
+            width: "100%",
+            height: "100%"
         },
 
         init: function (options) {
-            this.create('applications', new Applications());
         },
 
         registerApplication: function (name, appView, options) {
             log("Registering Application: " + name);
-            this.applications().add(new Application(name, appView, options));
+            applications.add(new Application(name, appView, options));
         },
 
         runApplication: function (name, options) {
-            var application = this.applications().find(function (e) {
+            var application = applications.find(function (e) {
                 return e.name() === name;
             });
             if(application) {
-                var app =  this.spawnApplication(application, mergeOptions(options, application.options()));
+                var allOptions = mergeOptions(options, application.options());
+                var app =  this.spawnApplication(application, allOptions);
                 var window = this.add(new WindowView(app));
+                if(options) {
+                    window.$el.css(mergeOptions(options.style, application.options().style));
+                } else {
+                    window.$el.css(application.options().style || {});
+                }
                 this.render();
                 return window;
             } else {
@@ -91,6 +107,7 @@ var Skynet = (function() {
 x = new Skynet();
 $(document).ready(function () {
     $('body').html(x.$el);
+    $('body').css({ margin: "0px" });
 });
-// x.registerApplication("skynet", Skynet);
+x.registerApplication("skynet", Skynet);
 
