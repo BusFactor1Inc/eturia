@@ -10906,7 +10906,9 @@ var Skynet = (function() {
 })();
 
 x = new Skynet();
-$('body').html(x.$el);
+$(document).ready(function () {
+    $('body').html(x.$el);
+});
 // x.registerApplication("skynet", Skynet);
 
 var AppView = new View({
