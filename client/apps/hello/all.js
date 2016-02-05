@@ -6,10 +6,6 @@ var AppView = new View({
 });
 
 x.registerApplication("hello", AppView, {
-    style: {
-        title: "Hello",
-        text: "Hello, World!",
-        width: "320px",
-        height: "240px"
-    }
+    title: "In the depths of Mount Doom.",
+    text: "Hello, World!"
 });
