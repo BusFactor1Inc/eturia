@@ -18,7 +18,6 @@ var AppView = (function () {
             this.$el.text(options.title);
 
             this.on('dragStart', function (e) {
-                console.log('dragStart');
                 this.dragItem = e.target.parent;
                 this.dragX = e.value.clientX;
                 this.dragY = e.value.clientY;

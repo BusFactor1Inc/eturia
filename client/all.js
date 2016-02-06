@@ -10117,6 +10117,7 @@ Model.prototype.destroy = function (name) {
            (UNLESS (= PARENT TARGET)
              ((@ THIS TRIGGER CALL) PARENT MESSAGE VALUE (OR TARGET THIS))))))) */
 Model.prototype.trigger = function (message, value, target) {
+    this.debug && console.log(message, value, target);
     var actions = this._actions[message];
     var triggerParents = null;
     if (actions) {
@@ -10218,11 +10219,11 @@ Model.prototype.push = function (obj, silent) {
                   (@ THIS CONTAINS))))))
      (WHEN (NOT ((@ THIS FIND) OBJ)) ((@ THIS PUSH) OBJ SILENT))
      OBJ) */
-Model.prototype.add = function (obj, silent) {
+Model.prototype.add = function (obj, silent, allowDuplicates) {
     if (this.contains && obj.type !== this.contains) {
         throw new Error('Attempt to push ' + obj.type + 'into container for ' + this.contains);
     };
-    if (!this.find(obj)) {
+    if (allowDuplicates || !this.find(obj)) {
         this.push(obj, silent);
     };
     return obj;
@@ -11287,7 +11288,6 @@ var Lisp = (function () {
         },
 
         loadCore: function(path) {
-            console.log('here');
             path = path || "/core";
             var env = JSON.parse(localStorage.getItem(path + "/env")) || {};
             console.log(env);
@@ -11342,10 +11342,10 @@ var Styles = {
 }
 var Skynet = (function() {
     var log = function(message) {
-        console.log("tyler: " + Date.now() + ": " + message);
+        this.debug && console.log("skynet: " + Date.now() + ": " + message);
     };
     var error = function(message) {
-        console.error("tyler: " + Date.now() + ": " + message);
+        console.error("skynet: " + Date.now() + ": " + message);
     };
 
     var mergeOptions = function() {
@@ -11425,22 +11425,28 @@ var Skynet = (function() {
 
         events: {
             mousedown: function(e) {
-                while(!e.target.app) {
+                while(e.target && !e.target.app) {
                     e.target = e.target.parentNode;
                 }
-                this.dragItem = e.target.app;
-                this.dragItem.trigger('dragStart', e);
-                e.stopPropagation();
+                if(e.target) {
+                    this.dragItem = e.target.app;
+                    this.current(this.dragItem.parent);
+                    this.dragItem.trigger('dragStart', e);
+                    e.stopPropagation();
+                }
             },
             mousemove: function(e) {
                 if(this.dragItem)
                     this.dragItem.trigger('drag', e);
+                e.stopPropagation();
             },
             mouseup: function(e) {
-                this.dragItem.trigger('dragStop', e);
-                this.dragItem = null;
-                e.stopPropagation();
-            }
+                if(this.dragItem) {
+                    this.dragItem.trigger('dragStop', e);
+                    this.dragItem = null;
+                    e.stopPropagation();
+                }
+            },
         },
 
         init: function (options, parent) {
@@ -11480,6 +11486,15 @@ var Skynet = (function() {
         registerApplication: function (name, appView, options) {
             log("Registering Application: " + name);
             applications.add(new Application(name, appView, options));
+        },
+
+        getApplicationOptions: function(name) {
+            var application = applications.find(function (e) {
+                return e.name() === name;
+            });
+            if(application) {
+                return application.options();
+            }
         },
 
         runApplication: function (options) {
@@ -11546,8 +11561,13 @@ var Skynet = (function() {
                 height: h
             });
             this.trigger('windowSized', window);
-        }
+        },
 
+        keyPress: function(e) {
+            if(this.current()) {
+                this.current().trigger('keyPress', e);
+            }
+        }
     });
 })();
 
@@ -11640,6 +11660,9 @@ x = new Skynet(SkynetDefaults);
 $(document).ready(function () {
     $('body').html(x.$el);
     $('body').css(Styles.Body || { margin: "0px" });
+    $('body').keypress(function(e) {
+        x.keyPress(e);
+    });
 });
 x.registerApplication("skynet", Skynet);
 var AppView = new View({
@@ -11648,40 +11671,129 @@ var AppView = new View({
 
 x.registerApplication("daemon", AppView, {
 });
+var AppView = new View({
+    type: "Cell",
+    model: "options",
+    init: function (options) {
+        this.create('enabled');
+        this.create('text', options.text || ' ');
+        this.create('blink');
+        this.create('blinkTime', options.blinkTime || 1000);
+        this.create('blinkColor', options.blinkColor || "black");
+
+        this.create('timer');
+        var blink;
+        this.on('change:blink', function (e) {
+            this.debug && console.log('change:blink', this.blink(), this);
+            if(this.blink()) {
+                this.timer(setInterval(function () {
+                    if(blink) {
+                        this.$el.css({transition: "ease-in .25s", 
+                                      background: "transparent"});
+                    } else {
+                        this.$el.css({transition: "ease-in .75s", 
+                                      background: this.blinkColor()});
+                    }
+                    blink = !blink;
+                }.bind(this), this.blinkTime()));
+            } else {
+                this.debug && console.log('timer', this.timer());
+                clearInterval(this.timer());
+                this.timer(undefined);
+                this.$el.css({background: "transparent"});
+            }
+            // this.trigger('blink'); FIXME causes trigger loop
+        });
+        this.on('change:enabled', function (e) {
+            if(this.enabled()) {
+                this.$el.css({transition: "ease-in .75s", 
+                              background: this.blinkColor()});      
+            } else {
+                this.$el.css({transition: "ease-in .75s", 
+                              background: "transparent"});
+            }
+        });
+        this.on('dragStart', function (e) {
+            this.toggle(true);
+        });
+
+        this.on('change:timer', function () {} );
+        this.on('change:text', this.render);
+        this.on('deleteWindow', function (e) {
+            this.timer() && clearInterval(this.timer());
+        });
+        this.blink(options.blink);
+    },
+
+    toggle: function (loud) {
+        this.blink(false, loud);
+        this.enabled(!this.enabled(), !loud);
+    },
+    
+    render: function () {
+        this.$el.text(this.text());
+        return this.$el;
+    }
+});
+
+x.registerApplication("cell", AppView, {
+    title: "Cell",
+    style: {
+        width: "8px",
+        height: "12px",
+        background: "transparent"
+    }
+});
 var AppView = (function () {
     var blank = new View({});
     var Layer = new View({
         tagName: "table",
+        style: {
+            borderSpacing: "0px",
+            borderCollapse: "0px",
+            
+        },
+
         init: function (model) {
             this.create('grid', model); // embed model
-
             this.create('visible', true);
 
-            for(var i = 0; i < 
-                    this.grid().rows() *
-                    this.grid().cols() *
-                    this.grid().layers(); i++) {
-                this.add(new blank());
-            }
-            
+            this.resize(this.grid().cols(), this.grid().rows(), true);
             this.grid().on('change', function (e) {
-                this.resize(e.target.cols(),
-                            e.target.rows());
+                if(e.target.type === "GridView") {
+                    this.resize(e.target.cols(),
+                                e.target.rows(), true);
+                }
             }.bind(this));
         },
 
-        resize: function (cols, rows) {
-            var newSize = cols*rows;
-            this.clear();
-            for(var i = 0; i < newSize; i++) {
-                this.add(new blank());
+        resize: function (cols, rows, silent) {
+            if(cols && rows) {
+                var newSize = cols*rows;
+                this.clear(silent);
+                for(var i = 0; i < newSize; i++) {
+                    this.add(this.grid().initialElement() || 
+                             x.spawnApplication(this,
+                                                "cell",
+                                                {
+                                                    style: {
+                                                        width: this.grid().cellWidth(),
+                                                        height: this.grid().cellHeight(),
+                                                    }
+                                                }), true, silent);
+                }
             }
         },
 
-        setColRow: function(col, row, appView, noRender) {
-            var index = row*(this.grid().cols()-1) + row;
-            this.insertAt(index, appView, true);
-            this.remove(index+1, true);
+        getColRow: function(col, row, silent) {
+            var index = row*(this.grid().cols()) + col;
+            return this.current(index, silent);
+        },
+
+        setColRow: function(col, row, appView, noRender, silent) {
+            var index = row*(this.grid().cols()) + col;
+            this.remove(index, silent);
+            this.insertAt(index, appView, silent);
             if(!noRender)
                 this.render();
         },
@@ -11709,6 +11821,11 @@ var AppView = (function () {
             this.create('cols', this.options.cols || 1);
             this.create('rows', this.options.rows || 1);
             this.create('layers', this.options.layers || 1);
+            this.create('cellWidth', this.options.cellWidth);
+            this.create('cellHeight', this.options.cellHeight);
+            this.create('initialElement',
+                        this.options.initialElement);
+                        
             for(var i = 0; i < this.layers(); i++) {
                 this.add(new Layer(this));
             }
@@ -11723,12 +11840,19 @@ var AppView = (function () {
              });
 
             this.on('change:visible', this.render());
+            this.on('change:current', function (e) { 
+                //this.trigger('gridAddressChange', e);
+            }); // HACK causes trigger loop if not here
         },
 
-        setColRow: function (col, row, appView, noRender) {
-            this.current().setColRow(col, row, appView, noRender);
+        setColRow: function (col, row, appView, noRender, silent) {
+            this.current().setColRow(col, row, appView, noRender, silent);
             if(!noRender)
                 this.render();
+        },
+
+        getColRow: function (col, row, silent) {
+            return this.current().getColRow(col, row, silent);
         },
 
         render: function () {
@@ -11737,8 +11861,19 @@ var AppView = (function () {
                     return layer.$el;
             });
 
-            console.log(html);
             this.$el.html(html);
+        },
+
+        broadcast: function(funName, e, loud) {
+            for(var i = 0; i < this.rows(); i++) {
+                for(var j = 0; j < this.cols(); j++) {
+                    var thing  = this.getColRow(j, i);
+                    thing[funName] && thing[funName](e, !loud);
+                    if(thing.broadcast) {
+                        thing.broadcast(funName, e);
+                    } 
+                }
+            }
         }
     });
 })();
@@ -11786,6 +11921,11 @@ var AppView = (function () {
             this.options.width && this.$el.width(this.options.width);
             this.options.height && this.$el.height(this.options.height);
             this.on('change', this.render);
+            this.on('modified', this.render);
+
+            this.on('keyPress', function (e) {
+                this.grid().broadcast('keyPress', e);
+            });
         },
 
         render: function () {
@@ -11818,7 +11958,6 @@ var AppView = (function () {
             this.$el.text(options.title);
 
             this.on('dragStart', function (e) {
-                console.log('dragStart');
                 this.dragItem = e.target.parent;
                 this.dragX = e.value.clientX;
                 this.dragY = e.value.clientY;
@@ -11858,7 +11997,7 @@ var AppView = new View({
 
 x.registerApplication("list", AppView, {});
 var AppView = new View({
-    type: "AppView",
+    type: "Listener",
     tagName: "textarea",
     style: {
         width: "100%",
@@ -11885,6 +12024,9 @@ var AppView = new View({
         this.create('triggerLispCode',
                     options.triggerLispCode);
         this.create('lisp', options.lisp || new Lisp());
+        this.on('dragStart', function () { } );
+        this.on('drag', function () { } );
+        this.on('dragStop', function () { } );
     }
 });
 
@@ -11912,10 +12054,10 @@ var AppView = new View({
                 result = this.listener().lisp().exec(code);
             } catch (e) {
                 error = true;
-                console.log(e);
+ 
                 result = e.message;
             }
-            
+
             var codeView = x.spawnApplication(this, "hello", {
                 app: "hello",
                 text: code,
@@ -11949,4 +12091,117 @@ var AppView = new View({
 
 x.registerApplication("notebook", AppView, {
     title: "Notebook"
+});
+var AppView = new View({
+    type: "Terminal",
+    init: function (options) {
+        this.create('blank', new (new View({})));
+        this.create('rows', options.rows || 25);
+        this.create('cols', options.cols || 80);
+        this.create('cursorX', 0);
+        this.create('cursorY', 0);
+        this.create('grid',
+                    x.spawnApplication(this,
+                                       "grid",
+                                       {
+                                           rows: this.rows(), 
+                                           cols: this.cols(),
+                                           cellWidth: "8px",
+                                           cellHeight: "12px",
+                                           style: {
+                                               background: x.getApplicationOptions("cell").
+                                                   style.background || "black",
+                                           }
+                                       }));
+        this.enableCursor(0, 0);
+        this.on("change:cursorX", function(e) {
+            this.setCursor(e.value, this.cursorY()).blink(false, true);
+            this.setCursor(this.cursorX(), this.cursorY());
+        });
+        this.on("change:cursorY", function(e) {
+            this.setCursor(this.cursorX(), e.value).blink(false, true);
+            this.setCursor(this.cursorX(), this.cursorY());
+        });
+    },
+
+    keyPress: function(e) {
+        if(e.value.charCode === 2) {
+            this.setCursor(this.cursorX(this.cursorX()-1), this.cursorY());
+        } else if(e.value.charCode === 13) {
+            this.enableCursor(this.cursorX(), this.cursorY((this.cursorY()+1)%this.rows()));
+        } else {
+            this.insert(String.fromCharCode(e.value.charCode));
+        }
+    },
+
+    clearScreen: function(loud) {
+        this.debug && console.log('terminal:clearScreen');
+        for(var i = 0; i < this.rows(); i++) {
+            for(var j = 0; j < this.cols(); j++) {
+                this.offCharacter(j, i);
+            }
+        }
+    },
+
+    _setCursorCell: function(px, py, cell, loud) {
+        return setTimeout(function () {
+            this.grid().setColRow(px, py, cell, false, !loud);
+        }.bind(this), 0); // wierd
+    },
+
+    getCursor: function (px, py) {
+        return this.grid().getColRow(px, py);
+    },
+
+    setCursor: function (px, py) {
+        var cell = this.grid().getColRow(px, py);
+        cell.blink(true);
+        return cell;
+    },
+
+    offCharacter: function (px, py, loud) {
+        return this._setCursorCell(px, py, x.spawnApplication(this, "cell", {}), loud);
+    },
+
+    enableCursor: function(px, py, loud) {
+        var cell = this.setCursor(px, py);
+        cell.blink(true);
+    },
+
+    onCharacter: function (px, py) {
+        var cell = this.getCursor(px, py);
+        cell.$el.css({background: "black"});
+    },
+
+    setCharacter: function(px, py, character, blink, loud) {
+        var cell = this.getCursor(px, py);
+        cell.blink(blink);
+        cell.text(character);
+    },
+    
+    blinkCharacter: function (px, py, blink) {
+        var cell = this.getCursor(px, py);
+        cell.blink(blink);
+    },
+
+    toggleCharacter: function (px, py) {
+        this.getCursor(px, py).toggle();
+    },
+
+    insert: function(string, blink, loud) {
+        for(c in string) {
+            this.setCharacter(this.cursorX(), this.cursorY(),
+                              string[c], blink, loud);
+            this.cursorX((this.cursorX()+1)%this.cols());
+        }
+    },
+
+    render: function() {
+        return this.$el.html(this.grid().$el);
+    }
+
+});
+
+x.registerApplication("terminal", AppView, {
+    title: "Terminal"
 });

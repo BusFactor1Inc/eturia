@@ -29,6 +29,11 @@ var AppView = (function () {
             this.options.width && this.$el.width(this.options.width);
             this.options.height && this.$el.height(this.options.height);
             this.on('change', this.render);
+            this.on('modified', this.render);
+
+            this.on('keyPress', function (e) {
+                this.grid().broadcast('keyPress', e);
+            });
         },
 
         render: function () {

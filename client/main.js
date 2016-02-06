@@ -1,9 +1,9 @@
 var Skynet = (function() {
     var log = function(message) {
-        console.log("tyler: " + Date.now() + ": " + message);
+        this.debug && console.log("skynet: " + Date.now() + ": " + message);
     };
     var error = function(message) {
-        console.error("tyler: " + Date.now() + ": " + message);
+        console.error("skynet: " + Date.now() + ": " + message);
     };
 
     var mergeOptions = function() {
@@ -83,22 +83,28 @@ var Skynet = (function() {
 
         events: {
             mousedown: function(e) {
-                while(!e.target.app) {
+                while(e.target && !e.target.app) {
                     e.target = e.target.parentNode;
                 }
-                this.dragItem = e.target.app;
-                this.dragItem.trigger('dragStart', e);
-                e.stopPropagation();
+                if(e.target) {
+                    this.dragItem = e.target.app;
+                    this.current(this.dragItem.parent);
+                    this.dragItem.trigger('dragStart', e);
+                    e.stopPropagation();
+                }
             },
             mousemove: function(e) {
                 if(this.dragItem)
                     this.dragItem.trigger('drag', e);
+                e.stopPropagation();
             },
             mouseup: function(e) {
-                this.dragItem.trigger('dragStop', e);
-                this.dragItem = null;
-                e.stopPropagation();
-            }
+                if(this.dragItem) {
+                    this.dragItem.trigger('dragStop', e);
+                    this.dragItem = null;
+                    e.stopPropagation();
+                }
+            },
         },
 
         init: function (options, parent) {
@@ -138,6 +144,15 @@ var Skynet = (function() {
         registerApplication: function (name, appView, options) {
             log("Registering Application: " + name);
             applications.add(new Application(name, appView, options));
+        },
+
+        getApplicationOptions: function(name) {
+            var application = applications.find(function (e) {
+                return e.name() === name;
+            });
+            if(application) {
+                return application.options();
+            }
         },
 
         runApplication: function (options) {
@@ -204,8 +219,13 @@ var Skynet = (function() {
                 height: h
             });
             this.trigger('windowSized', window);
-        }
+        },
 
+        keyPress: function(e) {
+            if(this.current()) {
+                this.current().trigger('keyPress', e);
+            }
+        }
     });
 })();
 
@@ -298,5 +318,8 @@ x = new Skynet(SkynetDefaults);
 $(document).ready(function () {
     $('body').html(x.$el);
     $('body').css(Styles.Body || { margin: "0px" });
+    $('body').keypress(function(e) {
+        x.keyPress(e);
+    });
 });
 x.registerApplication("skynet", Skynet);
