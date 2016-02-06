@@ -10854,21 +10854,490 @@ if (typeof module !== 'undefined') {
 if (typeof module !== 'undefined') {
     module.exports.View = View;
 };
+var Lisp = (function () {
+    console.log("Lisp is available.");
+    return new Model({
+        type: "Lisp",
+        contains: "Lisp",
+        model: "options",
+
+        init: function (options) {
+            options = options || {};
+            this.create('env',{
+                't': 't',
+                'nil': [],
+            });
+
+            this.create('fenv', {
+                'set': this.bset.bind(this),
+                'car': this.bcar.bind(this),
+                'cdr': this.bcdr.bind(this),
+                'cons': this.bcons.bind(this),
+                'eval': this.beval.bind(this),
+                'apply': this.bapply.bind(this),
+                'env': this.benv.bind(this),
+                'fenv': this.bfenv.bind(this),
+                'js': this.bjs,
+                '+': this.bplus,
+                '*': this.btimes,
+                'save': this.saveCore,
+                'load': this.loadCore,
+                'rm': this.rm,
+                'frm': this.frm
+            });
+
+            this.create('triggerTrace', false);
+
+            options.core && this.loadCore(options.core);
+        },
+
+        exec: function (string) {
+            return this.beval.call(this, (this.readFromString.call(this, string)));
+        },
+
+
+        //--------------------------------------------------------------------------------
+        brm: function (args) {
+            var old = this.env();
+            for(var i in args) {
+                delete old[args[i]];
+            };
+            this.env(old);
+        },
+        
+        bfrm: function (args) {
+            var old = this.fenv();
+            for(var i in args) {
+                delete old[args[i]];
+            };
+            this.fenv(old);
+        },
+        
+        bjs: function (string) {
+            return eval(string);
+        },
+        
+        bplus: function() {
+            var sum = 0;
+            for(var i = 0; i < arguments.length; i++) {
+	        sum += arguments[i];
+            }
+            return sum;
+        },
+
+        btimes: function() {
+            var product = 1;
+            for(var i = 0; i < arguments.length; i++) {
+	        product *= arguments[i];
+            }
+            return product;
+        },
+
+        bquote: function (x) {
+            return x;
+        },
+
+        bcar: function (list) {
+            return list[0] || [];
+        },
+
+        bcdr: function (list) {
+            return list.slice(1);
+        },
+
+        bcons: function (car, cdr) {
+            if(Array.isArray(cdr)) {
+	        cdr.unshift(car);
+	        return cdr;
+            }
+            return [car, cdr];
+        },
+
+        evlambda: function  (fun, args) {
+            var vars = fun[1];
+            var saved = {}
+            // save variables
+            var i;
+            for(i = 0; i < vars.length-1; i++) {
+	        if(vars[i] != '&rest' && vars[i] != '&body' && this.env()[vars[i]] !== undefined) {
+	            saved[vars[i]] = this.env()[vars[i]];
+	        }
+	        if(!Array.isArray(args[i]) && args[i].values !== undefined) {
+	            this.env()[vars[i]] = args[i].values[0];
+	        } else {
+	            if(vars[i] == '&rest' || vars[i] == '&body') {
+		        i++;
+		        this.env()[vars[i]] = args.slice(i-1, args.length-1);
+		        i = args.length - 1;
+		        break;
+	            } else
+		        this.env()[vars[i]] = args[i];
+	        }
+            }
+
+            if(i != args.length -1) {
+	        throw new Error("not enough arguments for function.");
+            }
+
+            
+            var cur = 2;
+            var result;
+            for(var expr = fun[cur]; cur < fun.length-1; expr = fun[++cur]) {
+	        result = this.beval(expr);
+            }
+            
+            // restore variables
+            for(var i = 0; i < vars.length-1; i++) {
+	        delete this.env()[vars[i]];
+	        if(saved[vars[i]] !== undefined) {
+	            this.env()[vars[i]] = saved[vars[i]];
+	        }
+            }
+            
+            return result;
+        },
+
+        bapply: function (fun, args) {
+            function evlis(list) {
+	        var result = []
+	        list.forEach(function (x) {
+	            var tmp = this.beval(x);
+	            if(!Array.isArray(tmp) && tmp.values !== undefined) {
+		        tmp = tmp.values[0];
+	            }
+	            result.push(tmp);
+	        }.bind(this));
+	        return result;
+            }
+
+
+            if(typeof fun === "string") {
+	        fun = this.fenv()[fun];
+            }
+            if(Array.isArray(fun) && fun[0] === 'macro') {
+	        return this.beval(this.evlambda(fun, args));
+            } else {
+	        var args = evlis.call(this, args);
+	        if(typeof fun == "function") {
+	            return fun.apply({}, args);
+	        } else if(Array.isArray(fun) && fun[0] === 'lambda') {
+	            return this.evlambda(fun, args);
+	        } else {
+	            throw new Error("undefined function: " + fun);
+	        }
+            }
+	    
+            throw new Error("apply: " + fun + ": " + args);
+        },
+
+        bset: function (v, expr) {
+            if(typeof v === "string") {
+	        return this.env()[v] = expr;
+            } else
+	        throw new Error("attempt to set non-symbol value: " + v);
+        },
+
+        benv: function () {
+            console.log(env);
+            return this.bvalues();
+        },
+
+        bfenv: function () {
+            console.log(fenv);
+            return this.bvalues();
+        },
+
+        bprint: function (expr) {
+            if(!Array.isArray(expr) && expr != undefined && expr.values !== undefined) {
+	        for(var i = 0; i < expr.values.length-1; i++) {
+	            console.log(expr.values[i]);
+	        }
+            } else {
+	        console.log(expr);
+            }
+        },
+
+        bsetf: function(place, value) {
+            switch(place[0]) {
+            case 'symbol-function':
+	        this.fenv()[place[1]] = value;
+            }
+        },
+
+        bvalues: function() {
+            return { 'values': Array.prototype.slice.call(arguments) };
+        },
+
+        bMultipleValueBind: function (exprs) {
+            var args = exprs[0];
+            var values = this.beval(exprs[1]);
+            var body = exprs.slice(2);
+
+            var lambda = ['lambda', args];
+            lambda = lambda.concat(body);
+            return this.bapply(lambda, values.values);
+        },
+
+        bdefmacro: function (expr) {
+            var name = expr[0];
+            var args = expr[1];
+            var body = expr.slice(2);
+
+            var macro = [ 'macro', args ];
+            macro = macro.concat(body);
+            this.fenv()[name] = macro;
+            return macro;
+        },
+
+        bmacroexpand: function (expr) {
+        },
+
+        bqquote: function(expr) {
+            var result = [];
+            for(var i = 0; i < expr.length; i++) {
+	        e = expr[i];
+	        if(Array.isArray(e) && e[0] === 'unquote')
+	            result.push(this.beval(e[1]));
+	        else if(Array.isArray(e) && e[0] === 'unquote-splice')
+	            result = result.concat(this.beval(e[1]).slice(0, e[1].length-1));
+	        else if(Array.isArray(e)) {
+	            result.push(this.bqquote(e));
+	        } else
+	            result.push(e);
+            }
+            return result;
+        },
+
+        bmacroexpand: function(expr) {
+            
+        },
+
+        beval: function (expr) {
+            if(Array.isArray(expr)) {
+	        var car = expr[0];
+	        var cdr = expr.slice(1);
+                if(this.triggerTrace() === 1)
+                    this.trigger(car, cdr);
+	        switch(car) {
+	        case 'quote':
+	            return this.bquote(cdr[0]);
+	        case 'qquote':
+	            return this.bqquote(cdr[0]);
+	        case 'lambda':
+	            return expr;
+	        case 'setq':
+	            return this.bset(cdr[0], this.beval(cdr[1]));
+	        case 'setf':
+	            return this.bsetf(cdr[0], cdr[1]);
+	        case 'values':
+	            return this.bvalues.apply({}, cdr);
+	        case 'multiple-value-bind':
+	            return this.bMultipleValueBind(cdr);
+	        case 'symbol-function':
+	            return this.fenv()[cdr[0]];
+	        case 'defmacro':
+	            return this.bdefmacro(cdr);
+	        default:
+	            return this.bapply(car, cdr);
+	        }
+            } else if(typeof expr === "string") {
+	        if(this.env()[expr] === undefined) {
+	            throw new Error("undefined symbol: " + expr);
+	        }
+	        return this.env()[expr];
+            } else {
+	        return expr;
+            }
+
+            throw new Error("eval error:" + expr);
+        },
+
+        isNumberThing: function (c) {
+            return c === '0' ||
+	        c === '1' ||
+	        c === '2' ||
+	        c === '3' ||
+	        c === '4' ||
+	        c === '5' ||
+	        c === '6' ||
+	        c === '7' ||
+	        c === '8' ||
+	        c === '9' ||
+	        c === '-' ||
+	        c === '.';
+        },
+
+        readFromString: function (string) {
+            function terminator(c) {
+	        return c === undefined ||
+	            c === ' ' ||
+	            c === '\n' ||
+	            c === '(' ||
+	            c === ')';
+            }
+
+            function readSymbol (string) {
+	        var symbol = "";
+	        while(!terminator(string[0])) {
+	            symbol += string[0];
+	            string.shift();
+	        }
+	        return symbol;
+            }
+
+            function readNumber (string) {
+	        var number = "";
+	        var isNumber = true;
+	        while(!terminator(string[0])) {
+	            isNumber &= this.isNumberThing(string[0]);
+	            number += string[0];
+	            string.shift();
+	        }
+	        if(isNumber)
+	            return parseFloat.call(this, (number));
+	        else
+	            return number;
+            }
+
+            function readSexpr(string) {
+	        while(string[0] != undefined) {
+	            var c = string.shift();
+	            switch(c) {
+	            case ' ':
+	            case '\n':
+	            case '\t':
+		        continue;
+
+	            case '\'':
+		        return [ 'quote', readSexpr.call(this, string)];
+
+	            case '`':
+		        return [ 'qquote', readSexpr.call(this, string)];
+
+	            case ',':
+		        c = string.shift();
+		        if(c == '@')
+		            return [ 'unquote-splice', readSexpr.call(this, string)];
+		        else {
+		            string.unshift(c);
+		            return [ 'unquote', readSexpr.call(this, string)];
+		        }
+
+	            case '(': {
+		        var result = [];
+
+		        for(var elt = readSexpr.call(this, string); elt !== null;  
+                            elt = readSexpr.call(this, string)) {
+		            result.push(elt);
+		        }
+		        result.push('nil');
+		        return result;
+	            }
+
+	            case ')':
+		        return null;
+
+	            default:
+		        if(this.isNumberThing(c)) {
+		            string.unshift(c); 
+		            return readNumber.call(this, string);
+		        }
+
+		        string.unshift(c);
+		        return readSymbol.call(this, string);
+	            }
+	        }
+
+	        throw new Error("unterminated sexpr.");
+            }
+
+            return readSexpr.call(this, string.split(''));
+        },
+
+        refresh: function () {
+            var fenv = {};
+            var oldFenv = {
+                'set': this.bset.bind(this),
+                'car': this.bcar.bind(this),
+                'cdr': this.bcdr.bind(this),
+                'cons': this.bcons.bind(this),
+                'eval': this.beval.bind(this),
+                'apply': this.bapply.bind(this),
+                'env': this.benv.bind(this),
+                'fenv': this.bfenv.bind(this),
+                'js': this.bjs,
+                '+': this.bplus,
+                '*': this.btimes,
+                'save': this.saveCore.bind(this),
+                'load': this.loadCore.bind(this),
+                'rm': this.rm,
+                'frm': this.frm
+            };
+            for(i in oldFenv) {
+                console.log(i);
+                fenv[i] = oldFenv[i];
+            }
+            this.fenv(fenv);
+        },
+
+        saveCore: function (path) {
+            path = path || "/core";
+            localStorage.setItem(path + "/env", JSON.stringify(this.env()));
+            localStorage.setItem(path + "/fenv", JSON.stringify(this.fenv()));
+        },
+
+        loadCore: function(path) {
+            console.log('here');
+            path = path || "/core";
+            var env = JSON.parse(localStorage.getItem(path + "/env")) || {};
+            console.log(env);
+            this.env(env);
+
+            var fenv = JSON.parse(localStorage.getItem(path + "/fenv")) || {} ;
+            var oldFenv = {
+                'set': this.bset.bind(this),
+                'car': this.bcar.bind(this),
+                'cdr': this.bcdr.bind(this),
+                'cons': this.bcons.bind(this),
+                'eval': this.beval.bind(this),
+                'apply': this.bapply.bind(this),
+                'env': this.benv.bind(this),
+                'fenv': this.bfenv.bind(this),
+                'js': this.bjs,
+                '+': this.bplus,
+                '*': this.btimes,
+                'save': this.saveCore.bind(this),
+                'load': this.loadCore.bind(this),
+                'rm': this.rm,
+                'frm': this.frm
+            };
+            for(i in oldFenv) {
+                console.log(i);
+                fenv[i] = oldFenv[i];
+            }
+            this.fenv(fenv);
+        }
+    });
+})();
 var Styles = {
     Body: {
         margin: '0px',
         fontFamily: "monospace"
     },
     Window: {
+        overflow: "auto",
+        padding: ".25em",
         border: "2px solid grey",
-        //borderRadius: "4px 4px",
         boxShadow: "2px 2px 2px grey",
         position: "absolute",
         background: "lightgrey"
     },
     TitleBar: {
-        borderBottom: "1px solid grey",
-        background: "lightblue"
+        borderRadius: "4px 4px",
+        border: "1px solid grey",
+        background: "lightblue",
+        marginBottom: ".25em",
+        padding: ".25em"
     }
 }
 var Skynet = (function() {
@@ -10968,7 +11437,6 @@ var Skynet = (function() {
                     this.dragItem.trigger('drag', e);
             },
             mouseup: function(e) {
-                console.log(e.target);
                 this.dragItem.trigger('dragStop', e);
                 this.dragItem = null;
                 e.stopPropagation();
@@ -10976,6 +11444,9 @@ var Skynet = (function() {
         },
 
         init: function (options, parent) {
+            this.create('lisp', new Lisp({
+                core: "/core"
+            }));
             this.options = this.options || {}; // Hack
             this.create('options', this.options); // embed model
             this.create('parent', parent);
@@ -11021,8 +11492,8 @@ var Skynet = (function() {
                     height: this.$el.height()
                 });
                 var allOptions = mergeOptions(application.options(), options, { style: placement });
-                var app = this.spawnApplication(this, options.daemon && "daemon" || "window", allOptions);
-                app.$el.css(mergeOptions(application.options().style, options.style, placement));
+                var app = this.spawnApplication(this, options.daemon && "daemon" || "window", allOptions );
+                app.$el.css(placement || {});
                 this.remove(this.layer(), true);
                 this.insertAt(this.layer(), app, true);
                 this.layer(this.layer()+1);
@@ -11046,6 +11517,9 @@ var Skynet = (function() {
                 var app = new appView(options);
                 app.$el[0].app = app;
                 app.parent = parent;
+                app.$el.css(application.options().style || {});
+                app.$el.css(options.style || {});
+                app.lisp = options.lisp || this.lisp;
                 this.trigger('spawnApplication', app);
                 return app;
             } else {
@@ -11150,6 +11624,14 @@ var SkynetDefaults = {
 
         'windowSized': function(e) {
             var window = e.value;
+        },
+
+        'saveCore': function(e) {
+            this.lisp().saveCore(e.value);
+        },
+
+        'loadCore': function(e) {
+            this.lisp().loadCore(e.value);
         }
     }
 };
@@ -11161,6 +11643,12 @@ $(document).ready(function () {
     $('body').css(Styles.Body || { margin: "0px" });
 });
 x.registerApplication("skynet", Skynet);
+var AppView = new View({
+    type: "Daemon",
+});
+
+x.registerApplication("daemon", AppView, {
+});
 var AppView = new View({
     type: "AppView",
     init: function(options) {
@@ -11187,6 +11675,9 @@ var AppView = (function () {
             this.add(this.create('app', x.spawnApplication(this, 
                                                            options.app,
                                                            options)));
+
+            this.options.width && this.$el.width(this.options.width);
+            this.options.height && this.$el.height(this.options.height);
             this.on('change', this.render);
         },
 
@@ -11245,3 +11736,110 @@ var AppView = (function () {
     });
 })();
 x.registerApplication("titlebar", AppView);
+var AppView = new View({
+    type: "ListView",
+    init: function (options) {
+        this.on('add', this.render);
+    },
+    render: function() {
+        this.each(function(e) {
+            this.$el.append(e.$el);
+        });
+        return this.$el;
+    }
+});
+
+x.registerApplication("list", AppView, {});
+var AppView = new View({
+    type: "AppView",
+    tagName: "textarea",
+    style: {
+        width: "100%",
+    },
+    events: {
+        keypress: function (e) {
+            if(e.charCode === 13 && !e.shiftKey) {
+                var code = this.$el.val();
+                if(this.triggerLispCode()) {
+                    this.trigger('lispCode', code);
+                } else {
+                    x.runApplication({
+                        app: "hello",
+                        title: code,
+                        text: this.lisp().exec(code)
+                    });
+                }
+                this.$el.val('');
+                e.preventDefault();
+            }
+        }
+    },
+    init: function(options) {
+        this.create('triggerLispCode',
+                    options.triggerLispCode);
+        this.create('lisp', options.lisp || new Lisp());
+    }
+});
+
+x.registerApplication("listener", AppView, {
+    title: "Listener",
+    lisp: new Lisp(),
+    style: {
+        width: "40em",
+        height: "3em",
+        padding: ".25em"
+    }
+});
+var AppView = new View({
+    type: "Notebook",
+    init: function (options) {
+        this.create('listener', x.spawnApplication(this, "listener", {
+            triggerLispCode: true
+        }));
+        this.create('list', x.spawnApplication(this, "list", {}));
+
+        this.on('lispCode', function (e) {
+            var code = e.value;
+            var result, error = false;
+            try {
+                result = this.listener().lisp().exec(code);
+            } catch (e) {
+                error = true;
+                console.log(e);
+                result = e.message;
+            }
+            
+            var codeView = x.spawnApplication(this, "hello", {
+                app: "hello",
+                text: code,
+                style: {
+                    padding: ".5em",
+                    background: error && "red" || "green"
+                }
+            });
+
+            var resultView = x.spawnApplication(this, "hello", {
+                app: "hello",
+                text: result,
+                style: {
+                    padding: ".5em",
+                    background: "white"
+                }
+            });
+            this.list().add(codeView, true);
+            this.list().add(resultView);
+            this.trigger('saveCore');
+        });
+    },
+    render: function() {
+        var html = [
+            this.list().$el,
+            this.listener().$el
+        ];
+        return this.$el.html(html);
+    }
+});
+
+x.registerApplication("notebook", AppView, {
+    title: "Notebook"
+});

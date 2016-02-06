@@ -1,0 +1,3 @@
+[submodule "lib/jslisp"]
+	path = lib/jslisp
+	url = https://github.com/burtonsamograd/jslisp

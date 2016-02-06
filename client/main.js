@@ -95,7 +95,6 @@ var Skynet = (function() {
                     this.dragItem.trigger('drag', e);
             },
             mouseup: function(e) {
-                console.log(e.target);
                 this.dragItem.trigger('dragStop', e);
                 this.dragItem = null;
                 e.stopPropagation();
@@ -103,6 +102,9 @@ var Skynet = (function() {
         },
 
         init: function (options, parent) {
+            this.create('lisp', new Lisp({
+                core: "/core"
+            }));
             this.options = this.options || {}; // Hack
             this.create('options', this.options); // embed model
             this.create('parent', parent);
@@ -148,8 +150,8 @@ var Skynet = (function() {
                     height: this.$el.height()
                 });
                 var allOptions = mergeOptions(application.options(), options, { style: placement });
-                var app = this.spawnApplication(this, options.daemon && "daemon" || "window", allOptions);
-                app.$el.css(mergeOptions(application.options().style, options.style, placement));
+                var app = this.spawnApplication(this, options.daemon && "daemon" || "window", allOptions );
+                app.$el.css(placement || {});
                 this.remove(this.layer(), true);
                 this.insertAt(this.layer(), app, true);
                 this.layer(this.layer()+1);
@@ -173,6 +175,9 @@ var Skynet = (function() {
                 var app = new appView(options);
                 app.$el[0].app = app;
                 app.parent = parent;
+                app.$el.css(application.options().style || {});
+                app.$el.css(options.style || {});
+                app.lisp = options.lisp || this.lisp;
                 this.trigger('spawnApplication', app);
                 return app;
             } else {
@@ -277,6 +282,14 @@ var SkynetDefaults = {
 
         'windowSized': function(e) {
             var window = e.value;
+        },
+
+        'saveCore': function(e) {
+            this.lisp().saveCore(e.value);
+        },
+
+        'loadCore': function(e) {
+            this.lisp().loadCore(e.value);
         }
     }
 };

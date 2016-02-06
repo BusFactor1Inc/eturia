@@ -13,6 +13,9 @@ var AppView = (function () {
             this.add(this.create('app', x.spawnApplication(this, 
                                                            options.app,
                                                            options)));
+
+            this.options.width && this.$el.width(this.options.width);
+            this.options.height && this.$el.height(this.options.height);
             this.on('change', this.render);
         },
 

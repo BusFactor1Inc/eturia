@@ -4,14 +4,18 @@ var Styles = {
         fontFamily: "monospace"
     },
     Window: {
+        overflow: "auto",
+        padding: ".25em",
         border: "2px solid grey",
-        //borderRadius: "4px 4px",
         boxShadow: "2px 2px 2px grey",
         position: "absolute",
         background: "lightgrey"
     },
     TitleBar: {
-        borderBottom: "1px solid grey",
-        background: "lightblue"
+        borderRadius: "4px 4px",
+        border: "1px solid grey",
+        background: "lightblue",
+        marginBottom: ".25em",
+        padding: ".25em"
     }
 }
