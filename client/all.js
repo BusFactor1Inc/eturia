@@ -11417,7 +11417,7 @@ var Skynet = (function() {
     return new View({
         type: "Skynet",
         model: "options",
-        contains: "Skynet",
+        contains: "Window",
 
         style: {
             position: "absolute"
@@ -11452,6 +11452,7 @@ var Skynet = (function() {
             this.create('parent', parent);
             this.create('app');
 
+            /*
             this.create('cols', this.options().cols || 1);
             this.create('rows', this.options().rows || 1);
             this.create('layers', this.options().layers || 1);
@@ -11461,7 +11462,7 @@ var Skynet = (function() {
                          z: this.layers()
                        };
             this.size(dims);
-
+            */
             if(this.options().triggerHandlers) {
                 for(var trigger in this.options().triggerHandlers) {
                     var handler = this.options().triggerHandlers[trigger];
@@ -11494,9 +11495,7 @@ var Skynet = (function() {
                 var allOptions = mergeOptions(application.options(), options, { style: placement });
                 var app = this.spawnApplication(this, options.daemon && "daemon" || "window", allOptions );
                 app.$el.css(placement || {});
-                this.remove(this.layer(), true);
-                this.insertAt(this.layer(), app, true);
-                this.layer(this.layer()+1);
+                this.add(app);
                 this.trigger('createWindow', this);
                 this.render();
                 return app;
@@ -11649,8 +11648,104 @@ var AppView = new View({
 
 x.registerApplication("daemon", AppView, {
 });
+var AppView = (function () {
+    var blank = new View({});
+    var Layer = new View({
+        tagName: "table",
+        init: function (model) {
+            this.create('grid', model); // embed model
+
+            this.create('visible', true);
+
+            for(var i = 0; i < 
+                    this.grid().rows() *
+                    this.grid().cols() *
+                    this.grid().layers(); i++) {
+                this.add(new blank());
+            }
+            
+            this.grid().on('change', function (e) {
+                this.resize(e.target.cols(),
+                            e.target.rows());
+            }.bind(this));
+        },
+
+        resize: function (cols, rows) {
+            var newSize = cols*rows;
+            this.clear();
+            for(var i = 0; i < newSize; i++) {
+                this.add(new blank());
+            }
+        },
+
+        setColRow: function(col, row, appView, noRender) {
+            var index = row*(this.grid().cols()-1) + row;
+            this.insertAt(index, appView, true);
+            this.remove(index+1, true);
+            if(!noRender)
+                this.render();
+        },
+
+        render: function () {
+            this.$el.html([]);
+            for(var i = 0; i < this.grid().rows(); i++) {
+                var tr = $("<tr>");
+                for(var j = 0; j < this.grid().cols(); j++) {
+                    var td = $("<td>");
+                    var index = i*this.grid().cols() + j;
+                    td.html(this.at(index).$el);
+                    tr.append(td);
+                }
+                this.$el.append(tr);
+            }
+            return this.$el;
+        }
+    });
+
+    return new View({
+        type: "GridView",
+        model: "options",
+        init: function(model) {
+            this.create('cols', this.options.cols || 1);
+            this.create('rows', this.options.rows || 1);
+            this.create('layers', this.options.layers || 1);
+            for(var i = 0; i < this.layers(); i++) {
+                this.add(new Layer(this));
+            }
+            this.current(0);
+
+            this.create('layer', 0);
+            this.on('modified', this.render);
+            this.on('modified:layer', function (e) {
+                var n = e.value;
+                if(n < 0 || n >= this.layers()) 
+                    throw new Error("grid: attempt to set to invalid layer number: " + n);
+             });
+
+            this.on('change:visible', this.render());
+        },
+
+        setColRow: function (col, row, appView, noRender) {
+            this.current().setColRow(col, row, appView, noRender);
+            if(!noRender)
+                this.render();
+        },
+
+        render: function () {
+            var html = this.map(function (layer) {
+                if(layer.visible())
+                    return layer.$el;
+            });
+
+            console.log(html);
+            this.$el.html(html);
+        }
+    });
+})();
+
+x.registerApplication("grid", AppView, {});
 var AppView = new View({
-    type: "AppView",
+    type: "HelloView",
     init: function(options) {
         this.$el.text(options.text || "Goodbye, World!");
     }
@@ -11666,23 +11761,35 @@ var AppView = (function () {
         model: "options",
         style: Styles.Window,
         init: function(options, parent) {
+            var appPlace = 0;
             if(!options.noTitleBar) {
-                this.add(this.create('titleBar',
-                                     x.spawnApplication(this, 
-"titlebar",
-                                                        options)));
+                this.create('grid', x.spawnApplication(this, "grid", {
+                    rows: 2
+                }));
+                this.grid().setColRow(0, 0, 
+                                      this.create('titleBar', 
+                                                  x.spawnApplication(this, 
+                                                                     "titlebar",
+                                                                     options.appOptions ||
+                                                                     options)));
+                appPlace = 1;
+            } else {
+                this.create('grid', x.spawnApplication(this, "grid"));
             }
-            this.add(this.create('app', x.spawnApplication(this, 
-                                                           options.app,
-                                                           options)));
-
+            this.grid().setColRow(0, appPlace, 
+                                  this.create('app', 
+                                              x.spawnApplication(this, 
+                                                                 options.app,
+                                                                 options.appOptions ||
+                                                                 options)));
+                
             this.options.width && this.$el.width(this.options.width);
             this.options.height && this.$el.height(this.options.height);
             this.on('change', this.render);
         },
 
         render: function () {
-            return this.$el.html(this.map(function(e){return e.$el; }));
+            return this.$el.html(this.grid().$el);
         }
     });
 })();

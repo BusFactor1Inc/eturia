@@ -25,6 +25,7 @@ var hello2 = x2.trigger('runApplication', { app: "hello",
                                                 border: "2px solid red",
                                             }});
 */
+/*
 var hello2 = x.runApplication({ app: "hello",
                                 text: "Don't say goodbye 2.",
                                 style: {
@@ -33,7 +34,7 @@ var hello2 = x.runApplication({ app: "hello",
                                 }});
 //x.placeWindow(hello2, "200px", "200px");
 //x.sizeWindow(hello2, "240px", "240px");
-
+*/
 var hello = x.runApplication({ app: "hello",
                                title: "Testing",
                                text: "Don't say goodbye.",
@@ -49,13 +50,10 @@ var lisp = new Lisp({
 });
 console.log(lisp.exec("(defmacro double (x) `(+ ,x ,x))")); 
 console.log(lisp.bjs("lisp.exec('(defmacro square (x) `(* ,x ,x))'); "));
+
 x.runApplication({ app: "notebook",
                    title: "Notebook Title",
                    width: "600px",
                    height: "800px"
                  });
-x.runApplication({ app: "notebook",
-                   title: "Notebook Title 2",
-                   width: "600px",
-                   height: "800px"
-                 });
+

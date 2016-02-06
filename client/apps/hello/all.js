@@ -1,5 +1,5 @@
 var AppView = new View({
-    type: "AppView",
+    type: "HelloView",
     init: function(options) {
         this.$el.text(options.text || "Goodbye, World!");
     }

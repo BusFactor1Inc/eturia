@@ -75,7 +75,7 @@ var Skynet = (function() {
     return new View({
         type: "Skynet",
         model: "options",
-        contains: "Skynet",
+        contains: "Window",
 
         style: {
             position: "absolute"
@@ -110,6 +110,7 @@ var Skynet = (function() {
             this.create('parent', parent);
             this.create('app');
 
+            /*
             this.create('cols', this.options().cols || 1);
             this.create('rows', this.options().rows || 1);
             this.create('layers', this.options().layers || 1);
@@ -119,7 +120,7 @@ var Skynet = (function() {
                          z: this.layers()
                        };
             this.size(dims);
-
+            */
             if(this.options().triggerHandlers) {
                 for(var trigger in this.options().triggerHandlers) {
                     var handler = this.options().triggerHandlers[trigger];
@@ -152,9 +153,7 @@ var Skynet = (function() {
                 var allOptions = mergeOptions(application.options(), options, { style: placement });
                 var app = this.spawnApplication(this, options.daemon && "daemon" || "window", allOptions );
                 app.$el.css(placement || {});
-                this.remove(this.layer(), true);
-                this.insertAt(this.layer(), app, true);
-                this.layer(this.layer()+1);
+                this.add(app);
                 this.trigger('createWindow', this);
                 this.render();
                 return app;
