@@ -11364,7 +11364,7 @@ var Lisp = (function () {
             return retval;
         },
 
-        printToString: function(expr, pretty) {
+        printToString: function(expr, ugly) {
             var retval;
             if(Array.isArray(expr)) {
                 retval = "(";
@@ -11372,10 +11372,10 @@ var Lisp = (function () {
                 for(var i in expr) {
                     var val = expr[i];
                     if(val !== "nil")
-                        retval += this.printToString(val) + (pretty && " " || " . (");
+                        retval += this.printToString(val) + (!ugly && " " || " . (");
                     closeParens += ")";
                 }
-                retval = retval + (pretty && ")" || closeParens);
+                retval = retval + (!ugly && ")" || closeParens);
             } else {
                 retval = expr
             }
@@ -12247,10 +12247,16 @@ var AppView = (function () {
             this.insert(";'e' to execute code"); this.newline();
             this.insert(";'z' to clear"); this.newline(); this.newline();
 
-            this.create('history');
+            this.create('history', 0);
             this.on('change:history', function(e) {
                 this.clearScreen();
-                this.insert(this.lisp.current(this.lisp.length-1-this.history()));
+                var index = this.lisp.length - 1 - this.history();
+                try {
+                    var code = this.lisp.current(index, true)
+                    this.insert(code);
+                } catch(e) { 
+                    console.error("terminal: no history at " + this.history());
+                }
             });
             setTimeout(function () {
                 this.insert(this.lisp.current(this.lisp.length-1, true));
@@ -12382,7 +12388,7 @@ var AppView = (function () {
 
         insert: function(stringOrCode, blink, loud) {
             if(Array.isArray(stringOrCode)) {
-                this.insert(this.lisp.printToString(stringOrCode, true));
+                this.insert(this.lisp.printToString(stringOrCode));
             } else {
                 for(c in stringOrCode) {
                     this.setCharacter(this.cursorX(), this.cursorY(),
@@ -12397,11 +12403,11 @@ var AppView = (function () {
         },
 
         previousHistory: function() {
-            this.history(this.history()-1);
+            this.history(this.history()+1);
         },
 
         nextHistory: function() {
-            this.history(this.history()+1);
+            this.history(this.history()-1);
         }
     });
 })();
