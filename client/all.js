@@ -10866,7 +10866,6 @@ var Lisp = (function () {
     console.log("Lisp is available.");
     return new Model({
         type: "Lisp",
-        contains: "Lisp",
         model: "options",
 
         init: function (options) {
@@ -10890,8 +10889,8 @@ var Lisp = (function () {
                 '*': this.btimes,
                 'save': this.saveCore,
                 'load': this.loadCore,
-                'rm': this.rm,
-                'frm': this.frm
+                'rm': this.brm.bind(this),
+                'rmf': this.brmf.bind(this)
             });
 
             this.create('triggerTrace', false);
@@ -10900,7 +10899,9 @@ var Lisp = (function () {
         },
 
         exec: function (string) {
-            return this.printToString(this.beval.call(this, (this.readFromString.call(this, string))));
+            var code = this.readFromString(string);
+            this.add(code);
+            return this.printToString(this.beval.call(this, code)))
         },
 
 
@@ -10911,14 +10912,16 @@ var Lisp = (function () {
                 delete old[args[i]];
             };
             this.env(old);
+            return old;
         },
         
-        bfrm: function (args) {
+        brmf: function (args) {
             var old = this.fenv();
             for(var i in args) {
                 delete old[args[i]];
             };
             this.fenv(old);
+            return old;
         },
         
         bjs: function (string) {
@@ -11286,8 +11289,8 @@ var Lisp = (function () {
                 '*': this.btimes,
                 'save': this.saveCore.bind(this),
                 'load': this.loadCore.bind(this),
-                'rm': this.rm,
-                'frm': this.frm
+                'rm': this.brm.bind(this),
+                'rmf': this.brmf.bind(this)
             };
             for(i in defaultFenv) {
                 fenv[i] = defaultFenv[i];
@@ -12116,7 +12119,8 @@ var AppView = new View({
                 text: code,
                 style: {
                     padding: ".5em",
-                    background: error && "red" || "green"
+                    background: error && "red" || "green",
+                    fontWeight: "bold"
                 }
             });
 
