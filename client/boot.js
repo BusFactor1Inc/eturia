@@ -46,7 +46,7 @@ var hello = x.runApplication({ app: "hello",
 //x.placeWindow(hello, 50, 50);
 //x.sizeWindow(hello, "128px", "128px");
 var notebook = x.runApplication({ app: "notebook",
-                   title: "Registry Editor",
+                   title: "Listener",
                    height: "900px",
                    style: {
                        top: "25px",

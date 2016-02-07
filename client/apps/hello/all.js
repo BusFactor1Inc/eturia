@@ -1,7 +1,7 @@
 var AppView = new View({
     type: "HelloView",
     init: function(options) {
-        this.$el.text(options.text || "Goodbye, World!");
+        this.$el.html(options.text || "Goodbye, World!");
     }
 });
 

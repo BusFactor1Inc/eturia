@@ -10900,6 +10900,9 @@ var Lisp = (function () {
             
             options.core && this.loadCore(options.core);
             this.length && this.current(0);
+
+            this.t = this.env()['t'];
+            this.nil = this.env()['nil'];
         },
 
         exec: function (string) {
@@ -11080,7 +11083,7 @@ var Lisp = (function () {
             var env = this.env();
             var retval = [];
             for(var i in env) {
-                retval = this.bcons(env[i], retval);
+                retval = this.bcons(this.bcons(i, env[i]), retval);
             }
             return retval;
         },
@@ -11089,7 +11092,10 @@ var Lisp = (function () {
             var env = this.fenv();
             var retval = [];
             for(var i in env) {
-                retval = this.bcons(env[i], retval);
+                var val = env[i];
+                if(typeof val === "function")
+                    val = "builtin";
+                retval = this.bcons(this.bcons(i, val), retval);
             }
             return retval;
         },
@@ -11159,6 +11165,28 @@ var Lisp = (function () {
             
         },
 
+        beq: function(expr) {
+            var a = expr[0];
+            var b = expr[1];
+            console.log(a, b);
+            if(a == b)
+                return this.t;
+            return this.nil;
+        },
+
+        bcond: function(expr) {
+            for(var i = 0; i < expr.length; i++) {
+                var e = expr[i];
+                var test = e[0];
+                var body = e[1];
+
+                var result = this.beval(test);
+                if(result !== this.nil) {
+                    return this.beval(body);
+                }
+            }
+        },
+
         beval: function (expr) {
             if(Array.isArray(expr)) {
 	        var car = expr[0];
@@ -11184,6 +11212,10 @@ var Lisp = (function () {
 	            return this.fenv()[cdr[0]];
 	        case 'defmacro':
 	            return this.bdefmacro(cdr);
+	        case 'cond':
+	            return this.bcond(cdr);
+	        case 'eq':
+	            return this.beq(cdr);
 	        default:
 	            return this.bapply(car, cdr);
 	        }
@@ -11363,7 +11395,7 @@ var Lisp = (function () {
             }
             return retval;
         },
-
+        
         printToString: function(expr, ugly) {
             var retval;
             var pretty = !ugly;
@@ -11382,7 +11414,13 @@ var Lisp = (function () {
                     closeParens += ")";
                 }
                 retval = retval + (pretty && ")" || closeParens);
-            } else {
+            } else if(typeof expr === "object" && expr.values) {
+                for(var i in expr.values) {
+                    if(expr.values[i])
+                        retval += expr.values[i] + "<br/>";
+                }
+                
+            }else {
                 retval = expr
             }
             return retval;
@@ -11791,7 +11829,7 @@ var AppView = new View({
                         this.$el.css({transition: "ease-in .25s", 
                                       background: "transparent"});
                     } else {
-                        this.$el.css({transition: "ease-in .75s", 
+                        this.$el.css({
                                       background: this.blinkColor()});
                     }
                     blink = !blink;
@@ -11806,10 +11844,10 @@ var AppView = new View({
         });
         this.on('change:enabled', function (e) {
             if(this.enabled()) {
-                this.$el.css({transition: "ease-in .75s", 
+                this.$el.css({transition: "ease-in .25s", 
                               background: this.blinkColor()});      
             } else {
-                this.$el.css({transition: "ease-in .75s", 
+                this.$el.css({transition: "ease-in .25s", 
                               background: "transparent"});
             }
         });
@@ -11986,7 +12024,7 @@ x.registerApplication("grid", AppView, {});
 var AppView = new View({
     type: "HelloView",
     init: function(options) {
-        this.$el.text(options.text || "Goodbye, World!");
+        this.$el.html(options.text || "Goodbye, World!");
     }
 });
 
@@ -12089,12 +12127,19 @@ x.registerApplication("titlebar", AppView);
 var AppView = new View({
     type: "ListView",
     init: function (options) {
+        this.create('reverse', options.reverse);
         this.on('add', this.render);
     },
     render: function() {
-        this.each(function(e) {
-            this.$el.append(e.$el);
-        });
+        if(!this.reverse()) {
+            this.each(function(e) {
+                this.$el.append(e.$el);
+            });
+        } else {
+            this.each(function(e) {
+                this.$el.prepend(e.$el);
+            });
+        }
         return this.$el;
     }
 });
@@ -12152,9 +12197,11 @@ var AppView = new View({
                 border: "1px solid black"
             }
         }));
-        this.create('list', x.spawnApplication(this, "list", {}));
-        this.grid().setColRow(0, 0, this.list());
-        this.grid().setColRow(0, 1, this.terminal());
+        this.create('list', x.spawnApplication(this, "list", {
+            reverse: true
+        }));
+        this.grid().setColRow(0, 0, this.terminal());
+        this.grid().setColRow(0, 1, this.list());
 
         this.on('lispCode', function (e) {
             var code = e.value;
@@ -12224,10 +12271,12 @@ var AppView = (function () {
                                            }));
             this.on("change:cursorX", function(e) {
                 this.disableCursor(e.value, this.cursorY())
+                this.onCharacter(this.cursorX(), this.cursorY());
                 this.setCursor(this.cursorX(), this.cursorY());
             });
             this.on("change:cursorY", function(e) {
                 this.disableCursor(this.cursorX(), e.value);
+                this.onCharacter(this.cursorX(), this.cursorY());
                 this.setCursor(this.cursorX(), this.cursorY());
             });
 
@@ -12245,13 +12294,14 @@ var AppView = (function () {
             this.offCharacter(this.cols()-1, this.rows()-1);
 
             // if(options.help) ...
-            this.insert(";Like VI, but different"); this.newline();
-            this.insert(";----------------------"); this.newline(); this.newline();
-            this.insert(";'?' is escape"); this.newline();
-            this.insert(";'hjkl' to navigate"); this.newline();
-            this.insert(";'i' for insert mode"); this.newline();
-            this.insert(";'e' to execute code"); this.newline();
-            this.insert(";'z' to clear"); this.newline(); this.newline();
+            this.insert(";Like VI, but different\n"); 
+            this.insert(";----------------------\n\n");
+            this.insert(";'?' is escape\n"); 
+            this.insert(";'hjkl' to navigate\n"); 
+            this.insert(";'i' for insert mode\n"); 
+            this.insert(";'e' to execute code\n"); 
+            this.insert(";'z' to clear\n\n"); 
+            this.insert(";This was your last statement:\n\n"); 
 
             this.create('history', 0);
             this.on('change:history', function(e) {
@@ -12401,7 +12451,12 @@ var AppView = (function () {
                 for(c in stringOrCode) {
                     this.setCharacter(this.cursorX(), this.cursorY(),
                                       stringOrCode[c], blink, loud);
-                    this.cursorX((this.cursorX()+1)%this.cols());
+                    if(stringOrCode[c] === '\n') {
+                        this.cursorX(0);
+                        this.cursorY(this.cursorY()+1);
+                    } else {
+                        this.cursorX((this.cursorX()+1)%this.cols());
+                    }
                 }
             }
         },
