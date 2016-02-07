@@ -10888,7 +10888,7 @@ var Lisp = (function () {
             });
 
             this.create('triggerTrace', false);
-
+            
             options.core && this.loadCore(options.core);
         },
 
@@ -11255,9 +11255,9 @@ var Lisp = (function () {
             return readSexpr.call(this, string.split(''));
         },
 
-        refresh: function () {
-            var fenv = {};
-            var oldFenv = {
+        refresh: function (fenv) {
+            fenv = fenv || {};
+            var defaultFenv = {
                 'set': this.bset.bind(this),
                 'car': this.bcar.bind(this),
                 'cdr': this.bcdr.bind(this),
@@ -11274,15 +11274,16 @@ var Lisp = (function () {
                 'rm': this.rm,
                 'frm': this.frm
             };
-            for(i in oldFenv) {
-                console.log(i);
-                fenv[i] = oldFenv[i];
+            for(i in defaultFenv) {
+                fenv[i] = defaultFenv[i];
             }
             this.fenv(fenv);
         },
 
         saveCore: function (path) {
             path = path || "/core";
+            console.log(this.env())
+            console.log(this.fenv())
             localStorage.setItem(path + "/env", JSON.stringify(this.env()));
             localStorage.setItem(path + "/fenv", JSON.stringify(this.fenv()));
         },
@@ -11290,32 +11291,12 @@ var Lisp = (function () {
         loadCore: function(path) {
             path = path || "/core";
             var env = JSON.parse(localStorage.getItem(path + "/env")) || {};
-            console.log(env);
+            env['t'] = 't';
+            env['nil'] = [];
             this.env(env);
 
             var fenv = JSON.parse(localStorage.getItem(path + "/fenv")) || {} ;
-            var oldFenv = {
-                'set': this.bset.bind(this),
-                'car': this.bcar.bind(this),
-                'cdr': this.bcdr.bind(this),
-                'cons': this.bcons.bind(this),
-                'eval': this.beval.bind(this),
-                'apply': this.bapply.bind(this),
-                'env': this.benv.bind(this),
-                'fenv': this.bfenv.bind(this),
-                'js': this.bjs,
-                '+': this.bplus,
-                '*': this.btimes,
-                'save': this.saveCore.bind(this),
-                'load': this.loadCore.bind(this),
-                'rm': this.rm,
-                'frm': this.frm
-            };
-            for(i in oldFenv) {
-                console.log(i);
-                fenv[i] = oldFenv[i];
-            }
-            this.fenv(fenv);
+            this.refresh(fenv);
         }
     });
 })();
@@ -11428,11 +11409,19 @@ var Skynet = (function() {
                 while(e.target && !e.target.app) {
                     e.target = e.target.parentNode;
                 }
-                if(e.target) {
-                    this.dragItem = e.target.app;
-                    this.current(this.dragItem.parent);
-                    this.dragItem.trigger('dragStart', e);
-                    e.stopPropagation();
+                if(e.which === 1) {
+                    if(e.target) {
+                        this.dragItem = e.target.app;
+                        this.current(this.dragItem.parent);
+                        this.dragItem.trigger('dragStart', e);
+                        e.stopPropagation();
+                    }
+                } else if(e.which === 2) {
+                    if(e.target.app && e.target.app.type === "TitleBar") {
+                        this.remove(e.target.app.parent);
+                        this.render();
+                    }
+                    
                 }
             },
             mousemove: function(e) {
@@ -11668,6 +11657,7 @@ var SkynetDefaults = {
                     text: result,
                 },
             });
+            this.lisp().saveCore();
         }
     }
 };

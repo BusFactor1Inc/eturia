@@ -86,11 +86,19 @@ var Skynet = (function() {
                 while(e.target && !e.target.app) {
                     e.target = e.target.parentNode;
                 }
-                if(e.target) {
-                    this.dragItem = e.target.app;
-                    this.current(this.dragItem.parent);
-                    this.dragItem.trigger('dragStart', e);
-                    e.stopPropagation();
+                if(e.which === 1) {
+                    if(e.target) {
+                        this.dragItem = e.target.app;
+                        this.current(this.dragItem.parent);
+                        this.dragItem.trigger('dragStart', e);
+                        e.stopPropagation();
+                    }
+                } else if(e.which === 2) {
+                    if(e.target.app && e.target.app.type === "TitleBar") {
+                        this.remove(e.target.app.parent);
+                        this.render();
+                    }
+                    
                 }
             },
             mousemove: function(e) {
@@ -326,6 +334,7 @@ var SkynetDefaults = {
                     text: result,
                 },
             });
+            this.lisp().saveCore();
         }
     }
 };
