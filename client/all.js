@@ -10907,8 +10907,10 @@ var Lisp = (function () {
 
         exec: function (string) {
             var code = this.readFromString(string);
+            var result = this.beval.call(this, code);
             this.add(code);
-            return this.printToString(this.beval.call(this, code));
+            this.bset('*', result);
+            return this.printToString(result);
         },
 
 
@@ -11018,7 +11020,7 @@ var Lisp = (function () {
             }
 
             if(i != args.length -1) {
-	        throw new Error("not enough arguments for function.");
+	        throw new Error("Not enough arguments for function.");
             }
 
             
@@ -11181,7 +11183,7 @@ var Lisp = (function () {
                 var body = e[1];
 
                 var result = this.beval(test);
-                if(result !== this.nil) {
+                if(result != this.nil) {
                     return this.beval(body);
                 }
             }
