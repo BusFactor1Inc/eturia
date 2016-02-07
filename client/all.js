@@ -11366,16 +11366,22 @@ var Lisp = (function () {
 
         printToString: function(expr, ugly) {
             var retval;
+            var pretty = !ugly;
             if(Array.isArray(expr)) {
                 retval = "(";
                 var closeParens = ")";
                 for(var i in expr) {
                     var val = expr[i];
-                    if(val !== "nil")
-                        retval += this.printToString(val) + (!ugly && " " || " . (");
+                    if(pretty && Array.isArray(val) && val[0] === "unquote") {
+                        retval += ',' + this.printToString(val[1]) + " ";
+                    } else if(pretty && Array.isArray(val) && val[0] === "qquote") {
+                        retval += '`' + this.printToString(val[1]) + " ";
+                    } else if(val !== "nil") {
+                        retval += this.printToString(val) + (pretty && " " || " . (");
+                    }
                     closeParens += ")";
                 }
-                retval = retval + (!ugly && ")" || closeParens);
+                retval = retval + (pretty && ")" || closeParens);
             } else {
                 retval = expr
             }
@@ -12407,7 +12413,8 @@ var AppView = (function () {
         },
 
         nextHistory: function() {
-            this.history(this.history()-1);
+            if(this.history() >= 0)
+                this.history(this.history()-1);
         }
     });
 })();
