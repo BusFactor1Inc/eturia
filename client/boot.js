@@ -60,7 +60,7 @@ x.runApplication({app:"cell",
                   blink: true
                  });
 var terminal = x.runApplication({app:"terminal",
-                                 title: "Terminal",
+                                 title: "Registry",
                                  style: {
                                      top: "300px",
                                      left: "20px"
@@ -68,10 +68,7 @@ var terminal = x.runApplication({app:"terminal",
                                 });
 var y = terminal.grid().getColRow(0, 1, true).grid()
 console.log(y.getColRow(0,0));
-y.getColRow(0,0).debug = true;
-
-terminal.app().setCharacter(0, 0, ' ');
-terminal.app().offCharacter(20, 20);
+terminal.app().clearScreen();
 x.current(terminal);
 
 

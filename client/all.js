@@ -11736,6 +11736,7 @@ var AppView = new View({
 
         this.on('change:timer', function () {} );
         this.on('change:text', this.render);
+        this.on('change:blink', this.render);
         this.on('deleteWindow', function (e) {
             this.timer() && clearInterval(this.timer());
         });
@@ -12153,6 +12154,11 @@ var AppView = new View({
                 this.$el.css({border: "0px"});
             }
         });
+
+        // This needs to be here for some reason
+        // DON'T FIX OffCharacter.
+        this.offCharacter(this.cols()-1, this.rows()-1);
+
     },
 
     keyPress: function(e) {
@@ -12204,14 +12210,11 @@ var AppView = new View({
 
     clearScreen: function(loud) {
         this.debug && console.log('terminal:clearScreen');
+        this.cursorX(0);
+        this.cursorY(0);
         for(var i = 0; i < this.rows(); i++) {
             for(var j = 0; j < this.cols(); j++) {
-                var cell = this.setCursor(j, i);
-                if(cell.text())
-                    cell.text(' ');
-                if(cell.blink())
-                    cell.blink(false);
-                cell.$el.css({ background: "transparent" });
+                this.setCharacter(j, i, ' ', false, {background: "transparent"});
             }
         }
         this.cursorX(0);
@@ -12253,10 +12256,14 @@ var AppView = new View({
         cell.$el.css({background: "black"});
     },
 
-    setCharacter: function(px, py, character, blink, loud) {
+    setCharacter: function(px, py, character, blink, style, loud) {
         var cell = this.getCursor(px, py);
-        cell.blink(blink);
-        cell.text(character);
+        if(blink !== undefined)
+            cell.blink(blink);
+        if(character !== undefined)
+            cell.text(character);
+        if(style !== undefined)
+            cell.$el.css(style);
     },
     
     blinkCharacter: function (px, py, blink) {
