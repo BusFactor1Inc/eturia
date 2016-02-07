@@ -71,5 +71,3 @@ var terminal = x.runApplication({app:"terminal",
 var y = terminal.grid().getColRow(0, 1, true).grid()
 */
 x.current(notebook);
-
-

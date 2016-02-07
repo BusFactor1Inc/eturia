@@ -10887,6 +10887,8 @@ var Lisp = (function () {
                 'js': this.bjs,
                 '+': this.bplus,
                 '*': this.btimes,
+                '-': this.bminus,
+                '/': this.bdivide,
                 'save': this.saveCore,
                 'load': this.loadCore,
                 'rm': this.brm.bind(this),
@@ -10901,7 +10903,7 @@ var Lisp = (function () {
         exec: function (string) {
             var code = this.readFromString(string);
             this.add(code);
-            return this.printToString(this.beval.call(this, code)))
+            return this.printToString(this.beval.call(this, code));
         },
 
 
@@ -10931,17 +10933,41 @@ var Lisp = (function () {
         bplus: function() {
             var sum = 0;
             for(var i = 0; i < arguments.length; i++) {
-	        sum += arguments[i];
+                if(typeof arguments[i] === "number") {
+	            sum += arguments[i];
+                }
             }
             return sum;
+        },
+
+        bminus: function() {
+            var difference = 0;
+            for(var i = 0; i < arguments.length; i++) {
+                if(typeof arguments[i] === "number") {
+	            difference -= arguments[i];
+                }
+            }
+            return difference;
         },
 
         btimes: function() {
             var product = 1;
             for(var i = 0; i < arguments.length; i++) {
-	        product *= arguments[i];
+                if(typeof arguments[i] === "number") {
+	            product *= arguments[i];
+                }
             }
             return product;
+        },
+
+        bdivide: function() {
+            var value = arguments[0];
+            for(var i = 1; i < arguments.length; i++) {
+                if(typeof arguments[i] === "number") {
+	            value /= arguments[i];
+                }
+            }
+            return value;
         },
 
         bquote: function (x) {
@@ -11213,7 +11239,11 @@ var Lisp = (function () {
 	            string.shift();
 	        }
 	        if(isNumber)
-	            return parseFloat.call(this, (number));
+                    if(number === "-") {
+                        return number;
+                    } else {
+	                return parseFloat.call(this, (number));
+                    }
 	        else
 	            return number;
             }
@@ -11287,6 +11317,8 @@ var Lisp = (function () {
                 'js': this.bjs,
                 '+': this.bplus,
                 '*': this.btimes,
+                '-': this.bminus,
+                '/': this.bdivide,
                 'save': this.saveCore.bind(this),
                 'load': this.loadCore.bind(this),
                 'rm': this.brm.bind(this),
@@ -11300,21 +11332,29 @@ var Lisp = (function () {
 
         saveCore: function (path) {
             path = path || "/core";
-            this.debug && console.log("env:" + this.env())
-            this.debug && console.log("fenv: " + this.fenv())
-            localStorage.setItem(path + "/env", JSON.stringify(this.env()));
-            localStorage.setItem(path + "/fenv", JSON.stringify(this.fenv()));
+            var core = JSON.stringify(this.map(function (e) { return e; }));
+            console.log("lisp: saveCore: ", core.length);
+            console.log(core);
+            localStorage.setItem(path, core);
         },
 
         loadCore: function(path) {
+            var retval;
             path = path || "/core";
-            var env = JSON.parse(localStorage.getItem(path + "/env")) || {};
-            env['t'] = 't';
-            env['nil'] = [];
-            this.env(env);
 
-            var fenv = JSON.parse(localStorage.getItem(path + "/fenv")) || {} ;
-            this.refresh(fenv);
+            var core = JSON.parse(localStorage.getItem(path)) || [] ;
+            console.log("lisp: loadCore: core: " +  core);
+            for(var i in core) {
+                try {
+                    var code = core[i];
+                    retval = this.beval(code);
+                    this.add(code);
+                    console.log("lisp: loadCore: " +  code, retval);
+                } catch (e) { 
+                    console.error("lisp: loadCore: " + e + ": " + core[i]);
+                }
+            }
+            return retval;
         },
 
         printToString: function(expr) {
@@ -11705,11 +11745,11 @@ var SkynetDefaults = {
 x = new Skynet(SkynetDefaults);
 
 $(document).ready(function () {
-    $('body').html(x.$el);
-    $('body').css(Styles.Body || { margin: "0px" });
-    $('body').keypress(function(e) {
-        x.keyPress(e);
-    });
+        $('body').html(x.$el);
+        $('body').css(Styles.Body || { margin: "0px" });
+        $('body').keypress(function(e) {
+            x.keyPress(e);
+        });
 });
 x.registerApplication("skynet", Skynet);
 var AppView = new View({
@@ -12148,33 +12188,6 @@ x.registerApplication("notebook", AppView, {
     title: "Notebook"
 });
 var AppView = (function () {
-    var History = new Model({
-        type: "History",
-        init: function () {
-            this.create('path', '/history');
-            this.on('change', this.save);
-            this.on('add', function () { });
-            this.on('modified', this.save);
-        },
-
-        insert: function (data) {
-            this.debug && console.log("history:insert");
-            return this.push(data);
-        },
-
-        get: function () {
-            return this.map(function (e) {
-                return e;
-            });
-        },
-
-        save: function () {
-            this.debug && console.log("history:save");
-            var data = this.get();
-            x.registryStore("/history", data);
-        }
-    });
-
     return new View({
         type: "Terminal",
         init: function (options) {
@@ -12217,8 +12230,6 @@ var AppView = (function () {
             // This needs to be here for some reason
             // DON'T FIX OffCharacter.
             this.offCharacter(this.cols()-1, this.rows()-1);
-
-            this.create('history', new History());
 
             // if(options.help) ...
             this.insert("Like VI, but different"); this.newline();
@@ -12279,7 +12290,6 @@ var AppView = (function () {
                 }
                 code += "\n";
             }
-            this.history().insert(code);
             this.trigger('lispCode', code);
         },
 

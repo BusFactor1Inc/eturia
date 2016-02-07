@@ -346,10 +346,10 @@ var SkynetDefaults = {
 x = new Skynet(SkynetDefaults);
 
 $(document).ready(function () {
-    $('body').html(x.$el);
-    $('body').css(Styles.Body || { margin: "0px" });
-    $('body').keypress(function(e) {
-        x.keyPress(e);
-    });
+        $('body').html(x.$el);
+        $('body').css(Styles.Body || { margin: "0px" });
+        $('body').keypress(function(e) {
+            x.keyPress(e);
+        });
 });
 x.registerApplication("skynet", Skynet);
