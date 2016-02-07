@@ -11651,6 +11651,23 @@ var SkynetDefaults = {
 
         'loadCore': function(e) {
             this.lisp().loadCore(e.value);
+        },
+
+        'lispCode': function(e) {
+            var result, error;
+            try {
+                result = this.lisp().exec(e.value);
+            } catch(e) {
+                error = true;
+                result = e.message;
+            }
+            x.runApplication({
+                app: "hello",
+                appOptions: { 
+                    title: e.value,
+                    text: result,
+                },
+            });
         }
     }
 };
@@ -11870,7 +11887,10 @@ var AppView = (function () {
                     var thing  = this.getColRow(j, i);
                     thing[funName] && thing[funName](e, !loud);
                     if(thing.broadcast) {
-                        thing.broadcast(funName, e);
+                        thing.broadcast(funName, e, loud);
+                    } 
+                    if(thing.grid && thing.grid().broadcast) {
+                        thing.grid().broadcast(funName, e, loud);
                     } 
                 }
             }
@@ -12042,16 +12062,21 @@ x.registerApplication("listener", AppView, {
 var AppView = new View({
     type: "Notebook",
     init: function (options) {
-        this.create('listener', x.spawnApplication(this, "listener", {
-            triggerLispCode: true
+        this.create('grid', x.spawnApplication(this, "grid", { rows: 2 }));
+        this.create('terminal', x.spawnApplication(this, "terminal", {
+            style: {
+                border: "1px solid black"
+            }
         }));
         this.create('list', x.spawnApplication(this, "list", {}));
+        this.grid().setColRow(0, 0, this.list());
+        this.grid().setColRow(0, 1, this.terminal());
 
         this.on('lispCode', function (e) {
             var code = e.value;
             var result, error = false;
             try {
-                result = this.listener().lisp().exec(code);
+                result = this.lisp().exec(code);
             } catch (e) {
                 error = true;
  
@@ -12080,12 +12105,10 @@ var AppView = new View({
             this.trigger('saveCore');
         });
     },
+
+    
     render: function() {
-        var html = [
-            this.list().$el,
-            this.listener().$el
-        ];
-        return this.$el.html(html);
+        return this.$el.html(this.grid().$el);
     }
 });
 
@@ -12113,34 +12136,86 @@ var AppView = new View({
                                                    style.background || "black",
                                            }
                                        }));
-        this.enableCursor(0, 0);
         this.on("change:cursorX", function(e) {
-            this.setCursor(e.value, this.cursorY()).blink(false, true);
+            this.disableCursor(e.value, this.cursorY())
             this.setCursor(this.cursorX(), this.cursorY());
         });
         this.on("change:cursorY", function(e) {
-            this.setCursor(this.cursorX(), e.value).blink(false, true);
+            this.disableCursor(this.cursorX(), e.value);
             this.setCursor(this.cursorX(), this.cursorY());
+        });
+
+        this.create('mode');
+        this.on('change:mode', function(e) {
+            if(this.mode()) {
+                this.$el.css({border: "1px solid green"});
+            } else {
+                this.$el.css({border: "0px"});
+            }
         });
     },
 
     keyPress: function(e) {
-        if(e.value.charCode === 2) {
-            this.setCursor(this.cursorX(this.cursorX()-1), this.cursorY());
-        } else if(e.value.charCode === 13) {
-            this.enableCursor(this.cursorX(), this.cursorY((this.cursorY()+1)%this.rows()));
+        console.log(e.value.charCode);
+        if(!this.mode()) {
+            if(e.value.charCode === 13) {
+                this.cursorX(0);
+                this.cursorY(this.cursorY()+1);
+            } else if(e.value.charCode === 104) {
+                this.cursorX(this.cursorX()-1);
+            } else if(e.value.charCode === 108) {
+                this.cursorX(this.cursorX()+1);
+            } else if(e.value.charCode === 106) {
+                this.cursorY((this.cursorY()+1)%this.rows());
+            } else if(e.value.charCode === 107) {
+                this.cursorY(this.cursorY()-1);
+            } else if(e.value.charCode === 120) {
+                this.execute();
+            } else if(e.value.charCode === 99) {
+                this.onCharacter(this.cursorX(), this.cursorY());
+            } else if(e.value.charCode === 100) {
+                this.offCharacter(this.cursorX(), this.cursorY());
+            } else if(e.value.charCode === 122) {
+                this.clearScreen();
+            } else if(e.value.charCode === 111) {
+                this.cursorX(0);
+            } else {
+                this.mode(e.value.charCode === 105);
+            } 
         } else {
-            this.insert(String.fromCharCode(e.value.charCode));
+            if(this.mode(e.value.charCode !== 63)) {
+                this.insert(String.fromCharCode(e.value.charCode));
+            }
         }
+        e.value.preventDefault();
+    },
+
+    execute: function() {
+        var code = "";
+        for(var i = 0; i < this.grid().rows(); i++) {
+            for(var j = 0; j < this.grid().cols(); j++) {
+                var cell = this.grid().getColRow(j, i);
+                code += cell.text();
+            }
+            code += "\n";
+        }
+        this.trigger('lispCode', code);
     },
 
     clearScreen: function(loud) {
         this.debug && console.log('terminal:clearScreen');
         for(var i = 0; i < this.rows(); i++) {
             for(var j = 0; j < this.cols(); j++) {
-                this.offCharacter(j, i);
+                var cell = this.setCursor(j, i);
+                if(cell.text())
+                    cell.text(' ');
+                if(cell.blink())
+                    cell.blink(false);
+                cell.$el.css({ background: "transparent" });
             }
         }
+        this.cursorX(0);
+        this.cursorY(0);
     },
 
     _setCursorCell: function(px, py, cell, loud) {
@@ -12166,6 +12241,11 @@ var AppView = new View({
     enableCursor: function(px, py, loud) {
         var cell = this.setCursor(px, py);
         cell.blink(true);
+    },
+
+    disableCursor: function(px, py, loud) {
+        var cell = this.getCursor(px, py);
+        cell.blink(false);
     },
 
     onCharacter: function (px, py) {

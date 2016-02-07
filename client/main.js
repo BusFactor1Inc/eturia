@@ -309,6 +309,23 @@ var SkynetDefaults = {
 
         'loadCore': function(e) {
             this.lisp().loadCore(e.value);
+        },
+
+        'lispCode': function(e) {
+            var result, error;
+            try {
+                result = this.lisp().exec(e.value);
+            } catch(e) {
+                error = true;
+                result = e.message;
+            }
+            x.runApplication({
+                app: "hello",
+                appOptions: { 
+                    title: e.value,
+                    text: result,
+                },
+            });
         }
     }
 };

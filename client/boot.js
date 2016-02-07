@@ -51,13 +51,9 @@ var lisp = new Lisp({
 console.log(lisp.exec("(defmacro double (x) `(+ ,x ,x))")); 
 console.log(lisp.bjs("lisp.exec('(defmacro square (x) `(* ,x ,x))'); "));
 
-/*
 x.runApplication({ app: "notebook",
                    title: "Notebook Title",
-                   width: "600px",
-                   height: "800px"
                  });
-*/
 
 x.runApplication({app:"cell",
                   title: "Cell",
@@ -74,10 +70,8 @@ var y = terminal.grid().getColRow(0, 1, true).grid()
 console.log(y.getColRow(0,0));
 y.getColRow(0,0).debug = true;
 
-terminal.app().setCharacter(10, 10, 's');
-terminal.app().setCharacter(11, 11, 'e');
+terminal.app().setCharacter(0, 0, ' ');
 terminal.app().offCharacter(20, 20);
-terminal.app().setCharacter(15, 15, 'x', true);
-terminal.app().insert('testing');
 x.current(terminal);
+
 
