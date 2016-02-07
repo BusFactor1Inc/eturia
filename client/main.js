@@ -198,7 +198,7 @@ var Skynet = (function() {
                 app.parent = parent;
                 app.$el.css(application.options().style || {});
                 app.$el.css(options.style || {});
-                app.lisp = options.lisp || this.lisp;
+                app.lisp = options.lisp || this.lisp();
                 this.trigger('spawnApplication', app);
                 return app;
             } else {

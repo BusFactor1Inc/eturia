@@ -10855,6 +10855,7 @@ function View(options) {
     fun.prototype.constructor = View;
     return fun;
 };
+
 /* (EXPORT *MODEL *VIEW) */
 if (typeof module !== 'undefined') {
     module.exports.Model = Model;
@@ -10898,6 +10899,7 @@ var Lisp = (function () {
             this.create('triggerTrace', false);
             
             options.core && this.loadCore(options.core);
+            this.length && this.current(0);
         },
 
         exec: function (string) {
@@ -11252,6 +11254,11 @@ var Lisp = (function () {
 	        while(string[0] != undefined) {
 	            var c = string.shift();
 	            switch(c) {
+                    case ';': {
+                        c = string.shift();
+                        while(c !== '\n')
+                            c = string.shift();
+                    }
 	            case ' ':
 	            case '\n':
 	            case '\t':
@@ -11357,23 +11364,23 @@ var Lisp = (function () {
             return retval;
         },
 
-        printToString: function(expr) {
+        printToString: function(expr, pretty) {
             var retval;
             if(Array.isArray(expr)) {
                 retval = "(";
                 var closeParens = ")";
                 for(var i in expr) {
                     var val = expr[i];
-                    retval += this.printToString(val) + " . (";
+                    if(val !== "nil")
+                        retval += this.printToString(val) + (pretty && " " || " . (");
                     closeParens += ")";
                 }
-                retval = retval + closeParens;
+                retval = retval + (pretty && ")" || closeParens);
             } else {
-                retval = " " + expr + " ";
+                retval = expr
             }
             return retval;
         }
-
     });
 })();
 var Styles = {
@@ -11597,7 +11604,7 @@ var Skynet = (function() {
                 app.parent = parent;
                 app.$el.css(application.options().style || {});
                 app.$el.css(options.style || {});
-                app.lisp = options.lisp || this.lisp;
+                app.lisp = options.lisp || this.lisp();
                 this.trigger('spawnApplication', app);
                 return app;
             } else {
@@ -12147,7 +12154,7 @@ var AppView = new View({
             var code = e.value;
             var result, error = false;
             try {
-                result = this.lisp().exec(code);
+                result = this.lisp.exec(code);
             } catch (e) {
                 error = true;
  
@@ -12232,13 +12239,22 @@ var AppView = (function () {
             this.offCharacter(this.cols()-1, this.rows()-1);
 
             // if(options.help) ...
-            this.insert("Like VI, but different"); this.newline();
-            this.insert("----------------------"); this.newline(); this.newline();
-            this.insert("'?' is escape"); this.newline();
-            this.insert("'hjkl' to navigate"); this.newline();
-            this.insert("'i' for insert mode"); this.newline();
-            this.insert("'e' to execute code"); this.newline();
-            this.insert("'z' to clear"); this.newline();
+            this.insert(";Like VI, but different"); this.newline();
+            this.insert(";----------------------"); this.newline(); this.newline();
+            this.insert(";'?' is escape"); this.newline();
+            this.insert(";'hjkl' to navigate"); this.newline();
+            this.insert(";'i' for insert mode"); this.newline();
+            this.insert(";'e' to execute code"); this.newline();
+            this.insert(";'z' to clear"); this.newline(); this.newline();
+
+            this.create('history');
+            this.on('change:history', function(e) {
+                this.clearScreen();
+                this.insert(this.lisp.current(this.lisp.length-1-this.history()));
+            });
+            setTimeout(function () {
+                this.insert(this.lisp.current(this.lisp.length-1, true));
+            }.bind(this), 0);
         },
 
         newline: function() {
@@ -12270,6 +12286,10 @@ var AppView = (function () {
                     this.clearScreen();
                 } else if(e.value.charCode === 111) {
                     this.cursorX(0);
+                } else if(e.value.charCode === 112) {
+                    this.previousHistory();
+                } else if(e.value.charCode === 110) {
+                    this.nextHistory();
                 } else {
                     this.mode(e.value.charCode === 105);
                 } 
@@ -12360,18 +12380,29 @@ var AppView = (function () {
             this.getCursor(px, py).toggle();
         },
 
-        insert: function(string, blink, loud) {
-            for(c in string) {
-                this.setCharacter(this.cursorX(), this.cursorY(),
-                                  string[c], blink, loud);
-                this.cursorX((this.cursorX()+1)%this.cols());
+        insert: function(stringOrCode, blink, loud) {
+            if(Array.isArray(stringOrCode)) {
+                this.insert(this.lisp.printToString(stringOrCode, true));
+            } else {
+                for(c in stringOrCode) {
+                    this.setCharacter(this.cursorX(), this.cursorY(),
+                                      stringOrCode[c], blink, loud);
+                    this.cursorX((this.cursorX()+1)%this.cols());
+                }
             }
         },
 
         render: function() {
             return this.$el.html(this.grid().$el);
-        }
+        },
 
+        previousHistory: function() {
+            this.history(this.history()-1);
+        },
+
+        nextHistory: function() {
+            this.history(this.history()+1);
+        }
     });
 })();
 
