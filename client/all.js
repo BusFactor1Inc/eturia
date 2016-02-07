@@ -9830,18 +9830,19 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 /* (LOAD macros.ps) */
-Array.prototype.remove = function (thing) {
+var arrayRemove = function (array, thing) {
     var i = 0;
-    for (var x = null, _js_idx1 = 0; _js_idx1 < this.length; _js_idx1 += 1) {
-        x = this[_js_idx1];
+    for (var x = null, _js_idx1 = 0; _js_idx1 < array.length; _js_idx1 += 1) {
+        x = array[_js_idx1];
         if (x === thing) {
-            this.splice(i, 1);
+            array.splice(i, 1);
             return true;
         };
         ++i;
     };
     return null;
 };
+
 /* (DEFCLASS *EVENT NIL (TARGET VALUE)
              (SETF (@ THIS TARGET) TARGET
                    (@ THIS VALUE) VALUE)) */
@@ -9929,11 +9930,11 @@ function addParent(child, parent, name) {
             child._parents.push(parent);
             if (name) {
                 return parent.once('change' + ':' + name, function (e) {
-                    return child._parents.remove(e.target);
+                    return arrayRemove(child._parents, e.target);
                 });
             } else {
                 return parent.on('remove', function (e) {
-                    return e.target === child ? child._parents.remove(e.target) : null;
+                    return e.target === child ? arrayRemove(child._parents, e.target) : null;
                 });
             };
         };
@@ -10120,6 +10121,12 @@ Model.prototype.trigger = function (message, value, target) {
     this.debug && console.log(message, value, target);
     var actions = this._actions[message];
     var triggerParents = null;
+    message.hops = message.hops || 1;
+    message.hops++;
+    if(message.hops > 10) {
+        console.error('px3: dropping message: ', message, value);
+        return;
+    }
     if (actions) {
         var event = new Event(target || this, value);
         var toRemove = [];
@@ -10134,7 +10141,7 @@ Model.prototype.trigger = function (message, value, target) {
         };
         for (var action = null, _js_idx3 = 0; _js_idx3 < toRemove.length; _js_idx3 += 1) {
             action = toRemove[_js_idx3];
-            actions.remove(action);
+            arrayRemove(actions, action);
         };
     } else {
         triggerParents = true;
@@ -10268,11 +10275,11 @@ Model.prototype.swap = function (i, j, silent) {
          (UNLESS SILENT (TRIGGER THIS REMOVE OBJ MODIFIED (ARRAY OBJ))))
        RETVAL)) */
 Model.prototype.remove = function (obj, silent) {
-    var retval = this._storage.remove(obj);
+    var retval = arrayRemove(this._storage, obj);
     if (retval) {
         --this.length;
         if (Modelp(obj)) {
-            obj._parents.remove(this);
+            arrayRemove(obj._parents, this);
         };
         if (!silent) {
             this.trigger('remove', obj);
@@ -10295,7 +10302,7 @@ Model.prototype.clear = function (silent) {
     for (var thing = null, _js_idx8 = 0; _js_idx8 < oldStorage.length; _js_idx8 += 1) {
         thing = oldStorage[_js_idx8];
         if (Modelp(thing)) {
-            thing._parents.remove(this);
+            arrayRemove(thing._parents, this);
         };
     };
     if (!silent) {
@@ -10893,7 +10900,7 @@ var Lisp = (function () {
         },
 
         exec: function (string) {
-            return this.beval.call(this, (this.readFromString.call(this, string)));
+            return this.printToString(this.beval.call(this, (this.readFromString.call(this, string))));
         },
 
 
@@ -11039,13 +11046,21 @@ var Lisp = (function () {
         },
 
         benv: function () {
-            console.log(env);
-            return this.bvalues();
+            var env = this.env();
+            var retval = [];
+            for(var i in env) {
+                retval = this.bcons(env[i], retval);
+            }
+            return retval;
         },
 
         bfenv: function () {
-            console.log(fenv);
-            return this.bvalues();
+            var env = this.fenv();
+            var retval = [];
+            for(var i in env) {
+                retval = this.bcons(env[i], retval);
+            }
+            return retval;
         },
 
         bprint: function (expr) {
@@ -11282,8 +11297,8 @@ var Lisp = (function () {
 
         saveCore: function (path) {
             path = path || "/core";
-            console.log(this.env())
-            console.log(this.fenv())
+            this.debug && console.log("env:" + this.env())
+            this.debug && console.log("fenv: " + this.fenv())
             localStorage.setItem(path + "/env", JSON.stringify(this.env()));
             localStorage.setItem(path + "/fenv", JSON.stringify(this.fenv()));
         },
@@ -11297,7 +11312,25 @@ var Lisp = (function () {
 
             var fenv = JSON.parse(localStorage.getItem(path + "/fenv")) || {} ;
             this.refresh(fenv);
+        },
+
+        printToString: function(expr) {
+            var retval;
+            if(Array.isArray(expr)) {
+                retval = "(";
+                var closeParens = ")";
+                for(var i in expr) {
+                    var val = expr[i];
+                    retval += this.printToString(val) + " . (";
+                    closeParens += ")";
+                }
+                retval = retval + closeParens;
+            } else {
+                retval = " " + expr + " ";
+            }
+            return retval;
         }
+
     });
 })();
 var Styles = {
@@ -11421,7 +11454,6 @@ var Skynet = (function() {
                         this.remove(e.target.app.parent);
                         this.render();
                     }
-                    
                 }
             },
             mousemove: function(e) {
@@ -11556,6 +11588,11 @@ var Skynet = (function() {
             if(this.current()) {
                 this.current().trigger('keyPress', e);
             }
+        },
+
+        registryStore: function(path, data) {
+            this.lisp().bset(path, this.lisp().printToString(data));
+            this.lisp().saveCore();
         }
     });
 })();
@@ -11658,7 +11695,7 @@ var SkynetDefaults = {
                 },
             });
             this.lisp().saveCore();
-        }
+        },
     }
 };
 
@@ -12106,178 +12143,223 @@ var AppView = new View({
 x.registerApplication("notebook", AppView, {
     title: "Notebook"
 });
-var AppView = new View({
-    type: "Terminal",
-    init: function (options) {
-        this.create('blank', new (new View({})));
-        this.create('rows', options.rows || 25);
-        this.create('cols', options.cols || 80);
-        this.create('cursorX', 0);
-        this.create('cursorY', 0);
-        this.create('grid',
-                    x.spawnApplication(this,
-                                       "grid",
-                                       {
-                                           rows: this.rows(), 
-                                           cols: this.cols(),
-                                           cellWidth: "8px",
-                                           cellHeight: "12px",
-                                           style: {
-                                               background: x.getApplicationOptions("cell").
-                                                   style.background || "black",
-                                           }
-                                       }));
-        this.on("change:cursorX", function(e) {
-            this.disableCursor(e.value, this.cursorY())
-            this.setCursor(this.cursorX(), this.cursorY());
-        });
-        this.on("change:cursorY", function(e) {
-            this.disableCursor(this.cursorX(), e.value);
-            this.setCursor(this.cursorX(), this.cursorY());
-        });
+var AppView = (function () {
+    var History = new Model({
+        type: "History",
+        init: function () {
+            this.create('path', '/history');
+            this.on('change', this.save);
+            this.on('add', function () { });
+            this.on('modified', this.save);
+        },
 
-        this.create('mode');
-        this.on('change:mode', function(e) {
-            if(this.mode()) {
-                this.$el.css({border: "1px solid green"});
+        insert: function (data) {
+            this.debug && console.log("history:insert");
+            return this.push(data);
+        },
+
+        get: function () {
+            return this.map(function (e) {
+                return e;
+            });
+        },
+
+        save: function () {
+            this.debug && console.log("history:save");
+            var data = this.get();
+            x.registryStore("/history", data);
+        }
+    });
+
+    return new View({
+        type: "Terminal",
+        init: function (options) {
+            this.create('blank', new (new View({})));
+            this.create('rows', options.rows || 25);
+            this.create('cols', options.cols || 80);
+            this.create('cursorX', 0);
+            this.create('cursorY', 0);
+            this.create('grid',
+                        x.spawnApplication(this,
+                                           "grid",
+                                           {
+                                               rows: this.rows(), 
+                                               cols: this.cols(),
+                                               cellWidth: "8px",
+                                               cellHeight: "12px",
+                                               style: {
+                                                   background: x.getApplicationOptions("cell").
+                                                       style.background || "black",
+                                               }
+                                           }));
+            this.on("change:cursorX", function(e) {
+                this.disableCursor(e.value, this.cursorY())
+                this.setCursor(this.cursorX(), this.cursorY());
+            });
+            this.on("change:cursorY", function(e) {
+                this.disableCursor(this.cursorX(), e.value);
+                this.setCursor(this.cursorX(), this.cursorY());
+            });
+
+            this.create('mode');
+            this.on('change:mode', function(e) {
+                if(this.mode()) {
+                    this.$el.css({border: "1px solid green"});
+                } else {
+                    this.$el.css({border: "0px"});
+                }
+            });
+
+            // This needs to be here for some reason
+            // DON'T FIX OffCharacter.
+            this.offCharacter(this.cols()-1, this.rows()-1);
+
+            this.create('history', new History());
+
+            // if(options.help) ...
+            this.insert("Like VI, but different"); this.newline();
+            this.insert("----------------------"); this.newline(); this.newline();
+            this.insert("'?' is escape"); this.newline();
+            this.insert("'hjkl' to navigate"); this.newline();
+            this.insert("'i' for insert mode"); this.newline();
+            this.insert("'e' to execute code"); this.newline();
+            this.insert("'z' to clear"); this.newline();
+        },
+
+        newline: function() {
+            this.cursorX(0);
+            return this.cursorY(this.cursorY()+1);
+        },
+
+        keyPress: function(e) {
+            console.log(e.value.charCode);
+            if(!this.mode()) {
+                if(e.value.charCode === 13) {
+                    this.cursorX(0);
+                    this.cursorY(this.cursorY()+1);
+                } else if(e.value.charCode === 104) {
+                    this.cursorX(this.cursorX()-1);
+                } else if(e.value.charCode === 108) {
+                    this.cursorX(this.cursorX()+1);
+                } else if(e.value.charCode === 106) {
+                    this.cursorY((this.cursorY()+1)%this.rows());
+                } else if(e.value.charCode === 107) {
+                    this.cursorY(this.cursorY()-1);
+                } else if(e.value.charCode === 101) {
+                    this.execute();
+                } else if(e.value.charCode === 99) {
+                    this.onCharacter(this.cursorX(), this.cursorY());
+                } else if(e.value.charCode === 100) {
+                    this.offCharacter(this.cursorX(), this.cursorY());
+                } else if(e.value.charCode === 122) {
+                    this.clearScreen();
+                } else if(e.value.charCode === 111) {
+                    this.cursorX(0);
+                } else {
+                    this.mode(e.value.charCode === 105);
+                } 
             } else {
-                this.$el.css({border: "0px"});
+                if(this.mode(e.value.charCode !== 63)) {
+                    this.insert(String.fromCharCode(e.value.charCode));
+                }
             }
-        });
+            e.value.preventDefault();
+        },
 
-        // This needs to be here for some reason
-        // DON'T FIX OffCharacter.
-        this.offCharacter(this.cols()-1, this.rows()-1);
-
-    },
-
-    keyPress: function(e) {
-        console.log(e.value.charCode);
-        if(!this.mode()) {
-            if(e.value.charCode === 13) {
-                this.cursorX(0);
-                this.cursorY(this.cursorY()+1);
-            } else if(e.value.charCode === 104) {
-                this.cursorX(this.cursorX()-1);
-            } else if(e.value.charCode === 108) {
-                this.cursorX(this.cursorX()+1);
-            } else if(e.value.charCode === 106) {
-                this.cursorY((this.cursorY()+1)%this.rows());
-            } else if(e.value.charCode === 107) {
-                this.cursorY(this.cursorY()-1);
-            } else if(e.value.charCode === 120) {
-                this.execute();
-            } else if(e.value.charCode === 99) {
-                this.onCharacter(this.cursorX(), this.cursorY());
-            } else if(e.value.charCode === 100) {
-                this.offCharacter(this.cursorX(), this.cursorY());
-            } else if(e.value.charCode === 122) {
-                this.clearScreen();
-            } else if(e.value.charCode === 111) {
-                this.cursorX(0);
-            } else {
-                this.mode(e.value.charCode === 105);
-            } 
-        } else {
-            if(this.mode(e.value.charCode !== 63)) {
-                this.insert(String.fromCharCode(e.value.charCode));
+        execute: function() {
+            var code = "";
+            for(var i = 0; i < this.grid().rows(); i++) {
+                for(var j = 0; j < this.grid().cols(); j++) {
+                    var cell = this.grid().getColRow(j, i);
+                    code += cell.text();
+                }
+                code += "\n";
             }
-        }
-        e.value.preventDefault();
-    },
+            this.history().insert(code);
+            this.trigger('lispCode', code);
+        },
 
-    execute: function() {
-        var code = "";
-        for(var i = 0; i < this.grid().rows(); i++) {
-            for(var j = 0; j < this.grid().cols(); j++) {
-                var cell = this.grid().getColRow(j, i);
-                code += cell.text();
+        clearScreen: function(loud) {
+            this.debug && console.log('terminal:clearScreen');
+            this.cursorX(0);
+            this.cursorY(0);
+            for(var i = 0; i < this.rows(); i++) {
+                for(var j = 0; j < this.cols(); j++) {
+                    this.setCharacter(j, i, ' ', false, {background: "transparent"});
+                }
             }
-            code += "\n";
-        }
-        this.trigger('lispCode', code);
-    },
+            this.cursorX(0);
+            this.cursorY(0);
+        },
 
-    clearScreen: function(loud) {
-        this.debug && console.log('terminal:clearScreen');
-        this.cursorX(0);
-        this.cursorY(0);
-        for(var i = 0; i < this.rows(); i++) {
-            for(var j = 0; j < this.cols(); j++) {
-                this.setCharacter(j, i, ' ', false, {background: "transparent"});
-            }
-        }
-        this.cursorX(0);
-        this.cursorY(0);
-    },
+        _setCursorCell: function(px, py, cell, loud) {
+            return setTimeout(function () {
+                this.grid().setColRow(px, py, cell, false, !loud);
+            }.bind(this), 0); // wierd
+        },
 
-    _setCursorCell: function(px, py, cell, loud) {
-        return setTimeout(function () {
-            this.grid().setColRow(px, py, cell, false, !loud);
-        }.bind(this), 0); // wierd
-    },
+        getCursor: function (px, py) {
+            return this.grid().getColRow(px, py);
+        },
 
-    getCursor: function (px, py) {
-        return this.grid().getColRow(px, py);
-    },
+        setCursor: function (px, py) {
+            var cell = this.grid().getColRow(px, py);
+            cell.blink(true);
+            return cell;
+        },
 
-    setCursor: function (px, py) {
-        var cell = this.grid().getColRow(px, py);
-        cell.blink(true);
-        return cell;
-    },
+        offCharacter: function (px, py, loud) {
+            return this._setCursorCell(px, py, x.spawnApplication(this, "cell", {}), loud);
+        },
 
-    offCharacter: function (px, py, loud) {
-        return this._setCursorCell(px, py, x.spawnApplication(this, "cell", {}), loud);
-    },
+        enableCursor: function(px, py, loud) {
+            var cell = this.setCursor(px, py);
+            cell.blink(true);
+        },
 
-    enableCursor: function(px, py, loud) {
-        var cell = this.setCursor(px, py);
-        cell.blink(true);
-    },
+        disableCursor: function(px, py, loud) {
+            var cell = this.getCursor(px, py);
+            cell.blink(false);
+        },
 
-    disableCursor: function(px, py, loud) {
-        var cell = this.getCursor(px, py);
-        cell.blink(false);
-    },
+        onCharacter: function (px, py) {
+            var cell = this.getCursor(px, py);
+            cell.$el.css({background: "black"});
+        },
 
-    onCharacter: function (px, py) {
-        var cell = this.getCursor(px, py);
-        cell.$el.css({background: "black"});
-    },
-
-    setCharacter: function(px, py, character, blink, style, loud) {
-        var cell = this.getCursor(px, py);
-        if(blink !== undefined)
+        setCharacter: function(px, py, character, blink, style, loud) {
+            var cell = this.getCursor(px, py);
+            if(blink !== undefined)
+                cell.blink(blink);
+            if(character !== undefined)
+                cell.text(character);
+            if(style !== undefined)
+                cell.$el.css(style);
+        },
+        
+        blinkCharacter: function (px, py, blink) {
+            var cell = this.getCursor(px, py);
             cell.blink(blink);
-        if(character !== undefined)
-            cell.text(character);
-        if(style !== undefined)
-            cell.$el.css(style);
-    },
-    
-    blinkCharacter: function (px, py, blink) {
-        var cell = this.getCursor(px, py);
-        cell.blink(blink);
-    },
+        },
 
-    toggleCharacter: function (px, py) {
-        this.getCursor(px, py).toggle();
-    },
+        toggleCharacter: function (px, py) {
+            this.getCursor(px, py).toggle();
+        },
 
-    insert: function(string, blink, loud) {
-        for(c in string) {
-            this.setCharacter(this.cursorX(), this.cursorY(),
-                              string[c], blink, loud);
-            this.cursorX((this.cursorX()+1)%this.cols());
+        insert: function(string, blink, loud) {
+            for(c in string) {
+                this.setCharacter(this.cursorX(), this.cursorY(),
+                                  string[c], blink, loud);
+                this.cursorX((this.cursorX()+1)%this.cols());
+            }
+        },
+
+        render: function() {
+            return this.$el.html(this.grid().$el);
         }
-    },
 
-    render: function() {
-        return this.$el.html(this.grid().$el);
-    }
-
-});
+    });
+})();
 
 x.registerApplication("terminal", AppView, {
     title: "Terminal"

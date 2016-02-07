@@ -45,20 +45,22 @@ var hello = x.runApplication({ app: "hello",
 
 //x.placeWindow(hello, 50, 50);
 //x.sizeWindow(hello, "128px", "128px");
-var lisp = new Lisp({
-    core: "/core" 
-});
-console.log(lisp.exec("(defmacro double (x) `(+ ,x ,x))")); 
-console.log(lisp.bjs("lisp.exec('(defmacro square (x) `(* ,x ,x))'); "));
-
-x.runApplication({ app: "notebook",
-                   title: "Notebook Title",
+var notebook = x.runApplication({ app: "notebook",
+                   title: "Registry Editor",
+                   height: "900px",
+                   style: {
+                       top: "25px",
+                       left: "20px"
+                   }
                  });
 
+/*
 x.runApplication({app:"cell",
                   title: "Cell",
                   blink: true
                  });
+*/
+/*
 var terminal = x.runApplication({app:"terminal",
                                  title: "Registry",
                                  style: {
@@ -67,8 +69,7 @@ var terminal = x.runApplication({app:"terminal",
                                  }
                                 });
 var y = terminal.grid().getColRow(0, 1, true).grid()
-console.log(y.getColRow(0,0));
-terminal.app().clearScreen();
-x.current(terminal);
+*/
+x.current(notebook);
 
 

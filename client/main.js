@@ -98,7 +98,6 @@ var Skynet = (function() {
                         this.remove(e.target.app.parent);
                         this.render();
                     }
-                    
                 }
             },
             mousemove: function(e) {
@@ -233,6 +232,11 @@ var Skynet = (function() {
             if(this.current()) {
                 this.current().trigger('keyPress', e);
             }
+        },
+
+        registryStore: function(path, data) {
+            this.lisp().bset(path, this.lisp().printToString(data));
+            this.lisp().saveCore();
         }
     });
 })();
@@ -335,7 +339,7 @@ var SkynetDefaults = {
                 },
             });
             this.lisp().saveCore();
-        }
+        },
     }
 };
 
