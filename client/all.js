@@ -12302,6 +12302,8 @@ var AppView = (function () {
                     this.previousHistory();
                 } else if(e.value.charCode === 110) {
                     this.nextHistory();
+                } else if(e.value.charCode === 68) {
+                    this.deleteCoreEntry();
                 } else {
                     this.mode(e.value.charCode === 105);
                 } 
@@ -12415,6 +12417,13 @@ var AppView = (function () {
         nextHistory: function() {
             if(this.history() >= 0)
                 this.history(this.history()-1);
+        },
+
+        deleteCoreEntry: function (index) {
+            index = this.history();
+            console.log('terminal: deleteCoreEntry: ' + index);
+            this.lisp && this.lisp.remove(this.lisp.current());
+            this.trigger('saveCore');
         }
     });
 })();
