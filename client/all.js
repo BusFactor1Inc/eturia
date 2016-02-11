@@ -10150,7 +10150,11 @@ Model.prototype.trigger = function (message, value, target) {
         for (var parent = null, _js_arrvar7 = this._parents, _js_idx6 = 0; _js_idx6 < _js_arrvar7.length; _js_idx6 += 1) {
             parent = _js_arrvar7[_js_idx6];
             if (parent !== target) {
-                this.trigger.call(parent, message, value, target || this);
+                /* try { */
+                    this.trigger.call(parent, message, value, target || this);
+                /* } catch (e) { 
+                    console.error("px3: trigger: trigger loop detected: " + message + ", " + value + ", " + target);
+                } */
             };
         };
     };
@@ -10885,15 +10889,14 @@ var Lisp = (function () {
                 'apply': this.bapply.bind(this),
                 'env': this.benv.bind(this),
                 'fenv': this.bfenv.bind(this),
-                'js': this.bjs,
                 '+': this.bplus,
                 '*': this.btimes,
                 '-': this.bminus,
                 '/': this.bdivide,
-                'save': this.saveCore,
-                'load': this.loadCore,
+                'save': this.saveCore.bind(this),
+                'load': this.loadCore.bind(this),
                 'rm': this.brm.bind(this),
-                'rmf': this.brmf.bind(this)
+                'rmf': this.brmf.bind(this),
             });
 
             this.create('triggerTrace', false);
@@ -10907,34 +10910,41 @@ var Lisp = (function () {
 
         exec: function (string) {
             var code = this.readFromString(string);
+            this.add($.extend(true, [], code));
             var result = this.beval.call(this, code);
-            this.add(code);
             this.bset('*', result);
             return this.printToString(result);
         },
 
 
         //--------------------------------------------------------------------------------
-        brm: function (args) {
+        bprogn: function (args) {
+            var result, i = 0;
+            while(args[i] !== 'nil') {
+                console.log('bprogn: ' + args[i]);
+                result = this.beval(args[i]);
+                i++;
+            }
+            return result;
+        },
+
+        brm: function () {
             var old = this.env();
-            for(var i in args) {
-                delete old[args[i]];
+            for(var i in arguments) {
+                delete old[arguments[i]];
             };
             this.env(old);
             return old;
         },
         
-        brmf: function (args) {
+        brmf: function () {
+            console.log(arguments);
             var old = this.fenv();
-            for(var i in args) {
-                delete old[args[i]];
+            for(var i in arguments) {
+                delete old[arguments[i]];
             };
             this.fenv(old);
             return old;
-        },
-        
-        bjs: function (string) {
-            return eval(string);
         },
         
         bplus: function() {
@@ -11020,7 +11030,7 @@ var Lisp = (function () {
             }
 
             if(i != args.length -1) {
-	        throw new Error("Not enough arguments for function.");
+	        throw new Error("Not enough arguments for function: " + fun);
             }
 
             
@@ -11173,7 +11183,7 @@ var Lisp = (function () {
             console.log(a, b);
             if(a == b)
                 return this.t;
-            return this.nil;
+            return [];
         },
 
         bcond: function(expr) {
@@ -11183,7 +11193,7 @@ var Lisp = (function () {
                 var body = e[1];
 
                 var result = this.beval(test);
-                if(result != this.nil) {
+                if(result != []) {
                     return this.beval(body);
                 }
             }
@@ -11218,13 +11228,20 @@ var Lisp = (function () {
 	            return this.bcond(cdr);
 	        case 'eq':
 	            return this.beq(cdr);
+	        case 'progn':
+	            return this.bprogn(cdr);
 	        default:
+                    console.log('bapply', car, cdr);
 	            return this.bapply(car, cdr);
 	        }
             } else if(typeof expr === "string") {
 	        if(this.env()[expr] === undefined) {
 	            throw new Error("undefined symbol: " + expr);
 	        }
+                if(expr === 'nil') {
+                    return [];
+                } 
+
 	        return this.env()[expr];
             } else {
 	        return expr;
@@ -11253,6 +11270,7 @@ var Lisp = (function () {
 	        return c === undefined ||
 	            c === ' ' ||
 	            c === '\n' ||
+	            c === '\r' ||
 	            c === '(' ||
 	            c === ')';
             }
@@ -11290,11 +11308,12 @@ var Lisp = (function () {
 	            switch(c) {
                     case ';': {
                         c = string.shift();
-                        while(c !== '\n')
+                        while(c !== '\n' || c !== '\r')
                             c = string.shift();
                     }
 	            case ' ':
 	            case '\n':
+	            case '\r':
 	            case '\t':
 		        continue;
 
@@ -11328,12 +11347,11 @@ var Lisp = (function () {
 		        return null;
 
 	            default:
+		        string.unshift(c); 
 		        if(this.isNumberThing(c)) {
-		            string.unshift(c); 
 		            return readNumber.call(this, string);
 		        }
 
-		        string.unshift(c);
 		        return readSymbol.call(this, string);
 	            }
 	        }
@@ -11355,7 +11373,6 @@ var Lisp = (function () {
                 'apply': this.bapply.bind(this),
                 'env': this.benv.bind(this),
                 'fenv': this.bfenv.bind(this),
-                'js': this.bjs,
                 '+': this.bplus,
                 '*': this.btimes,
                 '-': this.bminus,
@@ -11363,7 +11380,7 @@ var Lisp = (function () {
                 'save': this.saveCore.bind(this),
                 'load': this.loadCore.bind(this),
                 'rm': this.brm.bind(this),
-                'rmf': this.brmf.bind(this)
+                'rmf': this.brmf.bind(this),
             };
             for(i in defaultFenv) {
                 fenv[i] = defaultFenv[i];
@@ -11372,24 +11389,27 @@ var Lisp = (function () {
         },
 
         saveCore: function (path) {
+            console.log('path', path);
             path = path || "/core";
+            console.log('path', path);
             var core = JSON.stringify(this.map(function (e) { return e; }));
             console.log("lisp: saveCore: ", core.length);
             console.log(core);
             localStorage.setItem(path, core);
         },
 
-        loadCore: function(path) {
+        loadCore: function(path, clear) {
             var retval;
             path = path || "/core";
 
+            clear && this.clear();
             var core = JSON.parse(localStorage.getItem(path)) || [] ;
             console.log("lisp: loadCore: core: " +  core);
             for(var i in core) {
+                var code = core[i];
+                this.add($.extend(true, [], code));
                 try {
-                    var code = core[i];
                     retval = this.beval(code);
-                    this.add(code);
                     console.log("lisp: loadCore: " +  code, retval);
                 } catch (e) { 
                     console.error("lisp: loadCore: " + e + ": " + core[i]);
@@ -11416,7 +11436,7 @@ var Lisp = (function () {
                     closeParens += ")";
                 }
                 retval = retval + (pretty && ")" || closeParens);
-            } else if(typeof expr === "object" && expr.values) {
+            } else if(typeof expr === "object" && expr && expr.values) {
                 for(var i in expr.values) {
                     if(expr.values[i])
                         retval += expr.values[i] + "<br/>";
@@ -12200,7 +12220,10 @@ var AppView = new View({
             }
         }));
         this.create('list', x.spawnApplication(this, "list", {
-            reverse: true
+            reverse: true,
+            style: {
+                border: "2px solid black"
+            }
         }));
         this.grid().setColRow(0, 0, this.terminal());
         this.grid().setColRow(0, 1, this.list());
@@ -12296,13 +12319,14 @@ var AppView = (function () {
             this.offCharacter(this.cols()-1, this.rows()-1);
 
             // if(options.help) ...
-            this.insert(";Like VI, but different\n"); 
-            this.insert(";----------------------\n\n");
-            this.insert(";'?' is escape\n"); 
-            this.insert(";'hjkl' to navigate\n"); 
-            this.insert(";'i' for insert mode\n"); 
-            this.insert(";'e' to execute code\n"); 
-            this.insert(";'z' to clear\n\n"); 
+            this.insert(";Like VI, but different     Lisp Help\n"); 
+            this.insert(";----------------------     ----------------------------\n\n");
+            this.insert(";'?' is escape              * for last exec'd expression\n"); 
+            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq\n"); 
+            this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
+            this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
+            this.insert(";'z' to clear               defmacro, setq, setf, save, load,\n"); 
+            this.insert(";                           rm, rmf, env, fenv, +, -, *, /\n\n"); 
             this.insert(";This was your last statement:\n\n"); 
 
             this.create('history', 0);
@@ -12312,7 +12336,7 @@ var AppView = (function () {
                 try {
                     var code = this.lisp.current(index, true)
                     this.insert(code);
-                } catch(e) { 
+                } catch(e) {
                     console.error("terminal: no history at " + this.history());
                 }
             });
@@ -12453,7 +12477,7 @@ var AppView = (function () {
                 for(c in stringOrCode) {
                     this.setCharacter(this.cursorX(), this.cursorY(),
                                       stringOrCode[c], blink, loud);
-                    if(stringOrCode[c] === '\n') {
+                    if(stringOrCode[c] === '\n' || stringOrCode[c] === '\r') {
                         this.cursorX(0);
                         this.cursorY(this.cursorY()+1);
                     } else {
