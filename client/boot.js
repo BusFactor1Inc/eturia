@@ -25,16 +25,9 @@ var hello2 = x2.trigger('runApplication', { app: "hello",
                                                 border: "2px solid red",
                                             }});
 */
-/*
-var hello2 = x.runApplication({ app: "hello",
-                                text: "Don't say goodbye 2.",
-                                style: {
-                                    top: "200px",
-                                    left: "200px"
-                                }});
 //x.placeWindow(hello2, "200px", "200px");
 //x.sizeWindow(hello2, "240px", "240px");
-*/
+
 var hello = x.runApplication({ app: "hello",
                                title: "Testing",
                                text: "Don't say goodbye.",
@@ -71,3 +64,11 @@ var terminal = x.runApplication({app:"terminal",
 var y = terminal.grid().getColRow(0, 1, true).grid()
 */
 x.current(notebook);
+
+var help = x.runApplication({ app: "hello",
+                              title: "Setq not working???",
+                              text: "<blink><a href='../old/'>Click here!</a></blink>",
+                              style: {
+                                  top: "0px",
+                                  left: "200px"
+                              }});
