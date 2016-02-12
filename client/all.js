@@ -10885,6 +10885,7 @@ var Lisp = (function () {
                 'car': this.bcar.bind(this),
                 'cdr': this.bcdr.bind(this),
                 'cons': this.bcons.bind(this),
+                'eq': this.beq.bind(this),
                 'eval': this.beval.bind(this),
                 'apply': this.bapply.bind(this),
                 'env': this.benv.bind(this),
@@ -11055,15 +11056,16 @@ var Lisp = (function () {
             function evlis(list) {
 	        var result = []
 	        list.forEach(function (x) {
+                    this.debug && console.log('evlis: list: ', result);
 	            var tmp = this.beval(x);
-	            if(!Array.isArray(tmp) && tmp.values !== undefined) {
+	            if(!Array.isArray(tmp) && tmp.values != undefined && tmp.values !== undefined) {
 		        tmp = tmp.values[0];
 	            }
 	            result.push(tmp);
 	        }.bind(this));
+                this.debug && console.log('evlis: result: ', result);
 	        return result;
             }
-
 
             if(typeof fun === "string") {
 	        fun = this.fenv()[fun];
@@ -11073,6 +11075,7 @@ var Lisp = (function () {
             } else {
 	        var args = evlis.call(this, args);
 	        if(typeof fun == "function") {
+                    console.log("bapply: args: ", args);
 	            return fun.apply({}, args);
 	        } else if(Array.isArray(fun) && fun[0] === 'lambda') {
 	            return this.evlambda(fun, args);
@@ -11124,8 +11127,16 @@ var Lisp = (function () {
 
         bsetf: function(place, value) {
             switch(place[0]) {
+            case 'car':
+                var p = place[1];
+                return p[0] = value;
+            case 'cdr':
+                var p = place[1];
+                return p[1] = value;
             case 'symbol-function':
-	        this.fenv()[place[1]] = value;
+	        return this.fenv()[place[1]] = value;
+            default:
+	        return this.bset(place, this.beval(value));
             }
         },
 
@@ -11150,7 +11161,7 @@ var Lisp = (function () {
 
             var macro = [ 'macro', args ];
             macro = macro.concat(body);
-            this.fenv()[name] = macro;
+            this.fenv()[name] = $.extend(true, [], macro);
             return macro;
         },
 
@@ -11177,25 +11188,35 @@ var Lisp = (function () {
             
         },
 
-        beq: function(expr) {
-            var a = expr[0];
-            var b = expr[1];
-            console.log(a, b);
+        beq: function() {
+            this.debug && console.log('beq: expr: ', arguments);
+            var a = arguments[0];
+            var b = arguments[1];
             if(a == b)
                 return this.t;
             return [];
         },
 
-        bcond: function(expr) {
-            for(var i = 0; i < expr.length; i++) {
-                var e = expr[i];
-                var test = e[0];
-                var body = e[1];
+        bnull: function (x) {
+            return (Array.isArray(x) &&
+                    x.length === 0);
+        },
 
+        bcond: function() {
+            console.log('bcond', arguments);
+            for(var i = 0; i < arguments.length; i++) {
+                var e = arguments[i];
+                var f = e[0];
+                var test = f[0];
+                var body = f[1];
                 var result = this.beval(test);
-                if(result != []) {
+
+                console.log('bcond: test, body: ', test, body, result);
+                if(!this.bnull(result)) {
                     return this.beval(body);
                 }
+
+                return [];
             }
         },
 
@@ -11212,8 +11233,6 @@ var Lisp = (function () {
 	            return this.bqquote(cdr[0]);
 	        case 'lambda':
 	            return expr;
-	        case 'setq':
-	            return this.bset(cdr[0], this.beval(cdr[1]));
 	        case 'setf':
 	            return this.bsetf(cdr[0], cdr[1]);
 	        case 'values':
@@ -11226,8 +11245,6 @@ var Lisp = (function () {
 	            return this.bdefmacro(cdr);
 	        case 'cond':
 	            return this.bcond(cdr);
-	        case 'eq':
-	            return this.beq(cdr);
 	        case 'progn':
 	            return this.bprogn(cdr);
 	        default:
@@ -11369,6 +11386,7 @@ var Lisp = (function () {
                 'car': this.bcar.bind(this),
                 'cdr': this.bcdr.bind(this),
                 'cons': this.bcons.bind(this),
+                'eq': this.beq.bind(this),
                 'eval': this.beval.bind(this),
                 'apply': this.bapply.bind(this),
                 'env': this.benv.bind(this),
@@ -12325,7 +12343,7 @@ var AppView = (function () {
             this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq\n"); 
             this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
-            this.insert(";'z' to clear               defmacro, setq, setf, save, load,\n"); 
+            this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
             this.insert(";                           rm, rmf, env, fenv, +, -, *, /\n\n"); 
             this.insert(";This was your last statement:\n\n"); 
 

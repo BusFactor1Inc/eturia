@@ -1,0 +1,6 @@
+sigil is a simple lisp interpreter written in javascript.
+
+supports the basics (cons, car, cdr, quote, set, ...) , plus some
+extras like setf, values, and macros.
+
+http://www.paulgraham.com/rootsoflisp.html
