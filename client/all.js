@@ -10908,6 +10908,8 @@ var Lisp = (function () {
 
             this.t = this.env()['t'];
             this.nil = this.env()['nil'];
+
+            this.debug = true;
         },
 
         exec: function (string) {
@@ -11054,17 +11056,15 @@ var Lisp = (function () {
 
         bapply: function (fun, args) {
             function evlis(list) {
-	        var result = []
-	        list.forEach(function (x) {
-                    this.debug && console.log('sigil: evlis: list: ', result);
-	            var tmp = this.beval(x);
-	            if(!Array.isArray(tmp) && tmp.values != undefined && tmp.values !== undefined) {
-		        tmp = tmp.values[0];
-	            }
-	            result.push(tmp);
-	        }.bind(this));
-                this.debug && console.log('sigil: evlis: result: ', result);
-	        return result;
+                function helper(l, a) {
+                    if(l.length === 0) {
+                        return a;
+                    } else {
+                        return helper.call(this, l[1], this.bcons(this.beval(l[0]), a));
+                    }
+                }
+                
+                return helper.call(this, list, []);
             }
 
             if(typeof fun === "string") {
@@ -11223,7 +11223,7 @@ var Lisp = (function () {
         beval: function (expr) {
             if(Array.isArray(expr)) {
 	        var car = expr[0];
-	        var cdr = expr.slice(1);
+	        var cdr = expr[1];
                 if(this.triggerTrace() === 1)
                     this.trigger(car, cdr);
 	        switch(car) {
@@ -11318,6 +11318,18 @@ var Lisp = (function () {
 	            return number;
             }
 
+            function reverse (expr) {
+                function helper(e, a) {
+                    if(this.bnull(e)) {
+                        return a;
+                    } 
+                    return helper.call(this, e[1], this.bcons(e[0], a));
+                }
+
+                return helper.call(this, expr, []);
+            }
+
+
             function readSexpr(string) {
                 this.debug && console.log('sigil: readSexpr: ', string);
 	        while(string[0] != undefined) {
@@ -11355,10 +11367,9 @@ var Lisp = (function () {
 
 		        for(var elt = readSexpr.call(this, string); elt !== null;  
                             elt = readSexpr.call(this, string)) {
-		            result.push(elt);
+                            result = this.bcons(elt, result);
 		        }
-		        result.push('nil');
-		        return result;
+		        return reverse.call(this, result);
 	            }
 
 	            case ')':
@@ -11435,10 +11446,37 @@ var Lisp = (function () {
             }
             return retval;
         },
+
+        listp: function(expr) {
+            return Array.isArray(expr);
+        },
         
         printToString: function(expr, ugly) {
             var retval;
             var pretty = !ugly;
+
+            function doit (expr, pretty, retval) {
+                if(Array.isArray(expr) && expr.length !== 0) {
+                    var val = expr[0];
+                    retval += "(" + val + " . " +  doit(expr[1], pretty, retval) + ')';
+                    console.log("sigil: printToString: ", retval);
+                } else if(typeof expr === "object" && expr && expr.values) {
+                    for(var i in expr.values) {
+                        if(expr.values[i])
+                            retval += expr.values[i] + "<br/>";
+                    }
+                    
+                } else if(Array.isArray(expr) && expr.length === 0) {
+                    retval += '()';
+                } else {
+                    retval += expr
+                }
+                return retval;
+            }
+
+            return doit(expr, pretty, "");
+
+            /*
             if(Array.isArray(expr)) {
                 retval = "(";
                 var closeParens = ")";
@@ -11448,9 +11486,9 @@ var Lisp = (function () {
                         retval += ',' + this.printToString(val[1]) + " ";
                     } else if(pretty && Array.isArray(val) && val[0] === "qquote") {
                         retval += '`' + this.printToString(val[1]) + " ";
-                    } else if(val !== "nil") {
+                    } else if(val != "nil") {
                         retval += this.printToString(val) + (pretty && " " || " . (");
-                    }
+                    } 
                     closeParens += ")";
                 }
                 retval = retval + (pretty && ")" || closeParens);
@@ -11462,7 +11500,7 @@ var Lisp = (function () {
                 
             }else {
                 retval = expr
-            }
+            } */
             return retval;
         }
     });
