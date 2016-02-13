@@ -10927,7 +10927,7 @@ var Lisp = (function () {
         bprogn: function (args) {
             var result, i = 0;
             while(args[i] !== 'nil') {
-                console.log('bprogn: ' + args[i]);
+                this.debug && console.log('sigil: bprogn: ' + args[i]);
                 result = this.beval(args[i]);
                 i++;
             }
@@ -10944,7 +10944,6 @@ var Lisp = (function () {
         },
         
         brmf: function () {
-            console.log(arguments);
             var old = this.fenv();
             for(var i in arguments) {
                 delete old[arguments[i]];
@@ -11006,10 +11005,6 @@ var Lisp = (function () {
         },
 
         bcons: function (car, cdr) {
-            if(Array.isArray(cdr)) {
-	        cdr.unshift(car);
-	        return cdr;
-            }
             return [car, cdr];
         },
 
@@ -11061,14 +11056,14 @@ var Lisp = (function () {
             function evlis(list) {
 	        var result = []
 	        list.forEach(function (x) {
-                    this.debug && console.log('evlis: list: ', result);
+                    this.debug && console.log('sigil: evlis: list: ', result);
 	            var tmp = this.beval(x);
 	            if(!Array.isArray(tmp) && tmp.values != undefined && tmp.values !== undefined) {
 		        tmp = tmp.values[0];
 	            }
 	            result.push(tmp);
 	        }.bind(this));
-                this.debug && console.log('evlis: result: ', result);
+                this.debug && console.log('sigil: evlis: result: ', result);
 	        return result;
             }
 
@@ -11080,7 +11075,7 @@ var Lisp = (function () {
             } else {
 	        var args = evlis.call(this, args);
 	        if(typeof fun == "function") {
-                    console.log("bapply: args: ", args);
+                    this.debug && console.log("sigil: bapply: args: ", args);
 	            return fun.apply({}, args);
 	        } else if(Array.isArray(fun) && fun[0] === 'lambda') {
 	            return this.evlambda(fun, args);
@@ -11099,11 +11094,14 @@ var Lisp = (function () {
 	        throw new Error("attempt to set non-symbol value: " + v);
         },
 
-        benv: function () {
-            var env = this.env();
-            var retval = [];
-            for(var i in env) {
-                retval = this.bcons(this.bcons(i, env[i]), retval);
+        benv: function (e) {
+            if(e) {
+            } else {
+                var env = this.env();
+                var retval = [];
+                for(var i in env) {
+                    retval = this.bcons(this.bcons(i, env[i]), retval);
+                }
             }
             return retval;
         },
@@ -11208,19 +11206,17 @@ var Lisp = (function () {
         },
 
         bcond: function(args) {
-            console.log('here', args);
             for(var i in args) {
                 var e = args[i];
                 var test = e[0];
                 var body = e[1];
                 var result = this.beval(test);
 
-                console.log('bcond: test, body: ', test, body, result);
+                this.debug && console.log('sigil: bcond: test, body: ', test, body, result);
                 if(!this.bnull(result)) {
                     return this.beval(body);
                 }
             }
-            console.log('here');
             return [];
         },
 
@@ -11252,7 +11248,6 @@ var Lisp = (function () {
 	        case 'progn':
 	            return this.bprogn(cdr);
 	        default:
-                    console.log('bapply', car, cdr);
 	            return this.bapply(car, cdr);
 	        }
             } else if(typeof expr === "string") {
@@ -11414,12 +11409,10 @@ var Lisp = (function () {
         },
 
         saveCore: function (path) {
-            console.log('path', path);
             path = path || "/core";
-            console.log('path', path);
             var core = JSON.stringify(this.map(function (e) { return e; }));
-            console.log("lisp: saveCore: ", core.length);
-            this.debug && console.log(core);
+            console.log("sigil: saveCore: ", core.length);
+            this.debug && console.log("sigil: saveCore: core: ", core);
             localStorage.setItem(path, core);
         },
 
@@ -11429,15 +11422,15 @@ var Lisp = (function () {
 
             clear && this.clear();
             var core = JSON.parse(localStorage.getItem(path)) || [] ;
-            console.log("lisp: loadCore: core: " +  core);
+            console.log("sigil: loadCore: core: " +  core);
             for(var i in core) {
                 var code = core[i];
                 this.add($.extend(true, [], code));
                 try {
                     retval = this.beval(code);
-                    console.log("lisp: loadCore: " +  code, retval);
+                    console.log("sigil: loadCore: " +  code, retval);
                 } catch (e) { 
-                    console.error("lisp: loadCore: " + e + ": " + core[i]);
+                    console.error("sigil: loadCore: " + e + ": " + core[i]);
                 }
             }
             return retval;
@@ -12348,11 +12341,11 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq, atom\n"); 
+            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, atom, eq, cond\n"); 
             this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
-            this.insert(";                           rm, rmf, env, fenv, +, -, *, /\n\n"); 
+            this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
             this.insert(";This was your last statement:\n\n"); 
 
             this.create('history', 0);
@@ -12398,7 +12391,7 @@ var AppView = (function () {
                     this.offCharacter(this.cursorX(), this.cursorY());
                 } else if(e.value.charCode === 122) {
                     this.clearScreen();
-                } else if(e.value.charCode === 111) {
+                } else if(e.value.charCode === 48) {
                     this.cursorX(0);
                 } else if(e.value.charCode === 112) {
                     this.previousHistory();

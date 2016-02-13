@@ -48,11 +48,11 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq, atom\n"); 
+            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, atom, eq, cond\n"); 
             this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
-            this.insert(";                           rm, rmf, env, fenv, +, -, *, /\n\n"); 
+            this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
             this.insert(";This was your last statement:\n\n"); 
 
             this.create('history', 0);
@@ -98,7 +98,7 @@ var AppView = (function () {
                     this.offCharacter(this.cursorX(), this.cursorY());
                 } else if(e.value.charCode === 122) {
                     this.clearScreen();
-                } else if(e.value.charCode === 111) {
+                } else if(e.value.charCode === 48) {
                     this.cursorX(0);
                 } else if(e.value.charCode === 112) {
                     this.previousHistory();
