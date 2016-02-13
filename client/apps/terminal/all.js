@@ -126,6 +126,15 @@ var AppView = (function () {
                 }
                 code += "\n";
             }
+            
+            if(this.debug) {
+                var x = [];
+                for(var i in code) {
+                    x.unshift(code[i]);
+                }
+                console.log('terminal: execute', x);
+            }
+            
             this.trigger('lispCode', code);
         },
 

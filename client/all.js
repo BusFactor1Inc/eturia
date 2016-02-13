@@ -11319,13 +11319,15 @@ var Lisp = (function () {
             }
 
             function readSexpr(string) {
+                this.debug && console.log('sigil: readSexpr: ', string);
 	        while(string[0] != undefined) {
 	            var c = string.shift();
 	            switch(c) {
                     case ';': {
                         c = string.shift();
-                        while(c !== '\n' || c !== '\r')
+                        while(c !== undefined && (c != '\n' && c != '\r')) {
                             c = string.shift();
+                        }
                     }
 	            case ' ':
 	            case '\n':
@@ -12246,6 +12248,7 @@ var AppView = new View({
         this.grid().setColRow(0, 1, this.list());
 
         this.on('lispCode', function (e) {
+            console.log('notebook: lispCode: ' + e);
             var code = e.value;
             var result, error = false;
             try {
@@ -12417,6 +12420,15 @@ var AppView = (function () {
                 }
                 code += "\n";
             }
+            
+            if(this.debug) {
+                var x = [];
+                for(var i in code) {
+                    x.unshift(code[i]);
+                }
+                console.log('terminal: execute', x);
+            }
+            
             this.trigger('lispCode', code);
         },
 

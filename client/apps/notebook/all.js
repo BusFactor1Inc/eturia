@@ -17,6 +17,7 @@ var AppView = new View({
         this.grid().setColRow(0, 1, this.list());
 
         this.on('lispCode', function (e) {
+            console.log('notebook: lispCode: ' + e);
             var code = e.value;
             var result, error = false;
             try {
