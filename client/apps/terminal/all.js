@@ -48,7 +48,7 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq\n"); 
+            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq, atom\n"); 
             this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 

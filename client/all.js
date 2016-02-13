@@ -10881,6 +10881,7 @@ var Lisp = (function () {
             });
 
             this.create('fenv', {
+                'atom': this.batom.bind(this),
                 'set': this.bset.bind(this),
                 'car': this.bcar.bind(this),
                 'cdr': this.bcdr.bind(this),
@@ -10919,6 +10920,10 @@ var Lisp = (function () {
 
 
         //--------------------------------------------------------------------------------
+        batom: function (x) {
+            return (typeof x === "string" || typeof x === "number") && this.t || [];
+        },
+
         bprogn: function (args) {
             var result, i = 0;
             while(args[i] !== 'nil') {
@@ -11383,6 +11388,7 @@ var Lisp = (function () {
         refresh: function (fenv) {
             fenv = fenv || {};
             var defaultFenv = {
+                'atom': this.batom.bind(this),
                 'set': this.bset.bind(this),
                 'car': this.bcar.bind(this),
                 'cdr': this.bcdr.bind(this),
@@ -12342,7 +12348,7 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq\n"); 
+            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, cond, eq, atom\n"); 
             this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
