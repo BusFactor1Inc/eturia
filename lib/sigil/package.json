@@ -1,0 +1,11 @@
+{
+  "name": "sigil",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sigil.js",
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}

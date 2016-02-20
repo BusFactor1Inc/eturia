@@ -1,3 +1,19 @@
+/* 
+
+aswanson 7 hours ago
+
+Paganistic druids without the priestly shroud, revealing all sources
+of revelation to man, existence its barest form, for all to extend,
+rewrite, and revise for the solitary path of revelation must bear
+the unique fingerprint of the journeyman.
+
+reply  
+
+Source: https://news.ycombinator.com/item?id=11137855
+
+*/
+
+/* TODO: Rename Skynet to Eturia: 20-Feb-2016 */ 
 var Skynet = (function() {
     var log = function(message) {
         this.debug && console.log("skynet: " + Date.now() + ": " + message);

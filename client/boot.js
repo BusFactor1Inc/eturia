@@ -70,5 +70,5 @@ var help = x.runApplication({ app: "hello",
                               text: "<blink><a href='../old/'>Click here!</a></blink>",
                               style: {
                                   top: "0px",
-                                  left: "200px"
+                                  left: "400px"
                               }});
