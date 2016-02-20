@@ -10870,6 +10870,7 @@ if (typeof module !== 'undefined') {
 var Lisp = new Model({
     type: "Lisp",
     init: function (options) {
+        options = options || {};
         var fenv = {
             'atom': this.batom.bind(this),
             'null': this.bnull.bind(this),
@@ -10894,6 +10895,9 @@ var Lisp = new Model({
         }; 
         this.env = env;
         this.fenv = fenv;
+
+        var core = options.core || "/core";
+        this.loadCore(core);
    },
 
     _null: function(e) {
@@ -11393,6 +11397,14 @@ var Lisp = new Model({
 	        case '\t':
 		    continue;
 
+                case ';': {
+                    var c;
+                    do {
+                        c = string.shift();
+                    } while(c && (c !== '\r' && c !== '\n'));
+                    continue;
+                }
+
 	        case '`':
 		    return [ 'qquote', [ readSexpr.call(this, string)] ];
                     
@@ -11472,6 +11484,7 @@ var Lisp = new Model({
         var retval;
         var pretty = !ugly;
 
+/*
         function doit (expr, pretty, retval) {
             if(Array.isArray(expr) && expr.length !== 0) {
                 var val = expr[0];
@@ -11492,8 +11505,7 @@ var Lisp = new Model({
         }
 
         return doit(expr, pretty, "");
-
-        /*
+*/
           if(Array.isArray(expr)) {
           retval = "(";
           var closeParens = ")";
@@ -11516,7 +11528,7 @@ var Lisp = new Model({
           }
           
           }else { retval = expr } 
-        */
+
         return retval;
     },
 
@@ -11528,6 +11540,7 @@ var Lisp = new Model({
 
         var data = JSON.stringify(code);
         console.log("sigil: saveCore: Saving core:", path, data.length);
+        console.log(data);
         localStorage.setItem(path, JSON.stringify(code));
         return true;
     },
@@ -11535,14 +11548,21 @@ var Lisp = new Model({
     loadCore: function (path) {
         path = path || "/core";
 
+        this.debug = true;
         var code = JSON.parse(localStorage.getItem(path));
 
         console.log("sigil: loadCore: Loading core:", path);
 
         for(var i in code) {
             this.debug && console.log(code[i]);
-            this.exec(code[i]);
+            try {
+                console.log(this.printToString(this.eval(code[i])));
+            } catch (e) {
+                console.error(code);
+            }
         }
+
+        this.debug = false;
         return true;
     }
 });
