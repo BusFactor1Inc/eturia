@@ -7,5 +7,9 @@
     "test": "node_modules/mocha/bin/mocha"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
 }
