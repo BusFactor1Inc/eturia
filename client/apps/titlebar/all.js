@@ -15,7 +15,7 @@ var AppView = (function () {
 
         init: function(options) {
             this.maximized = false;
-            this.$el.text(options.title);
+            this.$el.text(options.title || "Application");
 
             this.on('dragStart', function (e) {
                 this.dragItem = e.target.parent;
@@ -37,7 +37,6 @@ var AppView = (function () {
             this.on('dragStop', function (e) {
                 this.dragItem = null;
             });
-
         },
     });
 })();

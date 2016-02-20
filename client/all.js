@@ -10867,7 +10867,7 @@ if (typeof module !== 'undefined') {
 if (typeof module !== 'undefined') {
     module.exports.View = View;
 };
-var Lisp = new Model({
+var Sigil = new Model({
     type: "Lisp",
     init: function (options) {
         options = options || {};
@@ -10878,7 +10878,6 @@ var Lisp = new Model({
             'car': this.bcar.bind(this),
             'cdr': this.bcdr.bind(this),
             'cons': this.bcons.bind(this),
-            'eval': this.beval.bind(this),
             '+': this.bplus.bind(this),
             '-': this.bminus.bind(this),
             '*': this.btimes.bind(this),
@@ -10896,12 +10895,11 @@ var Lisp = new Model({
         this.env = env;
         this.fenv = fenv;
 
-        var core = options.core || "/core";
-        this.loadCore(core);
+        options.core && this.loadCore(options.core);
    },
 
     _null: function(e) {
-        return (Array.isArray(e) && e.length === 0) && 't' || [];
+        return (e === undefined || (Array.isArray(e) && e.length === 0)) && 't' || [];
     },
 
     each: function(l, f) {
@@ -10912,7 +10910,7 @@ var Lisp = new Model({
             } else {
                 f(l[0]);
                 this.each(l[1], f);
-            }
+            } 
         } else {
             f(l, true);
         }
@@ -11176,6 +11174,7 @@ var Lisp = new Model({
         }
     },
 
+    /* xxx
     bsetf: function(args) {
         var type = args[0][0]
         var value = this.eval(args[1][0]);
@@ -11190,7 +11189,7 @@ var Lisp = new Model({
             return this.env[place[0]] = value;
         }
         }
-    },
+    }, */
 
 /* TODO: decide if want to remove */
     bcall: function(args) {
@@ -11245,7 +11244,7 @@ var Lisp = new Model({
                         e3 = e3[1];
                     e3[1] = result;
                     result = e2;
-	        } else if(e && e.length) {
+	        } else if(e && Array.isArray(e) && e.length) {
 	            result = [this.bqquote(e), result];
 	        } else {
                     if(last && this._null(e) !== 't') {
@@ -11278,10 +11277,6 @@ var Lisp = new Model({
             return arg;
     },
 
-    beval: function(args) {
-        return this.eval(args);
-    },
-
     eval: function(expr) {
         if(Array.isArray(expr)) {
             if(expr.length === 0) {
@@ -11294,14 +11289,14 @@ var Lisp = new Model({
 	        return this.bqquote(cdr[0]);
 	    case 'lambda':
 	        return this.blambda(cdr);
-	    case 'setf':
-	        return this.bsetf(cdr);
+	    /* case 'setf':  xxx
+	        return this.bsetf(cdr); */
 	    case 'values':
 	        return this.bvalues(cdr);
 	    case 'bind':
 	        return this.bbind(cdr);
-	    case 'symbol-function':
-	        return this.fenv[this.eval(cdr[0])];
+	    /* case 'symbol-function': xxx
+	        return this.fenv[this.eval(cdr[0])]; */
 	    case 'defmacro':
 	        return this.bdefmacro(cdr);
             case 'progn':
@@ -11475,7 +11470,7 @@ var Lisp = new Model({
     exec: function (string) {
         var code = this.readFromString(string);
         this.add($.extend(true, [], code));
-        var result = this.beval.call(this, code);
+        var result = this.eval(code);
         this.bset(['*', result]);
         return this.printToString(result);
     },
@@ -11557,6 +11552,7 @@ var Lisp = new Model({
             this.debug && console.log(code[i]);
             try {
                 console.log(this.printToString(this.eval(code[i])));
+                this.add($.extend(true, [], code));
             } catch (e) {
                 console.error(code);
             }
@@ -11566,6 +11562,8 @@ var Lisp = new Model({
         return true;
     }
 });
+
+//module.exports = Sigil;
 
 console.log("Lisp is available.");
 var Styles = {
@@ -11722,7 +11720,7 @@ var Skynet = (function() {
         },
 
         init: function (options, parent) {
-            this.create('lisp', new Lisp({
+            this.create('lisp', new Sigil({
                 core: "/core"
             }));
             this.options = this.options || {}; // Hack
@@ -12189,6 +12187,17 @@ x.registerApplication("hello", AppView, {
     title: "In the depths of Mount Doom.",
     text: "Hello, World!"
 });
+var AppView = new View({
+    type: "ImageView",
+    tagName: "img",
+    init: function(options) {
+        this.$el.attr('src', options.uri || "broken");
+    }
+});
+
+x.registerApplication("image", AppView, {
+    text: "Image"
+});
 var AppView = (function () {
     return new View({
         type: "Window",
@@ -12254,7 +12263,7 @@ var AppView = (function () {
 
         init: function(options) {
             this.maximized = false;
-            this.$el.text(options.title);
+            this.$el.text(options.title || "Application");
 
             this.on('dragStart', function (e) {
                 this.dragItem = e.target.parent;
@@ -12276,7 +12285,6 @@ var AppView = (function () {
             this.on('dragStop', function (e) {
                 this.dragItem = null;
             });
-
         },
     });
 })();
@@ -12338,7 +12346,7 @@ var AppView = new View({
 
 x.registerApplication("listener", AppView, {
     title: "Listener",
-    lisp: new Lisp(),
+    lisp: new Sigil(),
     style: {
         width: "40em",
         height: "3em",
@@ -12458,8 +12466,8 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, atom, eq, cond\n"); 
-            this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
+            this.insert(";'hjkl' to navigate         set, cons, car, cdr, atom, eq, cond\n"); 
+            this.insert(";'i' for insert mode        lambda, apply, symbol-function\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
             this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
@@ -12626,7 +12634,13 @@ var AppView = (function () {
                         this.cursorX(0);
                         this.cursorY(this.cursorY()+1);
                     } else {
-                        this.cursorX((this.cursorX()+1)%this.cols());
+                        var newx = (this.cursorX()+1)%this.cols();
+                        var newy = this.cursorY();
+                        if(newx < this.cursorX()) {
+                            newy++;
+                        }
+                        this.cursorX(newx);
+                        this.cursorY(newy);
                     }
                 }
             }

@@ -72,3 +72,13 @@ var help = x.runApplication({ app: "hello",
                                   top: "0px",
                                   left: "400px"
                               }});
+
+x.runApplication({ app: "image",
+                   appOptions: {
+                       title: "Eturia Logo",
+                       uri: "images/eturia.png"
+                   },
+                   style: {
+                       left: "1000px"
+                   }
+                 });

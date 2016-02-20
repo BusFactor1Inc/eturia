@@ -131,7 +131,7 @@ var Skynet = (function() {
         },
 
         init: function (options, parent) {
-            this.create('lisp', new Lisp({
+            this.create('lisp', new Sigil({
                 core: "/core"
             }));
             this.options = this.options || {}; // Hack

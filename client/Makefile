@@ -5,6 +5,7 @@ apps/daemon/all.js	\
 apps/cell/all.js	\
 apps/grid/all.js	\
 apps/hello/all.js	\
+apps/image/all.js	\
 apps/window/all.js	\
 apps/titlebar/all.js	\
 apps/list/all.js	\

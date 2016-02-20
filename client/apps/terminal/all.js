@@ -48,8 +48,8 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         quote, set, cons, car, cdr, atom, eq, cond\n"); 
-            this.insert(";'i' for insert mode        lambda, apply, eval, symbol-function\n"); 
+            this.insert(";'hjkl' to navigate         set, cons, car, cdr, atom, eq, cond\n"); 
+            this.insert(";'i' for insert mode        lambda, apply, symbol-function\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
             this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
@@ -216,7 +216,13 @@ var AppView = (function () {
                         this.cursorX(0);
                         this.cursorY(this.cursorY()+1);
                     } else {
-                        this.cursorX((this.cursorX()+1)%this.cols());
+                        var newx = (this.cursorX()+1)%this.cols();
+                        var newy = this.cursorY();
+                        if(newx < this.cursorX()) {
+                            newy++;
+                        }
+                        this.cursorX(newx);
+                        this.cursorY(newy);
                     }
                 }
             }

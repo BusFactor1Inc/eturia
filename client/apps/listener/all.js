@@ -34,7 +34,7 @@ var AppView = new View({
 
 x.registerApplication("listener", AppView, {
     title: "Listener",
-    lisp: new Lisp(),
+    lisp: new Sigil(),
     style: {
         width: "40em",
         height: "3em",
