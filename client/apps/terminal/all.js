@@ -53,8 +53,7 @@ var AppView = (function () {
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
             this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
-            this.insert(";This was your last statement:\n\n"); 
-
+ 
             this.create('history', 0);
             this.on('change:history', function(e) {
                 this.clearScreen();
@@ -66,9 +65,6 @@ var AppView = (function () {
                     console.error("terminal: no history at " + this.history());
                 }
             });
-            setTimeout(function () {
-                this.insert(this.lisp.current(this.lisp.length-1, true));
-            }.bind(this), 0);
         },
 
         newline: function() {

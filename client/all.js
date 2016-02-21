@@ -11543,22 +11543,21 @@ var Sigil = new Model({
     loadCore: function (path) {
         path = path || "/core";
 
-        this.debug = true;
         var code = JSON.parse(localStorage.getItem(path));
 
         console.log("sigil: loadCore: Loading core:", path);
 
+        this.clear();
         for(var i in code) {
-            this.debug && console.log(code[i]);
+            console.log('sigil: loadCore: code: ', code[i]);
             try {
                 console.log(this.printToString(this.eval(code[i])));
-                this.add($.extend(true, [], code));
+                this.add($.extend(true, [], code[i]));
             } catch (e) {
-                console.error(code);
+                console.error(code[i]);
             }
         }
 
-        this.debug = false;
         return true;
     }
 });
@@ -12471,8 +12470,7 @@ var AppView = (function () {
             this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
             this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
-            this.insert(";This was your last statement:\n\n"); 
-
+ 
             this.create('history', 0);
             this.on('change:history', function(e) {
                 this.clearScreen();
@@ -12484,9 +12482,6 @@ var AppView = (function () {
                     console.error("terminal: no history at " + this.history());
                 }
             });
-            setTimeout(function () {
-                this.insert(this.lisp.current(this.lisp.length-1, true));
-            }.bind(this), 0);
         },
 
         newline: function() {
