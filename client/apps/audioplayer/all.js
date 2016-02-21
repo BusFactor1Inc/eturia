@@ -1,7 +1,7 @@
 var AppView = (function () {
     return new View({
         type: "AudioPlayerView",
-        tagName: "audio controls",
+        tagName: "audio controls autoplay",
         init: function(options) {
             this.create('playlist');
             

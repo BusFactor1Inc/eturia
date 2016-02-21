@@ -12466,8 +12466,8 @@ var AppView = (function () {
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
             this.insert(";'hjkl' to navigate         set, cons, car, cdr, atom, eq, cond\n"); 
-            this.insert(";'i' for insert mode        lambda, apply, symbol-function\n"); 
-            this.insert(";'e' to execute code        multple-value-bind, values, cond, qquote\n"); 
+            this.insert(";'i' for insert mode        lambda, apply, cond, qquote,\n"); 
+            this.insert(";'e' to execute code        multple-value-bind, values, \n"); 
             this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
             this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
  
@@ -12669,7 +12669,7 @@ x.registerApplication("terminal", AppView, {
 var AppView = (function () {
     return new View({
         type: "AudioPlayerView",
-        tagName: "audio controls",
+        tagName: "audio controls autoplay",
         init: function(options) {
             this.create('playlist');
             
