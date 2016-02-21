@@ -11,7 +11,9 @@ apps/titlebar/all.js	\
 apps/list/all.js	\
 apps/listener/all.js	\
 apps/notebook/all.js	\
-apps/terminal/all.js
+apps/terminal/all.js	\
+apps/audioplayer/all.js	
+
 
 	cat $^ > all.js
 

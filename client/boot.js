@@ -79,6 +79,17 @@ x.runApplication({ app: "image",
                        uri: "images/eturia.png"
                    },
                    style: {
-                       left: "1000px"
+                       left: "800px"
+                   }
+                 });
+
+x.runApplication({ app: "audioplayer",
+                   appOptions: {
+                       title: "Eturia Music",
+                       playlist: "music/playlist"
+                   },
+                   style: {
+                       top: "400px",
+                       left: "800px"
                    }
                  });
