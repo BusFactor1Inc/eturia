@@ -12751,11 +12751,7 @@ var AppView = (function () {
 
             var audio = new Audio(this.current());
             audio.addEventListener('ended',function(){
-                debugger
-                audio.src = this.next();
-                audio.pause();
-                audio.load();
-                audio.play();
+                this.next();
             }.bind(this));
             this.audio(audio, true);
             audio.play();
