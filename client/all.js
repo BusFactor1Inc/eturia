@@ -10871,7 +10871,14 @@ var Sigil = new Model({
     type: "Lisp",
     init: function (options) {
         options = options || {};
-        var fenv = {
+        
+        this.reset();
+        
+        options.core && this.loadCore(options.core);
+    },
+    
+    reset: function (env, fenv) {
+        var _fenv = {
             'atom': this.batom.bind(this),
             'null': this.bnull.bind(this),
             'set': this.bset.bind(this),
@@ -10888,15 +10895,17 @@ var Sigil = new Model({
             'fenv': this.bfenv.bind(this)
         };
         
-        
-        var env = {
+        var _env = {
             't': 't'
         }; 
+
+
+        env = $.extend(_env, env);
+        fenv = $.extend(_fenv, fenv);
+        console.log(_env, _fenv, env, fenv);
         this.env = env;
         this.fenv = fenv;
-
-        options.core && this.loadCore(options.core);
-   },
+    },
 
     _null: function(e) {
         return (e === undefined || (Array.isArray(e) && e.length === 0)) && 't' || [];
@@ -11529,35 +11538,22 @@ var Sigil = new Model({
 
     saveCore: function (path) {
         path = path || "/core";
-        var code = this.map(function (e) {
-            return e;
-        });
 
-        var data = JSON.stringify(code);
-        console.log("sigil: saveCore: Saving core:", path, data.length);
-        console.log(data);
-        localStorage.setItem(path, JSON.stringify(code));
+        var core = JSON.stringify({ env: this.env, fenv: this.fenv });
+
+        console.log('sigil: saveCore: ', core, core.length);
+        localStorage.setItem(path, core);
         return true;
     },
 
     loadCore: function (path) {
         path = path || "/core";
 
-        var code = JSON.parse(localStorage.getItem(path));
-
         console.log("sigil: loadCore: Loading core:", path);
+        var core = JSON.parse(localStorage.getItem(path));
 
-        this.clear();
-        for(var i in code) {
-            console.log('sigil: loadCore: code: ', code[i]);
-            try {
-                console.log(this.printToString(this.eval(code[i])));
-                this.add($.extend(true, [], code[i]));
-            } catch (e) {
-                console.error(code[i]);
-            }
-        }
-
+        if(core)
+            this.reset(core.env, core.fenv);
         return true;
     }
 });
