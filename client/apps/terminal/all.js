@@ -51,7 +51,7 @@ var AppView = (function () {
             this.insert(";'hjkl' to navigate         set, cons, car, cdr, atom, eq, cond\n"); 
             this.insert(";'i' for insert mode        lambda, apply, cond, qquote,\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, \n"); 
-            this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
+            this.insert(";'z' to clear               defmacro, self, save, load,\n"); 
             this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
  
             this.create('history', 0);

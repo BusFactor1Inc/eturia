@@ -10925,6 +10925,22 @@ var Sigil = new Model({
         }
     },
 
+    bcond: function(args) {
+        while(this._null(args) !== 't') {
+            var test = args[0][0];
+            var body = args[0][1];
+            var result = this.eval(test);
+            
+            this.debug = true;
+            this.debug && console.log('sigil: bcond: test, body, result: ', test, body, result);
+            if(this._null(result) !== 't') {
+                return this.progn(body);
+            }
+            args = args[1];
+        }
+        return [];
+    },
+    
     bnull: function(args) {
         return this._null(args[0]);
     },
@@ -11054,6 +11070,7 @@ var Sigil = new Model({
                 }
             }.bind(this));
         } catch (e) { }
+        this.fenv['self'] = fun;
         
         var result = this.progn(fun[1][1]);
         
@@ -11063,6 +11080,7 @@ var Sigil = new Model({
 	        this.env[e] = saved[e];
 	    }
         }.bind(this));
+        delete this.fenv['self']
         
         return result;
     },
@@ -11296,6 +11314,8 @@ var Sigil = new Model({
 	    switch(car) {
 	    case 'qquote':
 	        return this.bqquote(cdr[0]);
+	    case 'cond':
+	        return this.bcond(cdr);
 	    case 'lambda':
 	        return this.blambda(cdr);
 	    /* case 'setf':  xxx
@@ -11485,54 +11505,33 @@ var Sigil = new Model({
     },
 
     printToString: function(expr, ugly) {
-        var retval;
         var pretty = !ugly;
+        var retval;
 
-/*
-        function doit (expr, pretty, retval) {
-            if(Array.isArray(expr) && expr.length !== 0) {
+        if(Array.isArray(expr)) {
+            retval = "(";
+            var closeParens = ")";
+            while(this._null(expr) !== 't') {
                 var val = expr[0];
-                retval += "(" + val + " . " +  doit(expr[1], pretty, retval) + ')';
-                console.log("sigil: printToString: ", retval);
-            } else if(typeof expr === "object" && expr && expr.values) {
-                for(var i in expr.values) {
-                    if(expr.values[i])
-                        retval += expr.values[i] + "<br/>";
-                }
-                
-            } else if(Array.isArray(expr) && expr.length === 0) {
-                retval += '()';
-            } else {
-                retval += expr
+                if(pretty && Array.isArray(val) && val[0] === "unquote") {
+                    retval += ',' + this.printToString(val[1]) + " ";
+                } else if(pretty && Array.isArray(val) && val[0] === "qquote") {
+                    retval += '`' + this.printToString(val[1]) + " ";
+                } else if(this._null(val) !== 't') {
+                    retval += this.printToString(val) + (pretty && " " || " . (");
+                } 
+                closeParens += ")";
+                expr = expr[1];
             }
-            return retval;
-        }
-
-        return doit(expr, pretty, "");
-*/
-          if(Array.isArray(expr)) {
-          retval = "(";
-          var closeParens = ")";
-          for(var i in expr) {
-          var val = expr[i];
-          if(pretty && Array.isArray(val) && val[0] === "unquote") {
-          retval += ',' + this.printToString(val[1]) + " ";
-          } else if(pretty && Array.isArray(val) && val[0] === "qquote") {
-          retval += '`' + this.printToString(val[1]) + " ";
-          } else if(val != "nil") {
-          retval += this.printToString(val) + (pretty && " " || " . (");
-          } 
-          closeParens += ")";
-          }
-          retval = retval + (pretty && ")" || closeParens);
-          } else if(typeof expr === "object" && expr && expr.values) {
-          for(var i in expr.values) {
-          if(expr.values[i])
-          retval += expr.values[i] + "<br/>";
-          }
-          
-          }else { retval = expr } 
-
+            retval = retval + (pretty && ")" || closeParens);
+        } else if(typeof expr === "object" && expr && expr.values) {
+            for(var i in expr.values) {
+                if(expr.values[i])
+                    retval += expr.values[i] + "<br/>";
+            }
+            
+        }else { retval = expr } 
+        
         return retval;
     },
 
@@ -12491,7 +12490,7 @@ var AppView = (function () {
             this.insert(";'hjkl' to navigate         set, cons, car, cdr, atom, eq, cond\n"); 
             this.insert(";'i' for insert mode        lambda, apply, cond, qquote,\n"); 
             this.insert(";'e' to execute code        multple-value-bind, values, \n"); 
-            this.insert(";'z' to clear               defmacro, setf, save, load,\n"); 
+            this.insert(";'z' to clear               defmacro, self, save, load,\n"); 
             this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
  
             this.create('history', 0);
