@@ -8,6 +8,7 @@ apps/hello/all.js	\
 apps/image/all.js	\
 apps/window/all.js	\
 apps/titlebar/all.js	\
+apps/button/all.js	\
 apps/list/all.js	\
 apps/listener/all.js	\
 apps/notebook/all.js	\

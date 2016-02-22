@@ -89,7 +89,7 @@ x.runApplication({ app: "audioplayer",
                        playlist: "music/playlist"
                    },
                    style: {
-                       top: "400px",
-                       left: "800px"
+                       top: "465px",
+                       left: "845px"
                    }
                  });
