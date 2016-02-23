@@ -11070,6 +11070,7 @@ var Sigil = new Model({
                 }
             }.bind(this));
         } catch (e) { }
+        var oldSelf = this.fenv['self'];
         this.fenv['self'] = fun;
         
         var result = this.progn(fun[1][1]);
@@ -11081,6 +11082,7 @@ var Sigil = new Model({
 	    }
         }.bind(this));
         delete this.fenv['self']
+        this.fenv['self'] = oldSelf;
         
         return result;
     },
@@ -11515,6 +11517,8 @@ var Sigil = new Model({
                 var val = expr[0];
                 if(pretty && Array.isArray(val) && val[0] === "unquote") {
                     retval += ',' + this.printToString(val[1]) + " ";
+                } else if(pretty && Array.isArray(val) && val[0] === "unquote-splice") {
+                    retval += ',@' + this.printToString(val[1]) + " ";
                 } else if(pretty && Array.isArray(val) && val[0] === "qquote") {
                     retval += '`' + this.printToString(val[1]) + " ";
                 } else if(this._null(val) !== 't') {
