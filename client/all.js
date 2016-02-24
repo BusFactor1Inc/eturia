@@ -10884,6 +10884,7 @@ var Sigil = new Model({
             'set': this.bset.bind(this),
             'car': this.bcar.bind(this),
             'cdr': this.bcdr.bind(this),
+            'eq': this.beq.bind(this),
             'cons': this.bcons.bind(this),
             '+': this.bplus.bind(this),
             '-': this.bminus.bind(this),
@@ -10923,6 +10924,14 @@ var Sigil = new Model({
         } else {
             f(l, true);
         }
+    },
+
+    beq: function(args) {
+        var x = args[0];
+        var y = args[1][0];
+
+        return (x === y || (Array.isArray(x) && Array.isArray(y) &&
+                            x.length === 0 && y.length === 0)) && 't' || [];
     },
 
     bcond: function(args) {
@@ -11510,17 +11519,22 @@ var Sigil = new Model({
         var pretty = !ugly;
         var retval;
 
+        function removeParens(s) {
+            s = s.slice(1);
+            return s.slice(0, s.length-1);
+        }
+
         if(Array.isArray(expr)) {
             retval = "(";
             var closeParens = ")";
             while(this._null(expr) !== 't') {
                 var val = expr[0];
                 if(pretty && Array.isArray(val) && val[0] === "unquote") {
-                    retval += ',' + this.printToString(val[1]) + " ";
+                    retval += ',' + removeParens(this.printToString(val[1])) + " ";
                 } else if(pretty && Array.isArray(val) && val[0] === "unquote-splice") {
-                    retval += ',@' + this.printToString(val[1]) + " ";
+                    retval += ',@' + removeParens(this.printToString(val[1])) + " ";
                 } else if(pretty && Array.isArray(val) && val[0] === "qquote") {
-                    retval += '`' + this.printToString(val[1]) + " ";
+                    retval += '`' + removeParens(this.printToString(val[1])) + " ";
                 } else if(this._null(val) !== 't') {
                     retval += this.printToString(val) + (pretty && " " || " . (");
                 } 
