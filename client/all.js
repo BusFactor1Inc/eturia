@@ -10897,7 +10897,7 @@ var Sigil = new Model({
             'fenv': this.bfenv.bind(this),
             'rm': this.brm.bind(this),
             'rmf': this.brmf.bind(this),
-            'alert': this.balert.bind(this)
+            '=>': this.bmagic.bind(this),
         };
         
         var _env = {
@@ -10910,6 +10910,14 @@ var Sigil = new Model({
         console.log(_env, _fenv, env, fenv);
         this.env = env;
         this.fenv = fenv;
+    },
+
+    bmagic: function (args) {
+        var retval = eval(args[0]);
+        if(retval !== undefined)
+            return retval;
+        else
+            return "";
     },
 
     brm: function (args) {
@@ -10927,7 +10935,8 @@ var Sigil = new Model({
     
 
     _null: function(e) {
-        return (e === undefined || (Array.isArray(e) && e.length === 0)) && 't' || [];
+        //return (e === undefined || (Array.isArray(e) && e.length === 0)) && 't' || [];
+        return (Array.isArray(e) && e.length === 0) && 't' || [];
     },
 
     each: function(l, f) {
@@ -10947,7 +10956,6 @@ var Sigil = new Model({
     beq: function(args) {
         var x = args[0];
         var y = args[1][0];
-
         return (x === y || (Array.isArray(x) && Array.isArray(y) &&
                             x.length === 0 && y.length === 0)) && 't' || [];
     },
@@ -10958,7 +10966,6 @@ var Sigil = new Model({
             var body = args[0][1];
             var result = this.eval(test);
             
-            this.debug = true;
             this.debug && console.log('sigil: bcond: test, body, result: ', test, body, result);
             if(this._null(result) !== 't') {
                 return this.progn(body);
@@ -11102,7 +11109,6 @@ var Sigil = new Model({
         var oldSelf = this.fenv['self'];
         this.fenv['self'] = fun;
         
-        console.log('evlambda:', this.printToString(this.benv()));
         var result = this.progn(fun[1][1]);
         
         this.each(vars, function (e, last) {
@@ -11196,12 +11202,6 @@ var Sigil = new Model({
         }
         
         throw new Error("apply: " + fun + ": " + args);
-    },
-
-    balert: function (args) {
-        var msg = args[0];
-        console.debug(msg);
-        return msg;
     },
 
     bme: function(args) {
@@ -11386,7 +11386,6 @@ var Sigil = new Model({
         } else if(typeof expr === "number") {
             return expr;
         } else if(typeof expr === "string") {
-            console.log('eval:', this.printToString(this.benv()));
             var v = this.env[expr];
             if(v === undefined)
                 v = this.fenv[expr]
@@ -11461,6 +11460,8 @@ var Sigil = new Model({
 	        return number;
         }
 
+        var inBackquote = false;
+
         function readSexpr(string) {
 	    while(string[0] != undefined) {
 	        var c = string.shift();
@@ -11479,9 +11480,15 @@ var Sigil = new Model({
                 }
 
 	        case '`':
-		    return [ 'qquote', [ readSexpr.call(this, string), []]];
+                    inBackquote = true;
+		    var retval = [ 'qquote', [ readSexpr.call(this, string), []]];
+                    inBackquote = false;
+                    return retval;
                     
 	        case ',':
+                    if(!inBackquote)
+                        throw new Error("comma not inside of backquote");
+
 		    c = string.shift();
 		    if(c == '@') {
                         var e = readSexpr.call(this, string);
@@ -11519,11 +11526,10 @@ var Sigil = new Model({
                             result2[1] = elt2;
                             return result3;
                         } else {
-                            if(elt)
+                            if(elt || elt === 0 || elt === '')
                                 result = [ elt, result ];
-                            console.log("result: ", result);
                         }
-                    } while(elt);
+                    } while(elt || elt === 0 || elt === '');
                     
 		    return this.reverse(result);
 	        }
@@ -12554,11 +12560,11 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         set, cons, car, cdr, atom, eq, cond\n"); 
-            this.insert(";'i' for insert mode        lambda, apply, cond, qquote,\n"); 
-            this.insert(";'e' to execute code        multple-value-bind, values, \n"); 
-            this.insert(";'z' to clear               defmacro, self, save, load,\n"); 
-            this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
+            this.insert(";'hjkl' to navigate         set, qquote, cons, car, cdr, atom, eq\n"); 
+            this.insert(";'i' for insert mode        cond, lambda, apply, cond, bind, values\n"); 
+            this.insert(";'e' to execute code        defmacro, self, save, load, rm, rmf\n"); 
+            this.insert(";'z' to clear               env, fenv, +, -, *, /\n\n\n"); 
+            this.insert(";'0' to first column");        
  
             this.create('history', 0);
             this.on('change:history', function(e) {

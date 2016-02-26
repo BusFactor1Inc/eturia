@@ -48,11 +48,11 @@ var AppView = (function () {
             this.insert(";Like VI, but different     Lisp Help\n"); 
             this.insert(";----------------------     ----------------------------\n\n");
             this.insert(";'?' is escape              * for last exec'd expression\n"); 
-            this.insert(";'hjkl' to navigate         set, cons, car, cdr, atom, eq, cond\n"); 
-            this.insert(";'i' for insert mode        lambda, apply, cond, qquote,\n"); 
-            this.insert(";'e' to execute code        multple-value-bind, values, \n"); 
-            this.insert(";'z' to clear               defmacro, self, save, load,\n"); 
-            this.insert(";'0' to first column        rm, rmf, env, fenv, +, -, *, /\n\n"); 
+            this.insert(";'hjkl' to navigate         set, qquote, cons, car, cdr, atom, eq\n"); 
+            this.insert(";'i' for insert mode        cond, lambda, apply, cond, bind, values\n"); 
+            this.insert(";'e' to execute code        defmacro, self, save, load, rm, rmf\n"); 
+            this.insert(";'z' to clear               env, fenv, +, -, *, /\n\n\n"); 
+            this.insert(";'0' to first column");        
  
             this.create('history', 0);
             this.on('change:history', function(e) {
