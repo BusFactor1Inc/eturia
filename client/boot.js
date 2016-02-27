@@ -1,3 +1,13 @@
+x.runApplication({ app: "image",
+                   appOptions: {
+                       title: "Eturia Logo",
+                       uri: "images/eturia.png",
+                   },
+                   style: {
+                       left: "845px"
+                   }
+                 });
+
 /*
 var x2 = x.runApplication({
     app: "skynet",
@@ -28,14 +38,6 @@ var hello2 = x2.trigger('runApplication', { app: "hello",
 //x.placeWindow(hello2, "200px", "200px");
 //x.sizeWindow(hello2, "240px", "240px");
 
-var hello = x.runApplication({ app: "hello",
-                               title: "Testing",
-                               text: "Don't say goodbye.",
-                               style: {
-                                   top: "100px",
-                                   left: "200px"
-                               }});
-
 //x.placeWindow(hello, 50, 50);
 //x.sizeWindow(hello, "128px", "128px");
 var notebook = x.runApplication({ app: "notebook",
@@ -64,19 +66,6 @@ var terminal = x.runApplication({app:"terminal",
 var y = terminal.grid().getColRow(0, 1, true).grid()
 */
 x.current(notebook);
-
-/*
-x.runApplication({ app: "image",
-                   appOptions: {
-                       title: "Eturia Logo",
-                       uri: "images/eturia.png"
-                   },
-                   style: {
-                       left: "800px"
-                   }
-                 });
-*/
-
 x.runApplication({ app: "audioplayer",
                    appOptions: {
                        title: "Eturia Music",
@@ -94,7 +83,7 @@ x.runApplication({ app: "iframe",
                        uri: 'the-order-of-symbols.txt',
                    },
                    style: {
-                       top: "20px",
+                       top: "300px",
                        left: "1000px",
                    }
                  });
