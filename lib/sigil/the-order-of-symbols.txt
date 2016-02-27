@@ -1,0 +1,228 @@
+;; -*- mode: lisp -*-
+
+The Order of Symbols
+--------------------
+
+The following is meant to be both an introduction and reference to
+Sigil, the Lisp that is used by Eturia.  You will find an explanation
+of syntax, followed by the list of builtins, followed by a brief
+explanation of the editor and then there is a set of examples that can
+be followed along and typed into the Eturia Listener, which can be
+found at:
+
+    http://busfactor1.ca/bin/eturia
+
+To run Eturia, click 'Engage'.
+
+Syntax
+======
+
+The following is the syntax of Sigil:
+
+Symbol - a string of characters not containing '(', or ')'.
+-----------------------------------------------------------
+
+Example:
+
+    x is a symbol
+    abc is a symbol
+    x123 is a symbol
+    123x is a symbol
+    a-longer-symbol is a symbol
+    |a symbol with spaces| is a symbol
+
+
+Numbers - a string of digits
+----------------------------
+
+Example:
+
+    1 is a number
+    100 is a number
+    3.141516 is a number
+
+
+Comments - a string of characters up to a newline that is ignored
+------------------------------------------------------------------
+
+Example:
+
+    ; this is a comment
+
+
+List - build lists
+------------------
+
+Example:
+
+    (1 2 3) ; is a list of the digits 1 2 3
+
+
+Quoting - stops evaluation
+--------------------------
+
+Example: `(1 2 3) => (1 2 3)
+
+
+Comma - evaulate inside of a quote
+----------------------------------
+
+Example:
+
+    (set `x 1) => 1
+    `(x 2 3) => (x 2 3)
+    `(,x 2 3) => (1 2 3)
+
+
+Comma at - evaluate a list inside of a quote, and splice it
+-----------------------------------------------------------
+
+Example:
+
+    (set `x `(a b c))
+    `(x 2 3) => (x 2 3)
+    `(,x 2 3) => ((a b c) 2 3)
+    `(,@x 2 3) => (a b c 2 3)
+
+
+NOTE: SYMBOLS AND NUMBERS ARE ALSO KNOWN AS ATOMS.
+
+Builtins
+========
+
+The following are the builtin commands for Sigil:
+
+atom
+eq
+cons
+car
+cdr
+cond
+qquote
+set
+lambda
+apply
+cond
+values
+bind
+defmacro
+self
++
+-
+*
+/
+
+%
+
+rm
+rmf
+env
+fenv
+save
+load
+
+Editor
+------
+
+Like VI, but different:
+
+hjkl - move the cursor left, down, up, or right (h,j,k,l)
+i - insert mode, allows you to type overwrite text in the buffer
+? - command mode, allows you to execute the following commands
+e - evaluate lisp code
+z - clear the screen
+np - previous/next in history (experimental)
+
+Window Manager
+--------------
+
+- click in title bar to focus window
+- middle click in title bar to remove window
+
+Exercises
+---------
+
+The following exercies build upon the primitives defined above and are
+meant to be typed into the Eturia 'Listener' console.
+
+1) if
+
+Example: (if (eq t t) 1 2) => 1
+Example: (if (eq t ()) 1 2) => 2
+
+(defmacro if (test true false)
+  (cond
+    (,test ,true)
+    (t ,false)))
+    
+2) when
+
+Example: (when (eq t t) 1) => 1
+Example: (when (eq t ()) 1) => ()
+
+(defmacro when (test &body body)
+  (cond
+    (,test ,@body)))
+
+3) unless
+
+Example: (unless (eq t t) 1) => ()
+Example: (unless (eq t ()) 1) => 1
+
+(defmacro unless (test &body body)
+  (cond ,test ,@body))
+
+4) reverse
+
+(defmacro reverse (l)
+  `((lambda (l a)
+      (if l
+          (self (cdr l) (cons (car l) a))
+          a))))
+
+5) map
+
+(defmacro map (f l)
+  `((lambda (l a)
+      (if l
+          (self (cdr l) (cons (,f (car l))))
+          (reverse a))) ,l ()))
+6) let
+
+(defmacro let (args &body body)
+  (lambda (vars values)
+    `((lambda ,vars ,@body) ,@args)
+    (map (lambda (x) (car x)) args)
+    (map (lambda (x) (car (car x))) args)))
+
+7) aif
+
+(defmacro aif (test true false)
+  `(let ((it ,test))
+     (if it ,true ,false)))
+
+8) awhen
+
+(defmacro awhen (test &body body)
+  `(let ((it ,test))
+     (when it ,@body)))
+
+9) setq
+
+
+not
+and
+or
+xor
+
+
+
+last
+nth
+pallindromep
+equal
+
+member
+list
+sort
+defun

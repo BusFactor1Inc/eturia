@@ -10942,12 +10942,13 @@ var Sigil = new Model({
     each: function(l, f) {
         if(this._null(l) !== 't') {
             if(l.length === 3) {
+                debugger
                 f(l[0], true);
                 this.each(l.slice(1), f);
             } else {
                 f(l[0]);
                 this.each(l[1], f);
-            } 
+            }
         } else {
             f(l, true);
         }
@@ -11481,7 +11482,8 @@ var Sigil = new Model({
 
 	        case '`':
                     inBackquote = true;
-		    var retval = [ 'qquote', [ readSexpr.call(this, string), []]];
+                    var e = readSexpr.call(this, string);
+		    var retval = [ 'qquote', [ e, []]];
                     inBackquote = false;
                     return retval;
                     
@@ -11531,6 +11533,9 @@ var Sigil = new Model({
                         }
                     } while(elt || elt === 0 || elt === '');
                     
+                    if(!(result.length === 0 || result.length === 2))
+                        throw new Error("read an improper list!: " + result.length);
+
 		    return this.reverse(result);
 	        }
 
@@ -11591,10 +11596,12 @@ var Sigil = new Model({
                 } 
                 closeParens += ")";
                 expr = expr[1];
-            }
 
-            if(!special)
-                retval += ". ()";
+                if(typeof expr === "string" || typeof expr === "number" || typeof expr === "function") {
+                    retval += ". " + this.printToString(expr);
+                    break;
+                }
+            }
 
             retval = retval + (pretty && ")" || closeParens);
         } else if(typeof expr === "object" && expr && expr.values) {
@@ -12104,6 +12111,29 @@ x.registerApplication("cell", AppView, {
         height: "12px",
         background: "transparent"
     }
+});
+var AppView = new View({
+    type: "HelloView",
+    tagName: "iframe",
+    init: function(options) {
+        this.create('uri');
+        this.on('change:uri', function (e) {
+            this.$el.attr('src', this.uri());
+            this.$el.attr('frameborder', 0);
+            debugger
+            this.$el.attr('width',
+                          options.style &&
+                          options.style.width  || "600px")
+            this.$el.attr('height',
+                          options.style &&
+                          options.style.height || "600px")
+        });
+        this.uri(options.uri);
+    }
+});
+
+x.registerApplication("iframe", AppView, {
+    title: "IFrame.",
 });
 var AppView = (function () {
     var blank = new View({});

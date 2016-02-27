@@ -65,14 +65,7 @@ var y = terminal.grid().getColRow(0, 1, true).grid()
 */
 x.current(notebook);
 
-var help = x.runApplication({ app: "hello",
-                              title: "Setq not working???",
-                              text: "<blink><a href='../old/'>Click here!</a></blink>",
-                              style: {
-                                  top: "0px",
-                                  left: "400px"
-                              }});
-
+/*
 x.runApplication({ app: "image",
                    appOptions: {
                        title: "Eturia Logo",
@@ -82,6 +75,7 @@ x.runApplication({ app: "image",
                        left: "800px"
                    }
                  });
+*/
 
 x.runApplication({ app: "audioplayer",
                    appOptions: {
@@ -91,5 +85,16 @@ x.runApplication({ app: "audioplayer",
                    style: {
                        top: "465px",
                        left: "845px"
+                   }
+                 });
+
+x.runApplication({ app: "iframe",
+                   appOptions: {
+                       title: "The Order of Symbols",
+                       uri: 'the-order-of-symbols.txt',
+                   },
+                   style: {
+                       top: "20px",
+                       left: "1000px",
                    }
                  });

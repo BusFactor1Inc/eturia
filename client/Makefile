@@ -3,6 +3,7 @@ all: all.js
 all.js: ../bower_components/jquery/dist/jquery.js ../lib/px3.js ../lib/sigil/sigil.js styles.js main.js \
 apps/daemon/all.js	\
 apps/cell/all.js	\
+apps/iframe/all.js	\
 apps/grid/all.js	\
 apps/hello/all.js	\
 apps/image/all.js	\
