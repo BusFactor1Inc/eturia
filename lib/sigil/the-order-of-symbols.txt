@@ -358,7 +358,8 @@ Exercises
 The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia 'Listener' console.
 
-1) if
+1) if - tradional conditional
+-----------------------------
 
 Example: (if (eq t t) 1 2) => 1
 Example: (if (eq t ()) 1 2) => 2
@@ -368,7 +369,8 @@ Example: (if (eq t ()) 1 2) => 2
     (,test ,true)
     (t ,false)))
     
-2) when
+2) when - single branch conditional
+-----------------------------------
 
 Example: (when (eq t t) 1) => 1
 Example: (when (eq t ()) 1) => ()
@@ -377,7 +379,8 @@ Example: (when (eq t ()) 1) => ()
   (cond
     (,test ,@body)))
 
-3) unless
+3) unless - negative single branch conditional
+----------------------------------------------
 
 Example: (unless (eq t t) 1) => ()
 Example: (unless (eq t ()) 1) => 1
@@ -385,7 +388,8 @@ Example: (unless (eq t ()) 1) => 1
 (defmacro unless (test &body body)
   (cond ,test ,@body))
 
-4) reverse
+4) reverse - reverse a list
+---------------------------
 
 (defmacro reverse (l)
   `((lambda (l a)
@@ -393,35 +397,79 @@ Example: (unless (eq t ()) 1) => 1
           (self (cdr l) (cons (car l) a))
           a))))
 
-5) map
+5) map - build a list by running the function f ovar the entries in
+         list l
+-------------------------------------------------------------------
 
 (defmacro map (f l)
   `((lambda (l a)
       (if l
           (self (cdr l) (cons (,f (car l))))
           (reverse a))) ,l ()))
-6) let
+
+5.5) caar, cadr, cdar and cddr - shortcuts
+------------------------------------------
+
+(defmacro caar (x)
+  `(car (car ,x)))
+
+(defmacro cadr (x)
+  `(car (cdr ,x)))
+
+(defmacro cdar (x)
+  `(cdr (car ,x)))
+
+(defmacro cddr (x)
+  `(cdr (cdr ,x)))
+
+6) let - declare local variables
+--------------------------------
 
 (defmacro let (args &body body)
   (lambda (vars values)
     `((lambda ,vars ,@body) ,@args)
-    (map (lambda (x) (car x)) args)
-    (map (lambda (x) (car (car x))) args)))
+    (map car args)
+    (map cadr args))) ; this should work, if not, try the below version
 
-7) aif
+(defmacro let (args &body body)
+  (lambda (vars values)
+    `((lambda ,vars ,@body) ,@args)
+    (map car args)
+    (map (lambda (x) (car (cdr x)) args)))
+
+7) aif - anamorphic if
+----------------------
 
 (defmacro aif (test true false)
   `(let ((it ,test))
      (if it ,true ,false)))
 
-8) awhen
+8) awhen - anamorphic when
+--------------------------
 
 (defmacro awhen (test &body body)
   `(let ((it ,test))
      (when it ,@body)))
 
-9) setq
+9) mapn - like map, but takes n lists as arguments (map is faster)
+------------------------------------------------------------------
 
+(defmacro mapn (f &rest xs)
+  `((lambda (a xs)
+      (let ((hs (map car xs)))
+        (self (cons (eval `(apply ,f ,@xs)) a) (cdr xs))
+        (reverse a))) () ,xs))
+
+; Warning: untested
+
+10) setq
+
+(defmacro setq (&rest rest)
+  (lambda (vars values)
+    `(mapn (lambda (var value)
+             (set var value)) ,vars ,values)
+    (map car vars)
+    (map (lambda (car (cdr x))) vars)))
 
 not
 and
