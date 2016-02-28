@@ -347,6 +347,11 @@ e - evaluate lisp code
 z - clear the screen
 np - previous/next in history (experimental)
 
+To type characters use 'insert' (overwrite) mode by pressing 'i'.
+
+REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
+LISTENER.
+
 Window Manager
 --------------
 
