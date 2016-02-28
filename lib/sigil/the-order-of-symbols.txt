@@ -30,6 +30,30 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
+Editor
+------
+
+Like VI, but different:
+
+hjkl - move the cursor left, down, up, or right (h,j,k,l)
+i - insert mode, allows you to type overwrite text in the buffer
+? - command mode, allows you to execute the following commands
+e - evaluate lisp code
+z - clear the screen
+np - previous/next in history (experimental)
+
+To type characters use 'insert' (overwrite) mode by pressing 'i'.
+
+REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
+LISTENER.
+
+Window Manager
+--------------
+
+    - click in title bar to focus window
+    - middle click in title bar to remove window
+
+======
 Syntax
 ======
 
@@ -361,31 +385,10 @@ THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 
 Example: (me (cadr `(1 2 3))) => (car (cdr `(1 2 3)))
 
-Editor
-------
 
-Like VI, but different:
-
-hjkl - move the cursor left, down, up, or right (h,j,k,l)
-i - insert mode, allows you to type overwrite text in the buffer
-? - command mode, allows you to execute the following commands
-e - evaluate lisp code
-z - clear the screen
-np - previous/next in history (experimental)
-
-To type characters use 'insert' (overwrite) mode by pressing 'i'.
-
-REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
-LISTENER.
-
-Window Manager
---------------
-
-    - click in title bar to focus window
-    - middle click in title bar to remove window
-
+=========
 Exercises
----------
+=========
 
 The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia 'Listener' console.  The 'Examples'
