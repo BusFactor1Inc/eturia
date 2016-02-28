@@ -14,6 +14,14 @@ found at:
 
 To run Eturia, click 'Engage'.
 
+This paper is meant to follow the ideas of Guy Steele in his
+talk/paper 'Growing a language':
+
+    https://www.cs.virginia.edu/~evans/cs655/readings/steele.pdf
+    https://www.youtube.com/watch?v=_ahvzDzKdB0
+
+All terms in the following text are (hopefully) defined before use.
+
 Syntax
 ======
 
