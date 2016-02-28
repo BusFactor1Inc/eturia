@@ -330,7 +330,7 @@ Example:
 
 Example:
 
-    (fenv) => ((set . builtin) (cons . builting) ...)
+    (fenv) => ((set . builtin) (cons . builtin) ...)
 
 24) save - save the current environment and function environment to
            local storage using argument as the name of the core
@@ -342,6 +342,11 @@ Example:
 25) load - load a core into the current environment
 
 THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
+
+26) me - macro expand
+---------------------
+
+Example: (me (cadr `(1 2 3))) => (car (cdr `(1 2 3)))
 
 Editor
 ------
@@ -443,7 +448,7 @@ Example: (unless (eq t ()) 1) => 1
   (lambda (vars values)
     `((lambda ,vars ,@body) ,@args)
     (map car args)
-    (map cadr args))) ; this should work, if not, try the below version
+    (map cadr args))) ; FIXME: this should work, if not, try the below version
 
 (defmacro let (args &body body)
   (lambda (vars values)
