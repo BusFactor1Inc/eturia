@@ -2,6 +2,8 @@
 ;;
 ;; Note: Click in the title bar of the 'Listener' window to type in it
 ;;
+;; Problems? Email root@busfactor1.ca
+;;
 
 The Order of Symbols
 --------------------
