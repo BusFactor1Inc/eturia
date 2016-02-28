@@ -30,8 +30,8 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
-Editor
-------
+Listener
+--------
 
 Like VI, but different:
 
