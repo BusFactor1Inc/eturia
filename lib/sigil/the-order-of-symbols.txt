@@ -124,8 +124,8 @@ Example:
     `(,x 2 3) => (1 2 3)
 
 
-Comma at - evaluate a list inside of a quote, and splice it
------------------------------------------------------------
+Commaat - evaluate a list inside of a quote, and splice it
+----------------------------------------------------------
 
 Example:
 
@@ -540,6 +540,7 @@ pallindromep
 member
 list
 sort
+assoc
 defun
 
 --

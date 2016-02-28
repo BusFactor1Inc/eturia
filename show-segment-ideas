@@ -1,3 +1,22 @@
+1) Syntax 1 - Symbols, Numbers, Comments and Lists
+2) Syntax 2 - Quoting, Comman and Commaat and Booleans
+3) Builtins 1 - Atom, Eq
+4) Builtins 2 - Cons, Car and Cdr
+5) Builtins 3 - Cond
+6) Builtins 4 - Quoting with qquote and Set
+7) Builtins 5 - Lambda and self
+8) Builtins 6 - Values and Bind
+9) BUiltins 7 - Defmacro, +, -, *, /, %
+10) Builtins 8 - env, fenv, rm, rmf, load, save, me
+11) Exercises 1 - if, when, unless
+12) Exercises 2 - reverse, map
+13) Exercises 3 - caar, cadr, cdar, cddr, let
+14) Exercises 4 - aif, awhen, not
+15) Exercises 5 - and, or, xor
+16) Exercises 6 - mapn, setq
+17) Exercises 7 - last, nth, equal, pallindromep
+
+
 -- continue lisp overview
    -- eq, cond
    -- functions (lambda)
