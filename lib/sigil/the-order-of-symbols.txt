@@ -301,7 +301,7 @@ Example:
 
     (% 5 2) => 1
 
-19) rm - remove a symbol from the environment
+20) rm - remove a symbol from the environment
 
 Example:
 
@@ -310,7 +310,7 @@ Example:
     (rm `x) => 1 ; returns the old value of x
     x => ; Error, undefined symbol
 
-19) rmf - remove a macro from the function environment
+21) rmf - remove a macro from the function environment
 
 Example:
 
@@ -320,26 +320,26 @@ Example:
     (rm `double) => (lambda (x) (+ x x))
     (double 2) => ; Error, undefined function
 
-20) env - return the current environment
+22) env - return the current environment
 
 Example:
 
      (env) => ((t . t) ...)
 
-21) fenv - return the current function environment
+23) fenv - return the current function environment
 
 Example:
 
     (fenv) => ((set . builtin) (cons . builting) ...)
 
-22) save - save the current environment and function environment to
+24) save - save the current environment and function environment to
            local storage using argument as the name of the core
 --------------------------------------------------------------------
 
 (save) => ; default /core is saved
 (save /backup) => ; saved to /backup in local storage
 
-23) load - load a core into the current environment
+25) load - load a core into the current environment
 
 THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 
