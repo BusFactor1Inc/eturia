@@ -1,4 +1,7 @@
 ;; -*- mode: lisp -*-
+;;
+;; Note: Click in the title bar of the 'Listener' window to type in it
+;;
 
 The Order of Symbols
 --------------------
