@@ -14,6 +14,11 @@ found at:
 
 To run Eturia, click 'Engage'.
 
+Lisp as a language is as Latin is to English or modern day Italian.
+It is the second oldest computer language still in use, invented (or
+found) in the 1950's by John McCarthy and is the most powerful and
+expressive programming language there is [citation needed].
+
 This paper is meant to follow the ideas of Guy Steele in his
 talk/paper 'Growing a language':
 
@@ -21,6 +26,7 @@ talk/paper 'Growing a language':
     https://www.youtube.com/watch?v=_ahvzDzKdB0
 
 All terms in the following text are (hopefully) defined before use.
+
 
 Syntax
 ======
