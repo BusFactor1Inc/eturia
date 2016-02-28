@@ -27,7 +27,6 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
-
 Syntax
 ======
 
@@ -78,7 +77,11 @@ An improper list does not.
 Quoting - stops evaluation
 --------------------------
 
-Example: `(1 2 3) => (1 2 3)
+Example: 
+`1 => 1
+x => ; Error, undefined symbol
+`x => x
+`(1 2 3) => (1 2 3)
 
 
 Comma - evaulate inside of a quote
@@ -87,6 +90,7 @@ Comma - evaulate inside of a quote
 Example:
 
     (set `x 1) => 1
+    x => 1
     `(x 2 3) => (x 2 3)
     `(,x 2 3) => (1 2 3)
 
@@ -97,13 +101,13 @@ Comma at - evaluate a list inside of a quote, and splice it
 Example:
 
     (set `x `(a b c))
-    `(x 2 3) => (x 2 3)
-    `(,x 2 3) => ((a b c) 2 3)
-    `(,@x 2 3) => (a b c 2 3)
+    x => (a b c)
+    `(x 1 2 3) => (x 1 2 3)
+    `(,x 1 2 3) => ((a b c) 1 2 3)
+    `(,@x 1 2 3) => (a b c 1 2 3)
 
 
 NOTE: SYMBOLS AND NUMBERS ARE ALSO KNOWN AS ATOMS.
-
 
 Booleans - () is false, everything else is true
 
