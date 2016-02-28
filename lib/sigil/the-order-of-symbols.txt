@@ -539,3 +539,7 @@ member
 list
 sort
 defun
+
+--
+Burton Samograd <root@busfactor1.ca>
+Copyright - 2016
