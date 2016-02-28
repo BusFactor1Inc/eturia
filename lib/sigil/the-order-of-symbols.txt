@@ -195,8 +195,9 @@ Example:
 x => 1
 (set `x 2) => 2
 x => 2
-(set `(1 2 3)) => (1 2 3)
+(set `x `(1 2 3)) => (1 2 3)
 x => (1 2 3)
+(set `x 1 `y 2 `z 3) => 3
 
 9) lambda - create an anonymous function
 ----------------------------------------
@@ -435,7 +436,11 @@ Example: (unless (eq t ()) 1) => 1
   (lambda (vars values)
     `((lambda ,vars ,@body) ,@args)
     (map car args)
-    (map (lambda (x) (car (cdr x)) args)))
+    (map (lambda (x) (car (cdr x)) args))))
+
+Examples:
+
+    (let ((x 1) (y 2)) (+ x y)) => 3
 
 7) aif - anamorphic if
 ----------------------
@@ -451,7 +456,12 @@ Example: (unless (eq t ()) 1) => 1
   `(let ((it ,test))
      (when it ,@body)))
 
-9) mapn - like map, but takes n lists as arguments (map is faster)
+9) not
+10) and
+11) or
+12) xor
+
+13) mapn - like map, but takes n lists as arguments (map is faster)
 ------------------------------------------------------------------
 
 (defmacro mapn (f &rest xs)
@@ -460,23 +470,18 @@ Example: (unless (eq t ()) 1) => 1
         (self (cons (eval `(apply ,f ,@xs)) a) (cdr xs))
         (reverse a))) () ,xs))
 
-; Warning: untested
+;; Warning: untested
 
-10) setq
+14) setq
 
 (defmacro setq (&rest rest)
   (lambda (vars values)
     `(mapn (lambda (var value)
              (set var value)) ,vars ,values)
     (map car vars)
-    (map (lambda (car (cdr x))) vars)))
+    (map cadr vars)))
 
-not
-and
-or
-xor
-
-
+;; Warning: untested
 
 last
 nth
