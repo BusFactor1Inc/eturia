@@ -378,44 +378,49 @@ LISTENER.
 Window Manager
 --------------
 
-- click in title bar to focus window
-- middle click in title bar to remove window
+    - click in title bar to focus window
+    - middle click in title bar to remove window
 
 Exercises
 ---------
 
 The following exercies build upon the primitives defined above and are
-meant to be typed into the Eturia 'Listener' console.
+meant to be typed into the Eturia 'Listener' console.  The 'Examples'
+can be used as test cases to ensure the correctness of your inputs.
 
 1) if - tradional conditional
 -----------------------------
-
-Example: (if (eq t t) 1 2) => 1
-Example: (if (eq t ()) 1 2) => 2
 
 (defmacro if (test true false)
   (cond
     (,test ,true)
     (t ,false)))
     
+Example: 
+
+    (if (eq t t) 1 2) => 1
+    (if (eq t ()) 1 2) => 2
+
 2) when - single branch conditional
 -----------------------------------
-
-Example: (when (eq t t) 1) => 1
-Example: (when (eq t ()) 1) => ()
 
 (defmacro when (test &body body)
   (cond
     (,test ,@body)))
 
+Example: 
+    (when (eq t t) 1) => 1
+    (when (eq t ()) 1) => ()
+
 3) unless - negative single branch conditional
 ----------------------------------------------
 
-Example: (unless (eq t t) 1) => ()
-Example: (unless (eq t ()) 1) => 1
-
 (defmacro unless (test &body body)
   (cond ,test ,@body))
+
+Example:
+    (unless (eq t t) 1) => ()
+    (unless (eq t ()) 1) => 1
 
 4) reverse - reverse a list
 ---------------------------
@@ -426,6 +431,10 @@ Example: (unless (eq t ()) 1) => 1
           (self (cdr l) (cons (car l) a))
           a))))
 
+Example: 
+
+    (reverse `(1 2 3)) => (3 2 1)
+
 5) map - build a list by running the function f ovar the entries in
          list l
 -------------------------------------------------------------------
@@ -435,6 +444,10 @@ Example: (unless (eq t ()) 1) => 1
       (if l
           (self (cdr l) (cons (,f (car l))))
           (reverse a))) ,l ()))
+
+Example:
+
+    (map (lambda (x) (+ x x)) `(1 2 3)) => (2 4 6)
 
 5.5) caar, cadr, cdar and cddr - shortcuts
 ------------------------------------------
