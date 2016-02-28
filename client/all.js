@@ -12628,7 +12628,7 @@ var AppView = (function () {
             this.insert(";'hjkl' to navigate         set, qquote, cons, car, cdr, atom, eq\n"); 
             this.insert(";'i' for insert mode        cond, lambda, apply, cond, bind, values\n"); 
             this.insert(";'e' to execute code        defmacro, self, save, load, rm, rmf\n"); 
-            this.insert(";'z' to clear               env, fenv, +, -, *, /\n\n\n"); 
+            this.insert(";'z' to clear               env, fenv, +, -, *, /\n"); 
             this.insert(";'0' to first column");        
  
             this.create('history', 0);
