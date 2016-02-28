@@ -87,3 +87,16 @@ x.runApplication({ app: "iframe",
                        left: "1000px",
                    }
                  });
+
+x.runApplication({ app: "hello",
+                   appOptions: {
+                       title: "What Makes Lisp Macros So Special(?)",
+                       text: "<a href='http://stackoverflow.com/questions/267862/what-makes-lisp-macros-so-special' target=_blank>Find out here!</a>"
+                   },
+                   style: {
+                       top: "64px",
+                       left: "1000px"
+                   }
+
+                 });
+
