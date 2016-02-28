@@ -146,8 +146,8 @@ Example:
 
     (cons 1 ()) => (1)
     (cons `x ()) => (x)
-    (cons 1 2) => (1 . 2) ; notice!
-    (cons (1 (cons 2 ()))) => (1 2)
+    (cons 1 2) => (1 . 2) ; notice! an improper list
+    (cons (1 (cons 2 ()))) => (1 2) ; a proper list
 
 4) car - return the first element of a list
 -------------------------------------------
@@ -196,81 +196,81 @@ Example:
 
 Example:
 
-`(1 2 3) => (1 2 3)
-(set `x 1) => 1
-`(,x 2 3) => (1 2 3) ; unquote with ,
-`(,@x 2 3) => (1 2 3) ; Error
-(set `x `(1 2 3)) => (1 2 3)
-`(,x 2 3) => ((1 2 3) 2 3) ; unquote with ,
-`(,@x 2 3) => (1 2 3 2 3) ; unquote splice a list with ,@
+    `(1 2 3) => (1 2 3)
+    (set `x 1) => 1
+    `(,x 2 3) => (1 2 3) ; unquote with ,
+    `(,@x 2 3) => (1 2 3) ; Error
+    (set `x `(1 2 3)) => (1 2 3)
+    `(,x 2 3) => ((1 2 3) 2 3) ; unquote with ,
+    `(,@x 2 3) => (1 2 3 2 3) ; unquote splice a list with ,@
 
 8) set - assign a symbol a value (variables)
 --------------------------------------------
 
 Example:
 
-(set `x 1) => 1
-x => 1
-(set `x 2) => 2
-x => 2
-(set `x `(1 2 3)) => (1 2 3)
-x => (1 2 3)
-(set `x 1 `y 2 `z 3) => 3
+    (set `x 1) => 1
+    x => 1
+    (set `x 2) => 2
+    x => 2
+    (set `x `(1 2 3)) => (1 2 3)
+    x => (1 2 3)
+    (set `x 1 `y 2 `z 3) => 3
 
 9) lambda - create an anonymous function
 ----------------------------------------
 Example:
 
-(lambda (x) x) => (lambda (x) x)
-((lambda (x) x) 1) => 1 ; call the function immediately
-((lambda (x) (+ x x)) 2) => 4
-(set `double (lambda (x) (+ x x))) ; declare function
-(double 2) => 4 ; call declared function
+    (lambda (x) x) => (lambda (x) x)
+    ((lambda (x) x) 1) => 1 ; call the function immediately
+    ((lambda (x) (+ x x)) 2) => 4
+    (set `double (lambda (x) (+ x x))) ; declare function
+    (double 2) => 4 ; call declared function
 
 10) self - the current function that is executing, used for recursion
 ---------------------------------------------------------------------
 
 Example:
 
-((lambda (l)
-   (cond
-     ((cdr l) (car l))
-     (t (self (cdr l))))) `(1 2 3)) => (3) ; return the last element
-                                           ; of the list, recursively
+    ((lambda (l)
+       (cond
+         ((cdr l) (car l))
+         (t (self (cdr l))))) `(1 2 3)) => (3) ; return the last element
+                                               ; of the list, recursively
 
 11) apply - call a function with a list of arguments
 ----------------------------------------------------
 
 Example:
 
-(apply (lambda (x) (+ x x)) `(1)) => 2
-(apply (lambda (x y z) (+ x y z)) `(1 2 3)) => 6
-(apply double 2) => 4 ; using previously defined function in 9)
+    (apply (lambda (x) (+ x x)) `(1)) => 2
+    (apply (lambda (x y z) (+ x y z)) `(1 2 3)) => 6
+    (apply double 2) => 4 ; using previously defined function in 9)
 
 12) values - return multiple values from a function
 ---------------------------------------------------
 
 Example:
 
-(values 1) => 1
-(values 1 2) => 1
-2
-((lambda (x) (values x)) 1) => 1
-((lambda (x y) (values x y)) 1 2) => 1
-2
+    (values 1) => 1
+    (values 1 2) => 1
+    2
+    ((lambda (x) (values x)) 1) => 1
+    ((lambda (x y) (values x y)) 1 2) => 1
+    2
 
 13) bind - bind multiple values to symbols
 ------------------------------------------
 
 Example:
 
-(set `multiple-values (lambda (x y) (values x y))) => ...
-(bind (a b) (multiple-values 1 2) (cons a b)) => (1 . 2)
+    (set `multiple-values (lambda (x y) (values x y))) => ...
+    (bind (a b) (multiple-values 1 2) (cons a b)) => (1 . 2)
 
 14) defmacro - define a macro
 -----------------------------
 
-Just watch the show:
+Just watch the show, that's what it's about, mostly:
 
     https://www.livecoding.tv/burtonsamograd/videos
 
