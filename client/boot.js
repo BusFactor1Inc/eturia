@@ -8,6 +8,16 @@ x.runApplication({ app: "image",
                    }
                  });
 
+x.runApplication({ app: "image",
+                   appOptions: {
+                       title: "3x3 Magic Prime Square",
+                       uri: "images/3x3-magic-prime-square.jpg",
+                   },
+                   style: {
+                       left: "1245px"
+                   }
+                 });
+
 /*
 var x2 = x.runApplication({
     app: "skynet",
