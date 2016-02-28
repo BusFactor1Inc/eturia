@@ -6,7 +6,6 @@ var AppView = new View({
         this.on('change:uri', function (e) {
             this.$el.attr('src', this.uri());
             this.$el.attr('frameborder', 0);
-            debugger
             this.$el.attr('width',
                           options.style &&
                           options.style.width  || "600px")

@@ -10890,6 +10890,7 @@ var Sigil = new Model({
             '-': this.bminus.bind(this),
             '*': this.btimes.bind(this),
             '/': this.bdivide.bind(this),
+            '%': this.bmod.bind(this),
             'apply': this.bapply.bind(this),
             'eval': this.beval.bind(this),
             'call': this.bcall.bind(this),
@@ -10942,12 +10943,11 @@ var Sigil = new Model({
     each: function(l, f) {
         if(this._null(l) !== 't') {
             if(l.length === 3) {
-                debugger
                 f(l[0], true);
                 this.each(l.slice(1), f);
             } else {
                 f(l[0]);
-                this.each(l[1], f);
+                this.each(this.cdr(l), f);
             }
         } else {
             f(l, true);
@@ -10979,12 +10979,15 @@ var Sigil = new Model({
     bnull: function(args) {
         return this._null(args[0]);
     },
-    
-    batom: function(args) {
-        var e = args[0];
+
+    atom: function (e) {
         return (typeof e === 'string' ||
                 typeof e === 'number' ||
-                this._null(e) === 't') && 't' || [];
+                this._null(e) === 't') && 't' || []
+    },
+    
+    batom: function(args) {
+        return this.atom(args[0]);
     },
     
     bdivide: function(args) {
@@ -10997,6 +11000,13 @@ var Sigil = new Model({
         }.bind(this));
         
         return quotient;
+    },
+
+    bmod: function(args) {
+        var x = args[0];
+        var y = args[1][0];
+
+        return Math.floor(x) % Math.floor(y);
     },
 
     btimes: function(args) {
@@ -11035,24 +11045,40 @@ var Sigil = new Model({
         return sum;
     },
 
+    car: function (x) {
+        var isnotnull = this._null(x) !== 't';
+        if(this.atom(x) === 't' && isnotnull) {
+            throw new Error("attempt to take the car of a symbol or number");
+        } else {
+            if(!isnotnull) {
+                return [];
+            } else {
+                return x[0];
+            }
+        }
+    },
+
     bcar: function (args) {
-        var x = args[0];
-        try {
-            return x[0];
-        } catch (e) {
-            return [];
+        return this.car(args[0]);
+    },
+
+    cdr: function (x) {
+        var isnotnull = this._null(x) !== 't';
+        if(this.atom(x) === 't' && isnotnull) {
+            throw new Error("attempt to take the cdr of a symbol or number");
+        } else {
+            if(!isnotnull) {
+                return [];
+            } else {
+                return x[1];
+            }
         }
     },
 
     bcdr: function (args) {
-        var x = args[0];
-        try {
-            return x[1];
-        } catch(e) {
-            return [];
-        }
+        return this.cdr(args[0]);
     },
-    
+
     cons: function(x, y) {
         return [x, y];
     },
@@ -12025,11 +12051,11 @@ var SkynetDefaults = {
 x = new Skynet(SkynetDefaults);
 
 $(document).ready(function () {
-        $('body').html(x.$el);
-        $('body').css(Styles.Body || { margin: "0px" });
-        $('body').keypress(function(e) {
-            x.keyPress(e);
-        });
+    $('body').html(x.$el);
+    $('body').css(Styles.Body || { margin: "0px" });
+    $('body').keypress(function(e) {
+        x.keyPress(e);
+    });
 });
 x.registerApplication("skynet", Skynet);
 var AppView = new View({
@@ -12120,7 +12146,6 @@ var AppView = new View({
         this.on('change:uri', function (e) {
             this.$el.attr('src', this.uri());
             this.$el.attr('frameborder', 0);
-            debugger
             this.$el.attr('width',
                           options.style &&
                           options.style.width  || "600px")
