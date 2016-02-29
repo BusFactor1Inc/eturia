@@ -567,9 +567,9 @@ Examples:
 (defmacro or (&rest args)
   `((lambda (args)
       (if args
-          (if (not (eval (car args)))
-              (self (cdr args))
-              t)
+          (if (eval (car args))
+              t
+              (self (cdr args)))
           ())) `,args))
 
 Examples:
@@ -607,6 +607,11 @@ Examples:
 
 ;; Warning: untested
 
+Examples:
+
+    (mapn (lambda (x y) (+ x y)) `(1 2 3) `(1 2 3)) => (2 4 6)
+    (mapn (lambda (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) => (xa1 yb2 zc3)
+
 14) setq
 
 (defmacro setq (&rest rest)
@@ -618,16 +623,70 @@ Examples:
 
 ;; Warning: untested
 
-last
-nth
-equal
-pallindromep
+Examples:
+
+    (setq x 1) => 1
+    x => 1
+    (setq x 2 y 3) => 3
+    x => 2
+    y => 3
+
+15) last - return the last element of a list
+--------------------------------------------
+
+(defmacro last (l)
+  `((lambda (l)
+      (if (cdr l)
+          (self (cdr l))
+          (car l)))) ,l))
+
+Examples:
+
+(last `(1 2 3)) => 3
+
+16) nth - return the nth element of a list
+------------------------------------------
+
+(defmacro nth (n l)
+  `((lambda (n l)
+      (if (eq n 0)
+          l
+          (self (- n 1) (cdr l))))) ,n ,l)
+
+Examples:
+
+    (nth 0 `(1 2 3)) => 1
+    (nth 1 `(1 2 3)) => 2
+    (nth 2 `(1 2 3)) => 3
+
+17) equal - compare if two things are equal, including lists
+------------------------------------------------------------
+
+(defmacro equal (x y)
+  `((lambda (x y)
+      (cond
+        ((and (atom x) (atom y)) (eq x y))
+        ((and (null x) (null y)) t)
+        (t
+         (self (cdr x) (cdr y))))) ,x ,y))
+
+18) pallindromep - see if a list is the same forwards and backwards
+-------------------------------------------------------------------
+
+(defmacro pallindromep (l)
+  `(equal l (reverse l)))
+
+Examples:
+
+    (pallindromep `(1 2 3)) => ()
+    (pallindromep `(1 2 3 2 1)) => t
 
 list
 member
 filter
-sort
+flatten
 assoc
+sort
 defun(?)
 
 --

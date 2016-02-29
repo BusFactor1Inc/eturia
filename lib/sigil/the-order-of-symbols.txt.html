@@ -692,9 +692,9 @@ Examples:
 (<span class="keyword">defmacro</span> <span class="function-name">or</span> (<span class="type">&amp;rest</span> args)
   `((<span class="keyword">lambda</span> (args)
       (<span class="keyword">if</span> args
-          (<span class="keyword">if</span> (not (eval (car args)))
-              (self (cdr args))
-              t)
+          (<span class="keyword">if</span> (eval (car args))
+              t
+              (self (cdr args)))
           ())) <span class="warning">`,args))</span>
 
 Examples:
@@ -732,6 +732,11 @@ Examples:
 
 <span class="comment-delimiter">;; </span><span class="comment">Warning: untested
 </span>
+Examples:
+
+    (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(1 2 3) `(1 2 3)) =&gt; (2 4 6)
+    (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) =&gt; (xa1 yb2 zc3)
+
 14) <span class="warning">setq</span>
 
 (<span class="keyword">defmacro</span> <span class="function-name">setq</span> (<span class="type">&amp;rest</span> rest)
@@ -743,16 +748,70 @@ Examples:
 
 <span class="comment-delimiter">;; </span><span class="comment">Warning: untested
 </span>
-last
-nth
-equal
-pallindromep
+Examples:
+
+    (setq x 1) =&gt; 1
+    x =&gt; 1
+    (setq x 2 y 3) =&gt; 3
+    x =&gt; 2
+    y =&gt; 3
+
+15) <span class="warning">last - return the last element of a list</span>
+--------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">last</span> (l)
+  `((<span class="keyword">lambda</span> (l)
+      (<span class="keyword">if</span> (cdr l)
+          (self (cdr l))
+          (car l)))) <span class="warning">,l))</span>
+
+Examples:
+
+(last `(1 2 3)) =&gt; 3
+
+16) <span class="warning">nth - return the nth element of a list</span>
+------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">nth</span> (n l)
+  `((<span class="keyword">lambda</span> (n l)
+      (<span class="keyword">if</span> (eq n 0)
+          l
+          (self (- n 1) (cdr l))))) <span class="warning">,n ,l)</span>
+
+Examples:
+
+    (nth 0 `(1 2 3)) =&gt; 1
+    (nth 1 `(1 2 3)) =&gt; 2
+    (nth 2 `(1 2 3)) =&gt; 3
+
+17) <span class="warning">equal - compare if two things are equal, including lists</span>
+------------------------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">equal</span> (x y)
+  `((<span class="keyword">lambda</span> (x y)
+      (<span class="keyword">cond</span>
+        ((and (atom x) (atom y)) (eq x y))
+        ((and (null x) (null y)) t)
+        (t
+         (self (cdr x) (cdr y))))) <span class="warning">,x ,y))</span>
+
+18) <span class="warning">pallindromep - see if a list is the same forwards and backwards</span>
+-------------------------------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
+  `(equal l (reverse l)))
+
+Examples:
+
+    (pallindromep `(1 2 3)) =&gt; ()
+    (pallindromep `(1 2 3 2 1)) =&gt; t
 
 list
 member
 filter
-sort
+flatten
 assoc
+sort
 defun(?)
 
 --
