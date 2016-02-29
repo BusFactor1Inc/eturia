@@ -505,10 +505,74 @@ Examples:
   `(let ((it ,test))
      (when it ,@body)))
 
-9) not
-10) and
-11) or
-12) xor
+9) not - logical compliment
+---------------------------
+
+(defmacro not (x)
+  `((lambda (x)
+      (cond
+        ((null x) t)
+        (t ())))))
+
+Examples:
+
+    (not ()) => t
+    (not t) => ()
+    (not 1) => ()
+
+10) and - logical and
+---------------------
+
+(defmacro and (&rest args)
+  `((lambda (args)
+      (if args
+          (if (eval (car args))
+              (self (cdr args))
+              ())
+          t)) `,args))
+
+Examples:
+
+    (and () ()) => ()
+    (and () t) => ()
+    (and t ()) => ()
+    (and t t) => t
+    (and 1 1) => t
+
+11) or - logicial or
+---------------------
+
+(defmacro or (&rest args)
+  `((lambda (args)
+      (if args
+          (if (not (eval (car args)))
+              (self (cdr args))
+              t)
+          ())) `,args))
+
+Examples:
+
+    (or () ()) => ()
+    (or () t) => t
+    (or t ()) => t
+    (or t t) => t
+    (or 1 1) => t
+
+12) xor - logical exclusive or
+
+(defmacro xor (x y)
+  `(let ((xe ,x)
+         (ye ,y))
+     (and
+      (or xe ye)
+      (not (and xe ye)))))
+
+Examples:
+
+    (xor () ()) => ()
+    (xor t ()) => t
+    (xor () t) => t
+    (xor t t) => ()
 
 13) mapn - like map, but takes n lists as arguments (map is faster)
 ------------------------------------------------------------------
@@ -537,11 +601,12 @@ nth
 equal
 pallindromep
 
-member
 list
+member
+filter
 sort
 assoc
-defun
+defun(?)
 
 --
 Burton Samograd <root@busfactor1.ca>
