@@ -160,16 +160,23 @@ All terms in the following text are (hopefully) defined before use.
 Listener
 --------
 
-Like VI, but different:
+There is no copy/pasting in Eturia.  To enter the code, it must be
+typed manually into the '<span class="constant">Listener</span>'.  This way the code will flow
+through you and you have a better chance of learning the concepts as
+you go along and build your own language in Sigil.
+
+This '<span class="constant">Listener</span>' is like Like VI, but a bit different:
 
 hjkl - move the cursor left, down, up, or right (h,j,k,l)
 i - insert mode, allows you to type overwrite text in the buffer
 ? - command mode, allows you to execute the following commands
+    and break out of insert mode
 e - evaluate lisp code
 z - clear the screen
 np - previous/next in history (experimental)
 
-To type characters use '<span class="constant">insert</span>' (overwrite) mode by pressing 'i'.
+To type characters use '<span class="constant">insert</span>' (overwrite) mode by pressing 'i'. To
+'<span class="constant">escape</span>', press '?'.
 
 REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
 LISTENER.
@@ -806,6 +813,8 @@ Examples:
     (pallindromep `(1 2 3)) =&gt; ()
     (pallindromep `(1 2 3 2 1)) =&gt; t
 
+ls
+lsf
 list
 member
 filter
