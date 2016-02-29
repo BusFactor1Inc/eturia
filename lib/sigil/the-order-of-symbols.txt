@@ -396,6 +396,28 @@ The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia 'Listener' console.  The 'Examples'
 can be used as test cases to ensure the correctness of your inputs.
 
+0) first, second, third, rest - shortcuts
+-----------------------------------------
+
+(defmacro first (x)
+  `(car ,x))
+
+(defmacro second (x)
+  `(car (cdr ,x)))
+
+(defmacro third (x)
+  `(car (cdr (cdr ,x))))
+
+(defmacro rest (x)
+  `(cdr ,x))
+
+Examples:
+
+    (first `(1 2 3)) => 1
+    (second `(1 2 3)) => 2
+    (third `(1 2 3)) => 3
+    (rest `(1 2 3)) => (2 3)
+
 1) if - tradional conditional
 -----------------------------
 

@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>the-order-of-symbols.txt</title>
+<meta name="generator" content="emacs 25.0.50.4; htmlfontify 0.21" />
+<style type="text/css"><!-- 
+body { font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  color: #ffffff;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.default   { font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  color: #ffffff;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.default a { font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  color: #ffffff;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+span.type   { color: #98fb98;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.type a { color: #98fb98;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+span.function-name   { color: #87cefa;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.function-name a { color: #87cefa;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+span.keyword   { color: #00ffff;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.keyword a { color: #00ffff;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+span.warning   { color: #ffc0cb;  font-weight: 700;  font-family: Ubuntu Mono;  font-stretch: normal;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.warning a { color: #ffc0cb;  font-weight: 700;  font-family: Ubuntu Mono;  font-stretch: normal;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+span.constant   { color: #7fffd4;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.constant a { color: #7fffd4;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+span.comment   { color: #ff7f24;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.comment a { color: #ff7f24;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+span.comment-delimiter   { color: #ff7f24;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: none; }
+span.comment-delimiter a { color: #ff7f24;  font-family: Ubuntu Mono;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 12pt;  text-decoration: underline; }
+ --></style>
+
+    <script type="text/javascript"><!--
+  // this function is needed to work around
+  // a bug in IE related to element attributes
+  function hasClass(obj)
+  {
+      var result = false;
+      if (obj.getAttributeNode("class") != null)
+      {
+          result = obj.getAttributeNode("class").value;
+      }
+      return result;
+  }
+
+  function stripe(id)
+  {
+      // the flag we'll use to keep track of
+      // whether the current row is odd or even
+      var even = false;
+
+      // if arguments are provided to specify the colors
+      // of the even & odd rows, then use the them;
+      // otherwise use the following defaults:
+      var evenColor = arguments[1] ? arguments[1] : "#fff";
+      var oddColor  = arguments[2] ? arguments[2] : "#ddd";
+
+      // obtain a reference to the desired table
+      // if no such table exists, abort
+      var table = document.getElementById(id);
+      if (! table) { return; }
+
+      // by definition, tables can have more than one tbody
+      // element, so we'll have to get the list of child
+      // &lt;tbody&gt;s
+      var tbodies = table.getElementsByTagName("tbody");
+
+      // and iterate through them...
+      for (var h = 0; h < tbodies.length; h++)
+      {
+          // find all the &lt;tr&gt; elements...
+          var trs = tbodies[h].getElementsByTagName("tr");
+
+          // ... and iterate through them
+          for (var i = 0; i < trs.length; i++)
+          {
+              // avoid rows that have a class attribute
+              // or backgroundColor style
+              if (! hasClass(trs[i]) &&
+                  ! trs[i].style.backgroundColor)
+              {
+                  // get all the cells in this row...
+                  var tds = trs[i].getElementsByTagName("td");
+
+                  // and iterate through them...
+                  for (var j = 0; j < tds.length; j++)
+                  {
+                      var mytd = tds[j];
+
+                      // avoid cells that have a class attribute
+                      // or backgroundColor style
+                      if (! hasClass(mytd) &&
+                          ! mytd.style.backgroundColor)
+                      {
+                          mytd.style.backgroundColor =
+                            even ? evenColor : oddColor;
+                      }
+                  }
+              }
+              // flip from odd to even, or vice-versa
+              even =  ! even;
+          }
+      }
+  }
+
+  function toggle_invis( name )
+  {
+      var filter =
+        { acceptNode:
+          function( node )
+          { var classname = node.id;
+            if( classname )
+            { var classbase = classname.substr( 0, name.length );
+              if( classbase == name ) { return NodeFilter.FILTER_ACCEPT; } }
+            return NodeFilter.FILTER_SKIP; } };
+      var walker = document.createTreeWalker( document.body           ,
+                                              NodeFilter.SHOW_ELEMENT ,
+                                              filter                  ,
+                                              false                   );
+      while( walker.nextNode() )
+      {
+          var e = walker.currentNode;
+          if( e.style.display == "none" ) { e.style.display = "inline"; }
+          else                            { e.style.display = "none";   }
+      }
+  }
+--> </script>
+  </head>
+  <body onload="stripe('index'); return true;">
+
+<pre><span class="comment-delimiter">;; </span><span class="comment">-*- mode: lisp -*-
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">Note: Click in the title bar of the '</span><span class="constant">Listener</span><span class="comment">' window to type in it
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">Problems? Email root@busfactor1.ca
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span>
+The Order of Symbols
+--------------------
+
+The following is meant to be both an introduction and reference to
+Sigil, the Lisp that is used by Eturia.  You will find an explanation
+of syntax, followed by the list of builtins, followed by a brief
+explanation of the editor and then there is a set of examples that can
+be followed along and typed into the Eturia Listener, which can be
+found at:
+
+    http://busfactor1.ca/bin/eturia
+
+To run Eturia, click '<span class="constant">Engage</span>'.
+
+Lisp as a language is as Latin is to English or modern day Italian.
+It is the second oldest computer language still in use, invented (or
+found) <span class="warning">in the 1950's by John McCarthy and is the most powerful and</span>
+expressive programming language there is [citation needed].
+
+This paper is meant to follow the ideas of Guy Steele in his
+talk/paper 'Growing a language':
+
+    https://www.cs.virginia.edu/~evans/cs655/readings/steele.pdf
+    https://www.youtube.com/watch?v=_ahvzDzKdB0
+
+All terms in the following text are (hopefully) defined before use.
+
+Listener
+--------
+
+Like VI, but different:
+
+hjkl - move the cursor left, down, up, or right (h,j,k,l)
+i - insert mode, allows you to type overwrite text in the buffer
+? - command mode, allows you to execute the following commands
+e - evaluate lisp code
+z - clear the screen
+np - previous/next in history (experimental)
+
+To type characters use '<span class="constant">insert</span>' (overwrite) mode by pressing 'i'.
+
+REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
+LISTENER.
+
+Window Manager
+--------------
+
+    - click in title bar to focus window
+    - middle click in title bar to remove window
+
+======
+Syntax
+======
+
+The following is the syntax of Sigil:
+
+Symbol - a string of characters not containing '(', or ')'.
+-----------------------------------------------------------
+
+Example:
+
+    x is a symbol
+    abc is a symbol
+    x123 is a symbol
+    123x is a symbol
+    a-longer-symbol is a symbol
+    |a symbol with spaces| is a symbol
+
+
+Numbers - a string of digits
+----------------------------
+
+Example:
+
+    1 is a number
+    100 is a number
+    3.141516 is a number
+
+
+Comments - a string of characters up to a newline that is ignored
+------------------------------------------------------------------
+
+Example:
+
+    <span class="comment">; this is a comment
+</span>
+
+List - build lists
+------------------
+
+Example:
+
+    (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3
+</span>    (1 . 2) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the digits 1 and 2
+</span>
+A proper list has () as its last element.
+An improper list does not.
+
+Quoting - stops evaluation
+--------------------------
+
+Example: 
+`1 =&gt; 1
+x =&gt; <span class="comment">; Error, undefined symbol
+</span>`x =&gt; x
+`(1 2 3) =&gt; (1 2 3)
+
+
+Comma - evaulate inside of a quote
+----------------------------------
+
+Example:
+
+    (set `x 1) =&gt; 1
+    x =&gt; 1
+    `(x 2 3) =&gt; (x 2 3)
+    `(,x 2 3) =&gt; (1 2 3)
+
+
+Commaat - evaluate a list inside of a quote, and splice it
+----------------------------------------------------------
+
+Example:
+
+    (set `x `(a b c))
+    x =&gt; (a b c)
+    `(x 1 2 3) =&gt; (x 1 2 3)
+    `(,x 1 2 3) =&gt; ((a b c) 1 2 3)
+    `(,@x 1 2 3) =&gt; (a b c 1 2 3)
+
+
+NOTE: SYMBOLS AND NUMBERS ARE ALSO KNOWN AS ATOMS.
+
+Booleans - () is false, everything else is true
+
+Builtins
+========
+
+The following are the builtin commands for Sigil:
+
+1) <span class="warning">atom - a predicate to test if its argument is an atom (string, number, or ())</span>
+---------------------------------------------------------------------------------
+
+Example:
+
+    (atom t) =&gt; t
+    (atom ()) =&gt; t
+    (atom `x) =&gt; t
+    (atom `(1 2 3)) =&gt; ()
+
+2) <span class="warning">eq - a predicate to test if 2 atoms are equal</span>
+------------------------------------------------
+Example:
+
+    (eq t t) =&gt; t
+    (eq () ()) =&gt; t
+    (eq t ()) =&gt; ()
+    (eq `x `x) =&gt; t
+    (eq `x `y) =&gt; ()
+    (eq 1 1) =&gt; t
+    (eq 1 2) =&gt; ()
+    (eq `(1 2 3) `(1 2 3)) =&gt; () <span class="comment">; notice!
+</span>
+3) <span class="warning">cons - create a new list cell</span>
+--------------------------------
+
+Example:
+
+    (cons 1 ()) =&gt; (1)
+    (cons `x ()) =&gt; (x)
+    (cons 1 2) =&gt; (1 . 2) <span class="comment">; notice! an improper list
+</span>    (cons (1 (cons 2 ()))) =&gt; (1 2) <span class="comment">; a proper list
+</span>
+4) <span class="warning">car - return the first element of a list</span>
+-------------------------------------------
+
+Example:
+
+    (car `(1 2 3)) =&gt; 1
+    (car `((1 2 3) 2 3)) =&gt; (1 2 3)
+    (car ()) =&gt; ()
+    (car `x) =&gt; <span class="comment">; Error</span><span class="comment">
+</span>    (car 1) =&gt; <span class="comment">; Error</span><span class="comment">
+</span>
+5) <span class="warning">cdr - return everything but the first element of a list</span>
+----------------------------------------------------------
+
+Example:
+
+    (cdr `(1 2 3)) =&gt; (2 3)
+    (cdr `((1 2 3) 2 3)) =&gt; (2 3)
+    (cdr ()) =&gt; ()
+    (cdr `x) =&gt; <span class="comment">; Error
+</span>    (cdr 1) =&gt; <span class="comment">; Error
+</span>
+6) <span class="warning">cond - conditional statement, execute tests until one returns not (),</span>
+          and then execute the following statement
+------------------------------------------------------------------------
+
+Example:
+
+    (<span class="keyword">cond</span> (t 1)) =&gt; 1
+    (<span class="keyword">cond</span> (() 1)) =&gt; ()
+    (<span class="keyword">cond</span> ((t 1) (t 2))) =&gt; 1
+    (<span class="keyword">cond</span> ((() 1) (t 2))) =&gt; 2
+    (<span class="keyword">cond</span> ((() 1) (() 2) (t 3))) =&gt; 3
+    (<span class="keyword">cond</span> ((() 1) (t 2) (t 3))) =&gt; 2
+    (set `x ())
+    (set `y t)
+    (<span class="keyword">cond</span>
+      (x `shouldnt-get-here)
+      (y `should-get-here)
+      (t `wont-get-here)) <span class="warning">=&gt; should-get-here</span>
+
+7) <span class="warning">qquote - prevent evaluation of the argument, allowing for unquote</span>
+            and unquote splicing, normally abbreviated with `
+--------------------------------------------------------------------
+
+Example:
+
+    `(1 2 3) =&gt; (1 2 3)
+    (set `x 1) =&gt; 1
+    `(,x 2 3) =&gt; (1 2 3) <span class="comment">; unquote with ,
+</span>    `(,@x 2 3) =&gt; (1 2 3) <span class="comment">; Error
+</span>    (set `x `(1 2 3)) =&gt; (1 2 3)
+    `(,x 2 3) =&gt; ((1 2 3) 2 3) <span class="comment">; unquote with ,
+</span>    `(,@x 2 3) =&gt; (1 2 3 2 3) <span class="comment">; unquote splice a list with ,@</span><span class="comment">
+</span>
+8) <span class="warning">set - assign a symbol a value (variables)</span>
+--------------------------------------------
+
+Example:
+
+    (set `x 1) =&gt; 1
+    x =&gt; 1
+    (set `x 2) =&gt; 2
+    x =&gt; 2
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    x =&gt; (1 2 3)
+    (set `x 1 `y 2 `z 3) =&gt; 3
+
+9) <span class="warning">lambda - create an anonymous function</span>
+----------------------------------------
+Example:
+
+    (<span class="keyword">lambda</span> (x) x) =&gt; (<span class="keyword">lambda</span> (x) x)
+    ((<span class="keyword">lambda</span> (x) x) 1) =&gt; 1 <span class="comment">; call the function immediately
+</span>    ((<span class="keyword">lambda</span> (x) (+ x x)) 2) =&gt; 4
+    (set `double (<span class="keyword">lambda</span> (x) (+ x x))) <span class="comment">; declare function
+</span>    (double 2) =&gt; 4 <span class="comment">; call declared function
+</span>
+10) <span class="warning">self - the current function that is executing, used for recursion</span>
+---------------------------------------------------------------------
+
+Example:
+
+    ((<span class="keyword">lambda</span> (l)
+       (<span class="keyword">cond</span>
+         ((cdr l) (car l))
+         (t (self (cdr l))))) `(1 2 3)) =&gt; (3) <span class="comment">; return the last element</span><span class="comment">
+</span>                                               <span class="comment">; of the list, recursively
+</span>
+11) <span class="warning">apply - call a function with a list of arguments</span>
+----------------------------------------------------
+
+Example:
+
+    (apply (<span class="keyword">lambda</span> (x) (+ x x)) `(1)) =&gt; 2
+    (apply (<span class="keyword">lambda</span> (x y z) (+ x y z)) `(1 2 3)) =&gt; 6
+    (apply double 2) =&gt; 4 <span class="comment">; using previously defined function in 9)
+</span>
+12) <span class="warning">values - return multiple values from a function</span>
+---------------------------------------------------
+
+Example:
+
+    (values 1) =&gt; 1
+    (values 1 2) =&gt; 1
+    2
+    ((<span class="keyword">lambda</span> (x) (values x)) 1) =&gt; 1
+    ((<span class="keyword">lambda</span> (x y) (values x y)) 1 2) =&gt; 1
+    2
+
+13) <span class="warning">bind - bind multiple values to symbols</span>
+------------------------------------------
+
+Example:
+
+    (set `multiple-values (<span class="keyword">lambda</span> (x y) (values x y))) =&gt; ...
+    (bind (a b) (multiple-values 1 2) (cons a b)) =&gt; (1 . 2)
+
+14) <span class="warning">defmacro - define a macro</span>
+-----------------------------
+
+Just watch the show, that's what it's about, mostly:
+
+    https://www.livecoding.tv/burtonsamograd/videos
+
+WRITEME
+
+15) <span class="warning">+ - addition, sum</span>
+---------------------
+
+Example:
+
+    (+ 1 2) =&gt; 3
+    (+ 1 2 3) =&gt; 6
+
+16) <span class="warning">- - subtraction, difference</span>
+-------------------------------
+
+    (- 1 2) =&gt; -1
+    (- 1 2 3) =&gt; -4
+
+17) <span class="warning">* - multipley, product</span>
+--------------------------
+
+    (* 1 2) =&gt; 2
+    (* 1 2 3) =&gt; 6
+
+18) <span class="warning">/ - divide, quotient</span>
+------------------------
+
+Example: 
+
+    (/ 1 2) =&gt; .5
+    (/ 1 2 3) =&gt; 0.1666....
+
+19) <span class="warning">% - remainder, mod</span>
+----------------------
+
+Example:
+
+    (% 5 2) =&gt; 1
+
+20) <span class="warning">rm - remove a symbol from the environment</span>
+
+Example:
+
+    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
+</span>    x =&gt; 1
+    (rm `x) =&gt; 1 <span class="comment">; returns the old value of x
+</span>    x =&gt; <span class="comment">; Error, undefined symbol
+</span>
+21) <span class="warning">rmf - remove a macro from the function environment</span>
+
+Example:
+
+    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ x x)) =&gt; (macro (x) `(+ ,x ,x))
+    (double 2) =&gt; 4
+    (rmf `double) =&gt; (macro (x) `(+ ,x ,x))
+    (rm `double) =&gt; (<span class="keyword">lambda</span> (x) (+ x x))
+    (double 2) =&gt; <span class="comment">; Error, undefined function
+</span>
+22) <span class="warning">env - return the current environment</span>
+
+Example:
+
+     (env) =&gt; ((t . t) ...)
+
+23) <span class="warning">fenv - return the current function environment</span>
+
+Example:
+
+    (fenv) =&gt; ((set . builtin) (cons . builtin) ...)
+
+24) <span class="warning">save - save the current environment and function environment to</span>
+           local storage using argument as the name of the core
+--------------------------------------------------------------------
+
+(save) =&gt; <span class="comment">; default /core is saved
+</span>(save /backup) =&gt; <span class="comment">; saved to /backup in local storage
+</span>
+25) <span class="warning">load - load a core into the current environment</span>
+
+THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
+
+26) <span class="warning">me - macro expand</span>
+---------------------
+
+Example: (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
+
+
+=========
+Exercises
+=========
+
+The following exercies build upon the primitives defined above and are
+meant to be typed into the Eturia '<span class="constant">Listener</span>' console.  The '<span class="constant">Examples</span>'
+can be used as test cases to ensure the correctness of your inputs.
+
+0) <span class="warning">first, second, third, rest - shortcuts</span>
+-----------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">first</span> (x)
+  `(car ,x))
+
+(<span class="keyword">defmacro</span> <span class="function-name">second</span> (x)
+  `(car (cdr ,x)))
+
+(<span class="keyword">defmacro</span> <span class="function-name">third</span> (x)
+  `(car (cdr (cdr ,x))))
+
+(<span class="keyword">defmacro</span> <span class="function-name">rest</span> (x)
+  `(cdr ,x))
+
+Examples:
+
+    (first `(1 2 3)) =&gt; 1
+    (second `(1 2 3)) =&gt; 2
+    (third `(1 2 3)) =&gt; 3
+    (rest `(1 2 3)) =&gt; (2 3)
+
+1) <span class="warning">if - tradional conditional</span>
+-----------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">if</span> (test true false)
+  (<span class="keyword">cond</span>
+    (,test ,true)
+    (t ,false)))
+    
+Example: 
+
+    (<span class="keyword">if</span> (eq t t) 1 2) =&gt; 1
+    (<span class="keyword">if</span> (eq t ()) 1 2) =&gt; 2
+
+2) <span class="warning">when - single branch conditional</span>
+-----------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">when</span> (test <span class="type">&amp;body</span> body)
+  (<span class="keyword">cond</span>
+    (,test ,@body)))
+
+Example: 
+    (<span class="keyword">when</span> (eq t t) 1) =&gt; 1
+    (<span class="keyword">when</span> (eq t ()) 1) =&gt; ()
+
+3) <span class="warning">unless - negative single branch conditional</span>
+----------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">unless</span> (test <span class="type">&amp;body</span> body)
+  (<span class="keyword">cond</span> ,test ,@body))
+
+Example:
+    (<span class="keyword">unless</span> (eq t t) 1) =&gt; ()
+    (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
+
+4) <span class="warning">reverse - reverse a list</span>
+---------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">reverse</span> (l)
+  `((<span class="keyword">lambda</span> (l a)
+      (<span class="keyword">if</span> l
+          (self (cdr l) (cons (car l) a))
+          a))))
+
+Example: 
+
+    (reverse `(1 2 3)) =&gt; (3 2 1)
+
+5) <span class="warning">map - build a list by running the function f ovar the entries in</span>
+         list l
+-------------------------------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">map</span> (f l)
+  `((<span class="keyword">lambda</span> (l a)
+      (<span class="keyword">if</span> l
+          (self (cdr l) (cons (,f (car l))))
+          (reverse a))) <span class="warning">,l ()))</span>
+
+Example:
+
+    (map (<span class="keyword">lambda</span> (x) (+ x x)) `(1 2 3)) =&gt; (2 4 6)
+
+5.5) <span class="warning">caar, cadr, cdar and cddr - shortcuts</span>
+------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">caar</span> (x)
+  `(car (car ,x)))
+
+(<span class="keyword">defmacro</span> <span class="function-name">cadr</span> (x)
+  `(car (cdr ,x)))
+
+(<span class="keyword">defmacro</span> <span class="function-name">cdar</span> (x)
+  `(cdr (car ,x)))
+
+(<span class="keyword">defmacro</span> <span class="function-name">cddr</span> (x)
+  `(cdr (cdr ,x)))
+
+6) <span class="warning">let - declare local variables</span>
+--------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">let</span> (args <span class="type">&amp;body</span> body)
+  (<span class="keyword">lambda</span> (vars values)
+    `((<span class="keyword">lambda</span> ,vars ,@body) ,@args)
+    (map car args)
+    (map cadr args))) <span class="comment">; FIXME: this should work, if not, try the below version
+</span>
+(<span class="keyword">defmacro</span> <span class="function-name">let</span> (args <span class="type">&amp;body</span> body)
+  (<span class="keyword">lambda</span> (vars values)
+    `((<span class="keyword">lambda</span> ,vars ,@body) ,@args)
+    (map car args)
+    (map (<span class="keyword">lambda</span> (x) (car (cdr x)) args))))
+
+Examples:
+
+    (<span class="keyword">let</span> ((x 1) (y 2)) (+ x y)) =&gt; 3
+
+7) <span class="warning">aif - anamorphic if</span>
+----------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">aif</span> (test true false)
+  `(<span class="keyword">let</span> ((it ,test))
+     (<span class="keyword">if</span> it ,true ,false)))
+
+8) <span class="warning">awhen - anamorphic when</span>
+--------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">awhen</span> (test <span class="type">&amp;body</span> body)
+  `(<span class="keyword">let</span> ((it ,test))
+     (<span class="keyword">when</span> it ,@body)))
+
+9) <span class="warning">not - logical compliment</span>
+---------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">not</span> (x)
+  `((<span class="keyword">lambda</span> (x)
+      (<span class="keyword">cond</span>
+        ((null x) t)
+        (t ())))))
+
+Examples:
+
+    (not ()) =&gt; t
+    (not t) =&gt; ()
+    (not 1) =&gt; ()
+
+10) <span class="warning">and - logical and</span>
+---------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">and</span> (<span class="type">&amp;rest</span> args)
+  `((<span class="keyword">lambda</span> (args)
+      (<span class="keyword">if</span> args
+          (<span class="keyword">if</span> (eval (car args))
+              (self (cdr args))
+              ())
+          t)) <span class="warning">`,args))</span>
+
+Examples:
+
+    (and () ()) =&gt; ()
+    (and () t) =&gt; ()
+    (and t ()) =&gt; ()
+    (and t t) =&gt; t
+    (and 1 1) =&gt; t
+
+11) <span class="warning">or - logicial or</span>
+---------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">or</span> (<span class="type">&amp;rest</span> args)
+  `((<span class="keyword">lambda</span> (args)
+      (<span class="keyword">if</span> args
+          (<span class="keyword">if</span> (not (eval (car args)))
+              (self (cdr args))
+              t)
+          ())) <span class="warning">`,args))</span>
+
+Examples:
+
+    (or () ()) =&gt; ()
+    (or () t) =&gt; t
+    (or t ()) =&gt; t
+    (or t t) =&gt; t
+    (or 1 1) =&gt; t
+
+12) <span class="warning">xor - logical exclusive or</span>
+
+(<span class="keyword">defmacro</span> <span class="function-name">xor</span> (x y)
+  `(<span class="keyword">let</span> ((xe ,x)
+         (ye ,y))
+     (and
+      (or xe ye)
+      (not (and xe ye)))))
+
+Examples:
+
+    (xor () ()) =&gt; ()
+    (xor t ()) =&gt; t
+    (xor () t) =&gt; t
+    (xor t t) =&gt; ()
+
+13) <span class="warning">mapn - like map, but takes n lists as arguments (map is faster)</span>
+------------------------------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">mapn</span> (f <span class="type">&amp;rest</span> xs)
+  `((<span class="keyword">lambda</span> (a xs)
+      (<span class="keyword">let</span> ((hs (map car xs)))
+        (self (cons (eval `(apply ,f ,@xs)) a) (cdr xs))
+        (reverse a))) <span class="warning">() ,xs))</span>
+
+<span class="comment-delimiter">;; </span><span class="comment">Warning: untested
+</span>
+14) <span class="warning">setq</span>
+
+(<span class="keyword">defmacro</span> <span class="function-name">setq</span> (<span class="type">&amp;rest</span> rest)
+  (<span class="keyword">lambda</span> (vars values)
+    `(mapn (<span class="keyword">lambda</span> (var value)
+             (set var value)) <span class="warning">,vars ,values)</span>
+    (map car vars)
+    (map cadr vars)))
+
+<span class="comment-delimiter">;; </span><span class="comment">Warning: untested
+</span>
+last
+nth
+equal
+pallindromep
+
+list
+member
+filter
+sort
+assoc
+defun(?)
+
+--
+Burton Samograd &lt;root@busfactor1.ca&gt;
+Copyright - 2016
+</pre>
+
+ </body>
+</html>
