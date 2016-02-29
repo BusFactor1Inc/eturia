@@ -35,6 +35,11 @@ All terms in the following text are (hopefully) defined before use.
 Listener
 --------
 
+There is no copy/pasting in Eturia.  To enter the code, it must be
+typed manually into the 'Listener'.  This way the code will flow
+through you and you have a better chance of learning the concepts as
+you go along and build your own language in Sigil.
+
 Like VI, but different:
 
 hjkl - move the cursor left, down, up, or right (h,j,k,l)
@@ -681,6 +686,8 @@ Examples:
     (pallindromep `(1 2 3)) => ()
     (pallindromep `(1 2 3 2 1)) => t
 
+ls
+lsf
 list
 member
 filter
