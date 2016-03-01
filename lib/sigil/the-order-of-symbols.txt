@@ -10,15 +10,6 @@
 The Order of Symbols
 --------------------
 
-The following is meant to be both an introduction and reference to
-Sigil, the Lisp that is used by Eturia.  You will find an explanation
-of syntax, followed by a brief explanation of Eturia, the Listener and
-Window Manager, followed by the list of builtins, and then a set of
-examples that can be followed along and typed into the Eturia
-Listener, which can be found at:
-
-    http://busfactor1.ca/bin/eturia/client/dev.html
-
 Lisp as a programming language is as Latin is to English or modern day
 Italian.  It is the second oldest high level computer language still
 in use, invented (or found) in the 1950's by John McCarthy and is the
@@ -29,6 +20,15 @@ a concrete thing, with all dialects looking similar, but behaving,
 sometimes, very differently.  And like any dialect of a language, it
 is malleable and modifiable, something which I will show you though
 this document as we build our language from base principals (axioms).
+
+The following is meant to be both an introduction and reference to
+Sigil, the Lisp that is used by Eturia.  You will find an explanation
+of syntax, followed by a brief explanation of Eturia, the Listener and
+Window Manager, followed by the list of builtins, and then a set of
+examples that can be followed along and typed into the Eturia
+Listener, which can be found at:
+
+    http://busfactor1.ca/bin/eturia/client/dev.html
 
 This paper is intended to follow the ideas of Guy Steele in his
 talk/paper 'Growing a language':
@@ -846,27 +846,29 @@ Exercises 4 - GPS (General Problem Solver)
 Exercises 5 - Boolean Propagator Networks
 =========================================
 
-====================
-Exercises 6 - Prolog
-====================
-
 ============================================================
 Mathematical Exercises 3 - A Calculus Differentiation Engine
 ============================================================
+
+====================
+Exercises 6 - Prolog
+====================
 
 ===============================
 Exercises 7 - A Prolog Compiler
 ===============================
 
+===============================================
+Mathmatical Exercises 4 - Multi-Core Ray Tracer
+===============================================
+
+========
 |DREAMS|
+========
 
 ===================================
 Exercise 8 - A (Simulated) RISC CPU
 ===================================
-
-===============================================
-Mathmatical Exercises 4 - Multi-Core Ray Tracer
-===============================================
 
 ====================================
 Exercises 9 - A (Simulated) Lisp CPU 
