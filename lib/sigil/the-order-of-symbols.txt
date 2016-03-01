@@ -603,6 +603,8 @@ Examples:
     (xor () t) => t
     (xor t t) => ()
 
+;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+
 13) mapn - like map, but takes n lists as arguments (map is faster)
 ------------------------------------------------------------------
 
@@ -611,8 +613,6 @@ Examples:
       (let ((hs (map car xs)))
         (self (cons (eval `(apply ,f ,@xs)) a) (cdr xs))
         (reverse a))) () ,xs))
-
-;; Warning: untested
 
 Examples:
 
@@ -627,8 +627,6 @@ Examples:
              (set var value)) ,vars ,values)
     (map car vars)
     (map cadr vars)))
-
-;; Warning: untested
 
 Examples:
 
