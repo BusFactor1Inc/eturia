@@ -10,14 +10,12 @@ The Order of Symbols
 
 The following is meant to be both an introduction and reference to
 Sigil, the Lisp that is used by Eturia.  You will find an explanation
-of syntax, followed by the list of builtins, followed by a brief
-explanation of the editor and then there is a set of examples that can
-be followed along and typed into the Eturia Listener, which can be
-found at:
+of syntax, followed by a brief explanation of the editor and window
+manager, followed by the list of builtins, and then there is a set of
+examples that can be followed along and typed into the Eturia
+Listener, which can be found at:
 
-    http://busfactor1.ca/bin/eturia
-
-To run Eturia, click 'Engage'.
+    http://busfactor1.ca/bin/eturia/client/dev.html
 
 Lisp as a language is as Latin is to English or modern day Italian.
 It is the second oldest computer language still in use, invented (or
@@ -68,6 +66,17 @@ Syntax
 
 The following is the syntax of Sigil:
 
+Numbers - a string of digits
+----------------------------
+
+Example:
+
+    1 is a number
+    100 is a number
+    3.141516 is a number
+    -3 is a number
+
+
 Symbol - a string of characters not containing '(', or ')'.
 -----------------------------------------------------------
 
@@ -79,16 +88,6 @@ Example:
     123x is a symbol
     a-longer-symbol is a symbol
     |a symbol with spaces| is a symbol
-
-
-Numbers - a string of digits
-----------------------------
-
-Example:
-
-    1 is a number
-    100 is a number
-    3.141516 is a number
 
 
 Comments - a string of characters up to a newline that is ignored
