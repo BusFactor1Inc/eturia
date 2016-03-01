@@ -81,16 +81,17 @@ the concepts as you go along and build your own language in Sigil.
 
 This 'Listener' is like Like VI, but a bit different:
 
-hjkl - move the cursor left, down, up, or right (h,j,k,l)
 i - insert mode, allows you to type overwrite text in the buffer
 ? - command mode, allows you to execute the following commands
     and break out of insert mode
+hjkl - move the cursor left, down, up, or right (h,j,k,l)
 e - evaluate lisp code
 z - clear the screen
 np - previous/next in history (experimental)
 
-To type characters use 'insert' (overwrite) mode by pressing 'i'. To
-'escape', press '?'.
+To type characters use 'insert' (overwrite) mode by pressing 'i'. You
+can tell when you are in 'insert' mode by the GREEN border around the
+console.  To 'escape' out of insert mode, press '?'.
 
 REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
 LISTENER.
@@ -810,33 +811,53 @@ assoc
 sort
 defun(?)
 
-=============================
-Exercies 2 - Phrase Generator
-=============================
+==============================================
+Mathematical Exercises 1 - Probablistic Primes
+==============================================
 
-========================
-Exercises 3 - Ray Tracer
-========================
+==============================
+Exercises 1 - Phrase Generator
+==============================
+
+=================================
+Exercises 2 - S-Expression Editor
+=================================
+
+====================================
+Mathmatical Exercises 2 - Ray Tracer
+====================================
 
 ==========================================
-Exercices 4 - GPS (General Problem Solver)
+Exercises 3 - GPS (General Problem Solver)
 ==========================================
 
 =========================================
-Exercises 5 - Boolean Propagator Networks
+Exercises 4 - Boolean Propagator Networks
 =========================================
 
 ====================
-Exercises 6 - Prolog
+Exercises 5 - Prolog
 ====================
 
+============================================================
+Mathematical Exercises 3 - A Calculus Differentiation Engine
+============================================================
+
 ===============================
-Exercises 7 - A Prolog Compiler
+Exercises 6 - A Prolog Compiler
 ===============================
 
-==================================
-Exercises x - A Simulated Lisp CPU 
-==================================
+===================================
+Exercise 7 - A (Simulated) RISC CPU
+===================================
+
+===============================================
+Mathmatical Exercises 8 - Multi-Core Ray Tracer
+===============================================
+
+====================================
+Exercises 9 - A (Simulated) Lisp CPU 
+====================================
 
 --
 This material is the result of many years of study and research, of
