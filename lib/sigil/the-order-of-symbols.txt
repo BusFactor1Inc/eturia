@@ -12,23 +12,23 @@ The Order of Symbols
 
 The following is meant to be both an introduction and reference to
 Sigil, the Lisp that is used by Eturia.  You will find an explanation
-of syntax, followed by a brief explanation Eturia, the Listener and
+of syntax, followed by a brief explanation of Eturia, the Listener and
 Window Manager, followed by the list of builtins, and then a set of
 examples that can be followed along and typed into the Eturia
 Listener, which can be found at:
 
     http://busfactor1.ca/bin/eturia/client/dev.html
 
-Lisp as a language is as Latin is to English or modern day Italian.
-It is the second oldest high level computer language still in use,
-invented (or found) in the 1950's by John McCarthy and is the most
-powerful and expressive programming language there is [citation
-needed].  Lisp comes in many shapes and forms and Sigil is not
+Lisp as a programming language is as Latin is to English or modern day
+Italian.  It is the second oldest high level computer language still
+in use, invented (or found) in the 1950's by John McCarthy and is the
+most powerful and expressive programming language there is [citation
+needed].  Lisp comes in many shapes and forms and Sigil is no
 different.  It is a 'dialect' of Lisp, as Lisp is more of an idea than
 a concrete thing, with all dialects looking similar, but behaving,
-sometimes, very differently.  And like any dialect of a langauge, it
-is malleable and modifiable, something which I hope to show you though
-this document as we build our language from base principals.
+sometimes, very differently.  And like any dialect of a language, it
+is malleable and modifiable, something which I will show you though
+this document as we build our language from base principals (axioms).
 
 This paper is intended to follow the ideas of Guy Steele in his
 talk/paper 'Growing a language':
@@ -803,25 +803,48 @@ Examples:
     (filter (lambda (x) (eq x 1)) `(1 2 3)) => (2 3)
     (filter (lambda (x) (or (eq x 1) (eq x 3)) `(1 2 3)) => (2)
 
+;; TO BE CONTINUED
+
 flatten
 assoc
 sort
 defun(?)
+
+=============================
+Exercies 2 - Phrase Generator
+=============================
+
 ========================
-Exercises 2 - Ray Tracer
+Exercises 3 - Ray Tracer
 ========================
 
 ==========================================
-Exercices 3 - GPS (General Problem Solver)
+Exercices 4 - GPS (General Problem Solver)
 ==========================================
+
+=========================================
+Exercises 5 - Boolean Propagator Networks
+=========================================
+
+====================
+Exercises 6 - Prolog
+====================
+
+===============================
+Exercises 7 - A Prolog Compiler
+===============================
+
+==================================
+Exercises x - A Simulated Lisp CPU 
+==================================
 
 --
-This material is the result of many years of study and research.  I
-have chosen to write it down both for myself and for others to benefit
-from it's knowledge.  It's opinions are all mine, built apon those I
-have admired in the past, knowingly or unknowningly.  I hope you find
-the material as useful and entertaining as I have writing it down and
-preparing it.
+This material is the result of many years of study and research, of
+both myself and others.  I have chosen to write it down both for
+myself and for others to benefit from it's knowledge.  It's opinions
+are all mine, built apon those I have admired in the past, knowingly
+or unknowningly.  I hope you find the material as useful and
+entertaining as I have writing it down and preparing it.
 
 Burton Samograd <root@busfactor1.ca>
 Copyright - 2016
