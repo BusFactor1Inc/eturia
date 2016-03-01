@@ -813,11 +813,70 @@ Examples:
     (pallindromep `(1 2 3)) =&gt; ()
     (pallindromep `(1 2 3 2 1)) =&gt; t
 
-ls
-lsf
-list
-member
-filter
+19) <span class="warning">ls - list the current environment, briefly</span>
+
+(<span class="keyword">defmacro</span> <span class="function-name">ls</span> ()
+  `(map car (env)))
+
+Examples:
+
+    (ls) =&gt; (t ...)
+
+20) <span class="warning">lsf - list the current function environment, briefly</span>
+
+(<span class="keyword">defmacro</span> <span class="function-name">ls</span> ()
+  `(map car (fenv)))
+
+Examples:
+
+    (lsf) =&gt; (atom eval ...)
+
+21) <span class="warning">list - create a proper list of all arguments</span>
+
+(<span class="keyword">defmacro</span> <span class="function-name">list</span> (<span class="type">&amp;rest</span> rest)
+  `(<span class="keyword">lambda</span> (rest)
+     rest) <span class="warning">,@rest)</span>
+
+Example:
+
+    (list `a `b `c) =&gt; (a b c)
+    (list 1 2 3) =&gt; (1 2 3)
+
+22) <span class="warning">member - see if something is in a list</span>
+
+(<span class="keyword">defmacro</span> <span class="function-name">member</span> (x l <span class="type">&amp;rest</span> test)
+  `(<span class="keyword">let</span> ((t (<span class="keyword">if</span> ,test ,test eq)))
+     (<span class="keyword">lambda</span> (x l)
+       (<span class="keyword">if</span> l
+           (<span class="keyword">if</span> (t x (car l))
+               l
+               (self x (cdr l)))
+           ())) <span class="warning">,x ,l))</span>
+
+Example:
+
+    (member 1 `(1 2 3)) =&gt; (1 2 3)
+    (member 3 `(1 2 3)) =&gt; (3)
+    (member 4 `(1 2 3)) =&gt; ()
+    (member `(1 2 3) `(a b c (1 2 3))) =&gt; ()
+    (member `(1 2 3) `(a b c (1 2 3)) equal) =&gt; ((1 2 3))  
+
+
+23) <span class="warning">filter - remove elements from a list based on a predicate</span>
+
+(<span class="keyword">defun</span> <span class="function-name">filter</span> (f l)
+  `((<span class="keyword">lambda</span> (l a)
+      (<span class="keyword">if</span> l
+          (<span class="keyword">if</span> (,f (car l))
+              (self (cdr l) (cons (car l) a))
+              (self (cdr l) a))
+          (reverse a))) <span class="warning">,l))</span>
+
+Examples:
+
+    (filter (<span class="keyword">lambda</span> (x) (eq x 1)) `(1 2 3)) =&gt; (2 3)
+    (filter (<span class="keyword">lambda</span> (x) (or (eq x 1) (eq x 3)) `(1 2 3)) =&gt; (2)
+
 flatten
 assoc
 sort
