@@ -127,6 +127,8 @@ span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretc
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;; </span><span class="comment">Note: Click in the title bar of the '</span><span class="constant">Listener</span><span class="comment">' window to type in it
 </span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS
+</span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;; </span><span class="comment">Problems? Email root@busfactor1.ca
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span>
@@ -135,19 +137,25 @@ The Order of Symbols
 
 The following is meant to be both an introduction and reference to
 Sigil, the Lisp that is used by Eturia.  You will find an explanation
-of syntax, followed by a brief explanation of the editor and window
-manager, followed by the list of builtins, and then there is a set of
+of syntax, followed by a brief explanation Eturia, the Listener and
+Window Manager, followed by the list of builtins, and then a set of
 examples that can be followed along and typed into the Eturia
 Listener, which can be found at:
 
     http://busfactor1.ca/bin/eturia/client/dev.html
 
 Lisp as a language is as Latin is to English or modern day Italian.
-It is the second oldest computer language still in use, invented (or
-found) <span class="warning">in the 1950's by John McCarthy and is the most powerful and</span>
-expressive programming language there is [citation needed].
+It is the second oldest high level computer language still in use,
+invented (or found) in the 1950's by John McCarthy and is the most
+powerful and expressive programming language there is [citation
+needed].  Lisp comes in many shapes and forms and Sigil is not
+different.  It is a '<span class="constant">dialect</span>' of Lisp, as Lisp is more of an idea than
+a concrete thing, with all dialects looking similar, but behaving,
+sometimes, very differently.  And like any dialect of a langauge, it
+is malleable and modifiable, something which I hope to show you though
+this document as we build our language from base principals.
 
-This paper is meant to follow the ideas of Guy Steele in his
+This paper is intended to follow the ideas of Guy Steele in his
 talk/paper 'Growing a language':
 
     https://www.cs.virginia.edu/~evans/cs655/readings/steele.pdf
@@ -170,7 +178,23 @@ The main desire of the reader should be to learn to program.  This is
 not a traditional programming course in any way and will teach you
 little on how to get a job as a programmer.  But knowing what this
 course will teach you will benefit you for as long as you act as a
-programmer during your life.
+programmer during your life [citation needed].
+
+Eturia
+------
+
+Euturia is a (similated) computer for Computer Science Education.  It
+is designed to be simple and limited, perfect for teaching and
+learning with few distractions.  Although probably unfamiliar at
+first, it's spartan interface can be quickly learned by any newcomer
+with its few and simple commands. Finally, it runs in a Web browser,
+so it is accessable from any location with an internet connection.
+
+The current version of Eturia can always be found at:
+
+    http://busfactor1.ca/bin/eturia
+
+along with videos and other information about the project.
 
 The Listener
 ------------
@@ -549,9 +573,9 @@ THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 Example: (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
 
 
-=========
-Exercises
-=========
+========================
+Exercises 1 - The Basics
+========================
 
 The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia '<span class="constant">Listener</span>' console.  The '<span class="constant">Examples</span>'
@@ -908,6 +932,13 @@ flatten
 assoc
 sort
 defun(?)
+========================
+Exercises 2 - Ray Tracer
+========================
+
+==========================================
+Exercices 3 - GPS (General Problem Solver)
+==========================================
 
 --
 This material is the result of many years of study and research.  I
@@ -921,7 +952,7 @@ Burton Samograd &lt;root@busfactor1.ca&gt;
 Copyright - 2016
 
 Yes, copyright.  If you wish to reproduce any of this work, please ask
-my permission first.  That is all.
+my permission first.  Linking is fine.  That is all.
 </pre>
 
  </body>
