@@ -448,9 +448,9 @@ THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 Example: (me (cadr `(1 2 3))) => (car (cdr `(1 2 3)))
 
 
-=========
-Exercises
-=========
+========================
+Exercises 1 - The Basics
+========================
 
 The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia 'Listener' console.  The 'Examples'
@@ -807,6 +807,13 @@ flatten
 assoc
 sort
 defun(?)
+========================
+Exercises 2 - Ray Tracer
+========================
+
+==========================================
+Exercices 3 - GPS (General Problem Solver)
+==========================================
 
 --
 This material is the result of many years of study and research.  I
