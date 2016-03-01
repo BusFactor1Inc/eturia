@@ -688,11 +688,70 @@ Examples:
     (pallindromep `(1 2 3)) => ()
     (pallindromep `(1 2 3 2 1)) => t
 
-ls
-lsf
-list
-member
-filter
+19) ls - list the current environment, briefly
+
+(defmacro ls ()
+  `(map car (env)))
+
+Examples:
+
+    (ls) => (t ...)
+
+20) lsf - list the current function environment, briefly
+
+(defmacro ls ()
+  `(map car (fenv)))
+
+Examples:
+
+    (lsf) => (atom eval ...)
+
+21) list - create a proper list of all arguments
+
+(defmacro list (&rest rest)
+  `(lambda (rest)
+     rest) ,@rest)
+
+Example:
+
+    (list `a `b `c) => (a b c)
+    (list 1 2 3) => (1 2 3)
+
+22) member - see if something is in a list
+
+(defmacro member (x l &rest test)
+  `(let ((t (if ,test ,test eq)))
+     (lambda (x l)
+       (if l
+           (if (t x (car l))
+               l
+               (self x (cdr l)))
+           ())) ,x ,l))
+
+Example:
+
+    (member 1 `(1 2 3)) => (1 2 3)
+    (member 3 `(1 2 3)) => (3)
+    (member 4 `(1 2 3)) => ()
+    (member `(1 2 3) `(a b c (1 2 3))) => ()
+    (member `(1 2 3) `(a b c (1 2 3)) equal) => ((1 2 3))  
+
+
+23) filter - remove elements from a list based on a predicate
+
+(defun filter (f l)
+  `((lambda (l a)
+      (if l
+          (if (,f (car l))
+              (self (cdr l) (cons (car l) a))
+              (self (cdr l) a))
+          (reverse a))) ,l))
+
+Examples:
+
+    (filter (lambda (x) (eq x 1)) `(1 2 3)) => (2 3)
+    (filter (lambda (x) (or (eq x 1) (eq x 3)) `(1 2 3)) => (2)
+
 flatten
 assoc
 sort
