@@ -58,7 +58,7 @@ programmer during your life [citation needed].
 Eturia
 ------
 
-Euturia is a (similated) computer for Computer Science Education.  It
+Eturia is a (similated) computer for Computer Science Education.  It
 is designed to be simple and limited, perfect for teaching and
 learning with few distractions.  Although probably unfamiliar at
 first, it's spartan interface can be quickly learned by any newcomer
@@ -448,10 +448,9 @@ THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 
 Example: (me (cadr `(1 2 3))) => (car (cdr `(1 2 3)))
 
-
-========================
-Exercises 1 - The Basics
-========================
+============
+|The Basics|
+============
 
 The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia 'Listener' console.  The 'Examples'
@@ -811,6 +810,10 @@ assoc
 sort
 defun(?)
 
+==========
+|THE MIDS|
+==========
+
 ==============================================
 Mathematical Exercises 1 - Probablistic Primes
 ==============================================
@@ -823,20 +826,28 @@ Exercises 1 - Phrase Generator
 Exercises 2 - S-Expression Editor
 =================================
 
+==================
+Exercises 3 - Life
+==================
+
 ====================================
 Mathmatical Exercises 2 - Ray Tracer
 ====================================
 
 ==========================================
-Exercises 3 - GPS (General Problem Solver)
+Exercises 4 - GPS (General Problem Solver)
 ==========================================
 
+==============
+|THE ADVANCED|
+==============
+
 =========================================
-Exercises 4 - Boolean Propagator Networks
+Exercises 5 - Boolean Propagator Networks
 =========================================
 
 ====================
-Exercises 5 - Prolog
+Exercises 6 - Prolog
 ====================
 
 ============================================================
@@ -844,20 +855,26 @@ Mathematical Exercises 3 - A Calculus Differentiation Engine
 ============================================================
 
 ===============================
-Exercises 6 - A Prolog Compiler
+Exercises 7 - A Prolog Compiler
 ===============================
 
+|DREAMS|
+
 ===================================
-Exercise 7 - A (Simulated) RISC CPU
+Exercise 8 - A (Simulated) RISC CPU
 ===================================
 
 ===============================================
-Mathmatical Exercises 8 - Multi-Core Ray Tracer
+Mathmatical Exercises 4 - Multi-Core Ray Tracer
 ===============================================
 
 ====================================
 Exercises 9 - A (Simulated) Lisp CPU 
 ====================================
+
+================================================
+Exercises 10 - A (Multi-Core Simulated) Lisp CPU 
+================================================
 
 --
 This material is the result of many years of study and research, of
