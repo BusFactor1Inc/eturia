@@ -135,14 +135,12 @@ The Order of Symbols
 
 The following is meant to be both an introduction and reference to
 Sigil, the Lisp that is used by Eturia.  You will find an explanation
-of syntax, followed by the list of builtins, followed by a brief
-explanation of the editor and then there is a set of examples that can
-be followed along and typed into the Eturia Listener, which can be
-found at:
+of syntax, followed by a brief explanation of the editor and window
+manager, followed by the list of builtins, and then there is a set of
+examples that can be followed along and typed into the Eturia
+Listener, which can be found at:
 
-    http://busfactor1.ca/bin/eturia
-
-To run Eturia, click '<span class="constant">Engage</span>'.
+    http://busfactor1.ca/bin/eturia/client/dev.html
 
 Lisp as a language is as Latin is to English or modern day Italian.
 It is the second oldest computer language still in use, invented (or
@@ -161,9 +159,9 @@ Listener
 --------
 
 There is no copy/pasting in Eturia.  To enter the code, it must be
-typed manually into the '<span class="constant">Listener</span>'.  This way the code will flow
-through you and you have a better chance of learning the concepts as
-you go along and build your own language in Sigil.
+typed manually into the '<span class="constant">Listener</span>'.  This way the code will go through
+your fingers and your brain, giving you a better chance of learning
+the concepts as you go along and build your own language in Sigil.
 
 This '<span class="constant">Listener</span>' is like Like VI, but a bit different:
 
@@ -193,6 +191,17 @@ Syntax
 
 The following is the syntax of Sigil:
 
+Numbers - a string of digits
+----------------------------
+
+Example:
+
+    1 is a number
+    100 is a number
+    3.141516 is a number
+    -3 is a number
+
+
 Symbol - a string of characters not containing '(', or ')'.
 -----------------------------------------------------------
 
@@ -204,16 +213,6 @@ Example:
     123x is a symbol
     a-longer-symbol is a symbol
     |a symbol with spaces| is a symbol
-
-
-Numbers - a string of digits
-----------------------------
-
-Example:
-
-    1 is a number
-    100 is a number
-    3.141516 is a number
 
 
 Comments - a string of characters up to a newline that is ignored
@@ -728,6 +727,8 @@ Examples:
     (xor () t) =&gt; t
     (xor t t) =&gt; ()
 
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+</span>
 13) <span class="warning">mapn - like map, but takes n lists as arguments (map is faster)</span>
 ------------------------------------------------------------------
 
@@ -737,8 +738,6 @@ Examples:
         (self (cons (eval `(apply ,f ,@xs)) a) (cdr xs))
         (reverse a))) <span class="warning">() ,xs))</span>
 
-<span class="comment-delimiter">;; </span><span class="comment">Warning: untested
-</span>
 Examples:
 
     (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(1 2 3) `(1 2 3)) =&gt; (2 4 6)
@@ -753,8 +752,6 @@ Examples:
     (map car vars)
     (map cadr vars)))
 
-<span class="comment-delimiter">;; </span><span class="comment">Warning: untested
-</span>
 Examples:
 
     (setq x 1) =&gt; 1
