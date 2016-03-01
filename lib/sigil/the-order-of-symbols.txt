@@ -30,6 +30,17 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
+Intended Audience
+-----------------
+
+This work is intended for both beginners and professionals alike.  For
+beginners, if they work through the exercies, should gain an
+understanding for all of the code and exercises given, with a little
+thought.  Professionals may benefit in the same way, finding the
+material refreshing over the typical code chaos one might see at work,
+while learning something new and, hopefully, interesting: programming
+language design and implementation.
+
 Listener
 --------
 
