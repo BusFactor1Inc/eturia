@@ -41,8 +41,14 @@ material refreshing over the typical code chaos one might see at work,
 while learning something new and, hopefully, interesting: programming
 language design and implementation.
 
-Listener
---------
+The main desire of the reader should be to learn to program.  This is
+not a traditional programming course in any way and will teach you
+little on how to get a job as a programmer.  But knowing what this
+course will teach you will benefit you for as long as you act as a
+programmer during your life.
+
+The Listener
+------------
 
 There is no copy/pasting in Eturia.  To enter the code, it must be
 typed manually into the 'Listener'.  This way the code will go through
@@ -779,5 +785,15 @@ sort
 defun(?)
 
 --
+This material is the result of many years of study and research.  I
+have chosen to write it down both for myself and for others to benefit
+from it's knowledge.  It's opinions are all mine, built apon those I
+have admired in the past, knowingly or unknowningly.  I hope you find
+the material as useful and entertaining as I have writing it down and
+preparing it.
+
 Burton Samograd <root@busfactor1.ca>
 Copyright - 2016
+
+Yes, copyright.  If you wish to reproduce any of this work, please ask
+my permission first.  That is all.
