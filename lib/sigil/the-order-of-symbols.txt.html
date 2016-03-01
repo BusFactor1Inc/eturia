@@ -155,8 +155,25 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
-Listener
---------
+Intended Audience
+-----------------
+
+This work is intended for both beginners and professionals alike.  For
+beginners, if they work through the exercies, should gain an
+understanding for all of the code and exercises given, with a little
+thought.  Professionals may benefit in the same way, finding the
+material refreshing over the typical code chaos one might see at work,
+while learning something new and, hopefully, interesting: programming
+language design and implementation.
+
+The main desire of the reader should be to learn to program.  This is
+not a traditional programming course in any way and will teach you
+little on how to get a job as a programmer.  But knowing what this
+course will teach you will benefit you for as long as you act as a
+programmer during your life.
+
+The Listener
+------------
 
 There is no copy/pasting in Eturia.  To enter the code, it must be
 typed manually into the '<span class="constant">Listener</span>'.  This way the code will go through
@@ -228,11 +245,14 @@ List - build lists
 
 Example:
 
-    (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3
+    () <span class="comment">; the empty list
+</span>    (1) <span class="comment">; a '</span><span class="constant">proper</span><span class="comment">' list containing the digit 1
+</span>    (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3</span><span class="comment">
+</span>    (1 2 3 . ()) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3</span><span class="comment">
 </span>    (1 . 2) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the digits 1 and 2
 </span>
-A proper list has () as its last element.
-An improper list does not.
+A proper list has () as its last element it is just not normally
+shown.  An improper list does not.
 
 Quoting - stops evaluation
 --------------------------
@@ -269,7 +289,17 @@ Example:
 
 NOTE: SYMBOLS AND NUMBERS ARE ALSO KNOWN AS ATOMS.
 
-Booleans - () is false, everything else is true
+ -------------------------------------------------
+| Booleans - () is false, everything else is true |
+ -------------------------------------------------
+
+As in most languages, Sigil has the idea of booleans, true and false.
+In this case, the empty list, () is '<span class="constant">false</span>' and everything else is
+'<span class="constant">true</span>'.  A special symbol 't' is defined to represent truth when
+needed, but is not required to be used.
+
+Functions that are meant to return either a true or false value are
+known as '<span class="constant">predicates</span>'.
 
 Builtins
 ========
@@ -880,8 +910,18 @@ sort
 defun(?)
 
 --
+This material is the result of many years of study and research.  I
+have chosen to write it down both for myself and for others to benefit
+from it's knowledge.  It's opinions are all mine, built apon those I
+have admired in the past, knowingly or unknowningly.  I hope you find
+the material as useful and entertaining as I have writing it down and
+preparing it.
+
 Burton Samograd &lt;root@busfactor1.ca&gt;
 Copyright - 2016
+
+Yes, copyright.  If you wish to reproduce any of this work, please ask
+my permission first.  That is all.
 </pre>
 
  </body>
