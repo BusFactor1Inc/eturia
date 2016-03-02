@@ -1,7 +1,7 @@
 x.runApplication({ app: "image",
                    appOptions: {
-                       title: "Eturia Logo",
-                       uri: "images/eturia.png",
+                       title: "Source: https://twitter.com/archillect/status/704876401904783360",
+                       uri: "images/Ccg5WfWW8AAe3pz.jpg"
                    },
                    style: {
                        left: "845px"

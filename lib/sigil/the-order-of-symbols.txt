@@ -656,7 +656,23 @@ Examples:
     (xor () t) => t
     (xor t t) => ()
 
+
 ;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+
+13) length - return the length of a list
+----------------------------------------
+
+(defmacro length (l)
+  `((lambda (l n)
+      (if l
+          (self (cdr l) (+ n 1))
+          n)) ,l))
+
+Examples:
+
+    (length ()) => 0
+    (length `(1 2 3)) => 3
+    (length `((1 2 3) a b c)) => 4
 
 13) mapn - like map, but takes n lists as arguments (map is faster)
 ------------------------------------------------------------------
@@ -805,8 +821,13 @@ Examples:
 
 ;; TO BE CONTINUED
 
-assoc
 
+push
+pop
+shift
+unshift
+rotate n
+assoc
 flatten
 sort
 defun(?)
