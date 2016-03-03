@@ -1,17 +1,36 @@
 ;; -*- mode: lisp -*-
 ;;
-;; "...there once existed a language which perfectly and unambiguously
-;; expressed the essence of all possible things and concepts..."
-;;
-;;     -- Umberto Eco - The Search for the Perfect Language
 ;;
 ;; Questions, comments or problems? Email root@busfactor1.ca
 ;;
 ;; WORK IN PROGRESS
 ;;
 
-The Order of Symbols
---------------------
+===============================================================================
+===============================================================================
+
+                        ======================
+                        |The Order of Symbols|
+                        ======================
+
+ "...there once existed a language which perfectly and unambiguously
+    expressed the essence of all possible things and concepts..."
+
+        -- Umberto Eco - /The Search for the Perfect Language/
+
+   "Most good programmers do programming not because they expect to
+  get paid or get adulation by the public, but because it is fun to
+                              program."
+
+                          -- Linus Torvalds
+
+        "Computers are good at following instructions, but not
+                        at reading your mind."
+
+                           -- Donald Knuth
+
+===============================================================================
+===============================================================================
 
 Lisp as a computer programming language is as Latin is to English or
 modern day Italian.  It is the second oldest high level computer
@@ -111,6 +130,7 @@ Window Manager
 --------------
 
     - click in title bar to focus window
+    - click and drag in title bar to move window
     - middle click in title bar to remove window
 
 ======
@@ -355,7 +375,7 @@ Example:
 
 Sometimes it is convenient to create a shortcut to certain values,
 known as a variable. 'set' can be used to create or change the values
-of variables.
+of symbols in the variable namespace.
 
 Example:
 
@@ -386,6 +406,9 @@ Example:
 
 9) self - the current function that is executing, used for recursion
 ---------------------------------------------------------------------
+
+"To iterate is human, to recurse divine."
+  -- L. Peter Deutsch
 
 Recursion is a fundamental concept used for looping, or doing
 something more than once.  To count the number of elements in a list,
@@ -454,9 +477,14 @@ Example:
 Define a symbol in the function namespace that when called, like a
 function, has it's body executed which is to return 'code' that is
 then executed.  This is in contrary to regular functions that can
-return anything.  Macros are a powerful tool that give Lisp it's
-power.  There are many examples that follow that use defmacro, so
-study them carefully to understand it's use.
+return anything.  Macros are a powerful tool that give Lisp it's power
+and allow you to grow the language in a way that is no different than
+adding primitives to itself, but on 'top' of the language rather than
+from the 'bottom'.
+
+
+There are many examples that follow that use defmacro, so study them
+carefully to understand it's use.
 
 14) + - addition, sum
 ---------------------
@@ -538,9 +566,31 @@ debugging.
 
 Example: (me (cadr `(1 2 3))) => (car (cdr `(1 2 3)))
 
-============
-|The Basics|
-============
+===============================================================================
+===============================================================================
+
+                             ============
+                             |The Basics|
+                             ============
+
+
+    "..an individual's thoughts and actions are determined by the
+                             language.."
+
+                    -- The Sapir-Whorf Hypothesis
+   
+            "Lisp is a programmable programming language."
+
+                           -- John Foderaro
+
+                  "Talk is cheap. Show me the code."
+
+                          -- Linus Torvalds
+
+
+===============================================================================
+===============================================================================
+
 
 The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia 'Listener' console.  The 'Examples'
@@ -935,15 +985,29 @@ rmf - remove a macro from the function environment
 
 Example:
 
-    (defmacro double (x) `(+ x x)) => (macro (x) `(+ ,x ,x))
+    (defmacro double (x) `(+ ,x ,x)) => (macro (x) `(+ ,x ,x))
     (double 2) => 4
     (rmf `double) => (macro (x) `(+ ,x ,x))
-    (rm `double) => (lambda (x) (+ x x))
     (double 2) => ; Error, undefined function
 
-==========
-|THE MIDS|
-==========
+===============================================================================
+===============================================================================
+
+                              ==========
+                              |THE MIDS|
+                              ==========
+
+       "Because language is the carrier of ideas, it is easy to
+   believe that it should be very little else than such a carrier."
+
+                           -- Louise Bogan
+
+          "Lisp isn't a language, it's a building material."
+
+                              - Alan Kay
+
+===============================================================================
+===============================================================================
 
 =======================
 Exercises 0 - TODO List
@@ -987,9 +1051,19 @@ Exercises 4 - GPS (General Problem Solver)
 Exercises 5 - A (Simulated) Arbitrage Trading Bot
 =================================================
 
-==============
-|THE ADVANCED|
-==============
+===============================================================================
+===============================================================================
+
+                            ==============
+                            |THE ADVANCED|
+                            ==============
+
+                    "Language disguises thought."
+
+                        -- Ludwig Wittgenstein
+
+===============================================================================
+===============================================================================
 
 =========================================
 Exercises 6 - Boolean Propagator Networks
@@ -1011,9 +1085,19 @@ Exercises 8 - Prolog, a Logic Language
 Mathmatical Exercises 4 - Multi-Core Ray Tracer
 ===============================================
 
-========
-|DREAMS|
-========
+===============================================================================
+===============================================================================
+
+                               ========
+                               |DREAMS|
+                               ========
+
+                          "Mind has no end."
+
+                         -- K. David Harrison
+
+===============================================================================
+===============================================================================
 
 ===================================
 Exercise 9 - A (Simulated) RISC CPU
@@ -1032,12 +1116,12 @@ Exercises 11 - A Multi-Core (Simulated) Lisp CPU
 ================================================
 
 --
+
 This material is the result of many years of study and research, of
-both myself and others.  I have chosen to write it down both for
-myself and for others to benefit from it's knowledge.  It's opinions
-are all mine, built apon those I have admired in the past, knowingly
-or unknowningly.  I hope you find the material as useful and
-entertaining as I have writing it down and preparing it.
+both myself and others.  It's opinions are all mine, built apon
+those I have admired in the past, knowingly or unknowningly. I hope
+you find the material as useful and entertaining as I have writing it
+down and preparing it.
 
 Burton Samograd <root@busfactor1.ca>
 Homepage: http://busfactor1.ca/old/old
@@ -1051,3 +1135,5 @@ All rights reserved.
 If you wish to reproduce this work, please ask my permission first.
 Fair use provisions apply.  The computer code contained in this
 document can be used for any purpose without restriction.
+
+

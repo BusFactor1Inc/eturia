@@ -17,10 +17,10 @@ span.keyword   { color: #00ffff;  font-family: monospace;  font-stretch: normal;
 span.keyword a { color: #00ffff;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
 span.warning   { color: #ffc0cb;  font-weight: 700;  font-family: monospace;  font-stretch: normal;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
 span.warning a { color: #ffc0cb;  font-weight: 700;  font-family: monospace;  font-stretch: normal;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
-span.string   { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
-span.string a { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
 span.constant   { color: #7fffd4;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
 span.constant a { color: #7fffd4;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.string   { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.string a { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
 span.comment   { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
 span.comment a { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
 span.comment-delimiter   { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
@@ -127,18 +127,37 @@ span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretc
 
 <pre><span class="comment-delimiter">;; </span><span class="comment">-*- mode: lisp -*-
 </span><span class="comment-delimiter">;;</span><span class="comment">
-</span><span class="comment-delimiter">;; </span><span class="comment">&quot;...there once existed a language which perfectly and unambiguously
-</span><span class="comment-delimiter">;; </span><span class="comment">expressed the essence of all possible things and concepts...&quot;
-</span><span class="comment-delimiter">;;</span><span class="comment">
-</span><span class="comment-delimiter">;;     </span><span class="comment">-- Umberto Eco - The Search for the Perfect Language</span><span class="comment">
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;; </span><span class="comment">Questions, comments or problems? Email root@busfactor1.ca
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span>
-The Order of Symbols
---------------------
+===============================================================================
+===============================================================================
+
+                        ======================
+                        |The Order of Symbols|
+                        ======================
+
+ <span class="string">&quot;...there once existed a language which perfectly and unambiguously
+    expressed the essence of all possible things and concepts...&quot;</span>
+
+        -- Umberto Eco - /The Search for the Perfect Language/
+
+   <span class="string">&quot;Most good programmers do programming not because they expect to
+  get paid or get adulation by the public, but because it is fun to
+                              program.&quot;</span>
+
+                          -- Linus Torvalds
+
+        <span class="string">&quot;Computers are good at following instructions, but not
+                        at reading your mind.&quot;</span>
+
+                           -- Donald Knuth
+
+===============================================================================
+===============================================================================
 
 Lisp as a computer programming language is as Latin is to English or
 modern day Italian.  It is the second oldest high level computer
@@ -238,6 +257,7 @@ Window Manager
 --------------
 
     - click in title bar to focus window
+    - click and drag in title bar to move window
     - middle click in title bar to remove window
 
 ======
@@ -482,7 +502,7 @@ Example:
 
 Sometimes it is convenient to create a shortcut to certain values,
 known as a variable. '<span class="constant">set</span>' can be used to create or change the values
-of variables.
+of symbols in the variable namespace.
 
 Example:
 
@@ -513,6 +533,9 @@ Example:
 </span>
 9) <span class="warning">self - the current function that is executing, used for recursion</span>
 ---------------------------------------------------------------------
+
+<span class="string">&quot;To iterate is human, to recurse divine.&quot;</span>
+  -- L. Peter Deutsch
 
 Recursion is a fundamental concept used for looping, or doing
 something more than once.  To count the number of elements in a list,
@@ -581,9 +604,14 @@ Example:
 Define a symbol in the function namespace that when called, like a
 function, has it's body executed which is to return '<span class="constant">code</span>' that is
 then executed.  This is in contrary to regular functions that can
-return anything.  Macros are a powerful tool that give Lisp it's
-power.  There are many examples that follow that use defmacro, so
-study them carefully to understand it's use.
+return anything.  Macros are a powerful tool that give Lisp it's power
+and allow you to grow the language in a way that is no different than
+adding primitives to itself, but on '<span class="constant">top</span>' of the language rather than
+from the '<span class="constant">bottom</span>'.
+
+
+There are many examples that follow that use defmacro, so study them
+carefully to understand it's use.
 
 14) <span class="warning">+ - addition, sum</span>
 ---------------------
@@ -665,9 +693,31 @@ debugging.
 
 Example: (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
 
-============
-|The Basics|
-============
+===============================================================================
+===============================================================================
+
+                             ============
+                             |The Basics|
+                             ============
+
+
+    <span class="string">&quot;..an individual's thoughts and actions are determined by the
+                             language..&quot;</span>
+
+                    -- The Sapir-Whorf Hypothesis
+   
+            <span class="string">&quot;Lisp is a programmable programming language.&quot;</span>
+
+                           -- John Foderaro
+
+                  <span class="string">&quot;Talk is cheap. Show me the code.&quot;</span>
+
+                          -- Linus Torvalds
+
+
+===============================================================================
+===============================================================================
+
 
 The following exercies build upon the primitives defined above and are
 meant to be typed into the Eturia '<span class="constant">Listener</span>' console.  The '<span class="constant">Examples</span>'
@@ -1062,15 +1112,29 @@ rmf - remove a macro from the function environment
 
 Example:
 
-    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ x x)) =&gt; (macro (x) `(+ ,x ,x))
+    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
     (double 2) =&gt; 4
     (rmf `double) =&gt; (macro (x) `(+ ,x ,x))
-    (rm `double) =&gt; (<span class="keyword">lambda</span> (x) (+ x x))
     (double 2) =&gt; <span class="comment">; Error, undefined function
 </span>
-==========
-|THE MIDS|
-==========
+===============================================================================
+===============================================================================
+
+                              ==========
+                              |THE MIDS|
+                              ==========
+
+       <span class="string">&quot;Because language is the carrier of ideas, it is easy to
+   believe that it should be very little else than such a carrier.&quot;</span>
+
+                           -- Louise Bogan
+
+          <span class="string">&quot;Lisp isn't a language, it's a building material.&quot;</span>
+
+                              - Alan Kay
+
+===============================================================================
+===============================================================================
 
 =======================
 Exercises 0 - TODO List
@@ -1114,9 +1178,19 @@ Exercises 4 - GPS (General Problem Solver)
 Exercises 5 - A (Simulated) Arbitrage Trading Bot
 =================================================
 
-==============
-|THE ADVANCED|
-==============
+===============================================================================
+===============================================================================
+
+                            ==============
+                            |THE ADVANCED|
+                            ==============
+
+                    <span class="string">&quot;Language disguises thought.&quot;</span>
+
+                        -- Ludwig Wittgenstein
+
+===============================================================================
+===============================================================================
 
 =========================================
 Exercises 6 - Boolean Propagator Networks
@@ -1138,9 +1212,19 @@ Exercises 8 - Prolog, a Logic Language
 Mathmatical Exercises 4 - Multi-Core Ray Tracer
 ===============================================
 
-========
-|DREAMS|
-========
+===============================================================================
+===============================================================================
+
+                               ========
+                               |DREAMS|
+                               ========
+
+                          <span class="string">&quot;Mind has no end.&quot;</span>
+
+                         -- K. David Harrison
+
+===============================================================================
+===============================================================================
 
 ===================================
 Exercise 9 - A (Simulated) RISC CPU
@@ -1159,12 +1243,12 @@ Exercises 11 - A Multi-Core (Simulated) Lisp CPU
 ================================================
 
 --
+
 This material is the result of many years of study and research, of
-both myself and others.  I have chosen to write it down both for
-myself and for others to benefit from it's knowledge.  It's opinions
-are all mine, built apon those I have admired in the past, knowingly
-or unknowningly.  I hope you find the material as useful and
-entertaining as I have writing it down and preparing it.
+both myself and others.  It's opinions are all mine, built apon
+those I have admired in the past, knowingly or unknowningly. I hope
+you find the material as useful and entertaining as I have writing it
+down and preparing it.
 
 Burton Samograd &lt;root@busfactor1.ca&gt;
 Homepage: http://busfactor1.ca/old/old
@@ -1178,6 +1262,8 @@ All rights reserved.
 If you wish to reproduce this work, please ask my permission first.
 Fair use provisions apply.  The computer code contained in this
 document can be used for any purpose without restriction.
+
+
 </pre>
 
  </body>
