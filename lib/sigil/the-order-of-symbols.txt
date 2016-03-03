@@ -1,8 +1,14 @@
 ;; -*- mode: lisp -*-
 ;;
+;; "...there once existed a language which perfectly and unambiguously
+;; expressed the essence of all possible things and concepts..."
+;;
+;;     -- Umberto Eco - The Search for the Perfect Language
+;;
 ;; Questions, comments or problems? Email root@busfactor1.ca
 ;;
 ;; WORK IN PROGRESS
+;;
 
 The Order of Symbols
 --------------------
