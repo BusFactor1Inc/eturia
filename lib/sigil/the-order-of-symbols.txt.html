@@ -17,6 +17,8 @@ span.keyword   { color: #00ffff;  font-family: monospace;  font-stretch: normal;
 span.keyword a { color: #00ffff;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
 span.warning   { color: #ffc0cb;  font-weight: 700;  font-family: monospace;  font-stretch: normal;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
 span.warning a { color: #ffc0cb;  font-weight: 700;  font-family: monospace;  font-stretch: normal;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.string   { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.string a { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
 span.constant   { color: #7fffd4;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
 span.constant a { color: #7fffd4;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
 span.comment   { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
@@ -125,12 +127,9 @@ span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretc
 
 <pre><span class="comment-delimiter">;; </span><span class="comment">-*- mode: lisp -*-
 </span><span class="comment-delimiter">;;</span><span class="comment">
-</span><span class="comment-delimiter">;; </span><span class="comment">Note: Click in the title bar of the '</span><span class="constant">Listener</span><span class="comment">' window to type in it
+</span><span class="comment-delimiter">;; </span><span class="comment">Questions, comments or problems? Email root@busfactor1.ca
 </span><span class="comment-delimiter">;;</span><span class="comment">
-</span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS
-</span><span class="comment-delimiter">;;</span><span class="comment">
-</span><span class="comment-delimiter">;; </span><span class="comment">Problems? Email root@busfactor1.ca
-</span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS</span><span class="comment">
 </span>
 The Order of Symbols
 --------------------
@@ -163,6 +162,7 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
+
 Intended Audience
 -----------------
 
@@ -180,6 +180,12 @@ little on how to get a job as a programmer.  But knowing what this
 course will teach you will benefit you for as long as you act as a
 programmer during your life [citation needed].
 
+This course assumes a basic understanding of arithmetic and algebra,
+along with the idea that a computer is something that simply follows
+the instructions that they are told, nothing more.  As Picasso
+noted, <span class="string">&quot;Computers...they can only give you answers.&quot;</span>
+
+
 Eturia
 ------
 
@@ -195,6 +201,7 @@ The current version of Eturia can always be found at:
     http://busfactor1.ca/bin/eturia
 
 along with videos and other information about the project.
+
 
 The Listener
 ------------
@@ -265,28 +272,34 @@ Example:
     <span class="comment">; this is a comment
 </span>
 
+Quoting - stops evaluation
+--------------------------
+
+Example:
+1 =&gt; 1
+`1 =&gt; 1
+x =&gt; <span class="comment">; Error, undefined symbol
+</span>`x =&gt; x
+(1 2 3) =&gt; <span class="comment">; Error, undefined function
+</span>`(1 2 3) =&gt; (1 2 3)
+
+
 List - build lists
 ------------------
 
 Example:
 
-    () <span class="comment">; the empty list
-</span>    (1) <span class="comment">; a '</span><span class="constant">proper</span><span class="comment">' list containing the digit 1
-</span>    (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3</span><span class="comment">
-</span>    (1 2 3 . ()) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3</span><span class="comment">
-</span>    (1 . 2) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the digits 1 and 2
+    `() =&gt; ()<span class="comment">; the empty list
+</span>    `(1) =&gt; (1) <span class="comment">; a '</span><span class="constant">proper</span><span class="comment">' list containing the digit 1
+</span>    `(1 . ()) =&gt; (1) <span class="comment">; a '</span><span class="constant">proper</span><span class="comment">' list containing the digit 1</span><span class="comment">
+</span>    `(1 2 3) =&gt; (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3</span><span class="comment">
+</span>    `(1 2 3 . ()) =&gt; (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3
+</span>    `(1 . 2) =&gt; (1 . 2) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the digits 1 and 2</span><span class="comment">
+</span>    `(x . y) =&gt; (x . y) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the symbols x and y</span><span class="comment">
 </span>
-A proper list has () as its last element it is just not normally
-shown.  An improper list does not.
-
-Quoting - stops evaluation
---------------------------
-
-Example: 
-`1 =&gt; 1
-x =&gt; <span class="comment">; Error, undefined symbol
-</span>`x =&gt; x
-`(1 2 3) =&gt; (1 2 3)
+A proper list has () as its last element, and it is not normally
+shown.  An improper list does not have () as it's last element, and
+this is shown by preceeding the last element with a dot.
 
 
 Comma - evaulate inside of a quote
@@ -329,20 +342,54 @@ known as '<span class="constant">predicates</span>'.
 Builtins
 ========
 
-The following are the builtin commands for Sigil:
+The following are the builtin commands for Sigil.  
 
-1) <span class="warning">atom - a predicate to test if its argument is an atom (string, number, or ())</span>
----------------------------------------------------------------------------------
+Note: in the Examples, '<span class="constant">=&gt;</span>' means 'evaulates to' or 'the value of'.
+
+0) <span class="warning">quote - prevent evaluation</span>
+-----------------------------
+
+Evaluation means to 'give me the value of something', and to prevent
+the evauation of something means to just 'give me something'.
+Sometimes you want, in a list, to say 'just give me these things but
+give me the value of these other things', which can be done with ','
+and ',@'.
+
+Example:
+
+    1 =&gt; 1 <span class="comment">; 'give me the value of' 1
+</span>    `1 =&gt; 1 <span class="comment">; 'give me' 1
+</span>    x =&gt; <span class="comment">; 'give me the value of' x, error, as x has no value</span><span class="comment">
+</span>    `x =&gt; x <span class="comment">; 'give me' x</span><span class="comment">
+</span>    `(1 2 3) =&gt; (1 2 3) <span class="comment">; give me the list of digits 1, 2 and 3
+</span>
+    <span class="comment-delimiter">;; </span><span class="comment">ADVANCED, unquoting with ',' and splicing with ',@'
+</span>    (set `x 1) =&gt; 1 <span class="comment">; give x the value 1
+</span>    `(,x 2 3) =&gt; (1 2 3) <span class="comment">; evaluate inside of a quoted list with ,
+</span>    `(,@x 2 3) =&gt; (1 2 3) <span class="comment">; Error, cannot unquote '</span><span class="constant">splice</span><span class="comment">' a non-list
+</span>    (set `x `(1 2 3)) =&gt; (1 2 3) <span class="comment">; give x a value that is a list
+</span>    `(,x 2 3) =&gt; ((1 2 3) 2 3) <span class="comment">; unquote (evaulate) x with ,
+</span>    `(,@x 2 3) =&gt; (1 2 3 2 3) <span class="comment">; '</span><span class="constant">splice</span><span class="comment">' with ,@</span><span class="comment">
+</span>
+1) <span class="warning">atom - a predicate to test if its argument is an atom</span>
+--------------------------------------------------------
+
+Everything in Sigil is either an atom (symbol, number, or ()) or a
+list.
 
 Example:
 
     (atom t) =&gt; t
     (atom ()) =&gt; t
     (atom `x) =&gt; t
+    (atom 1) =&gt; t
     (atom `(1 2 3)) =&gt; ()
 
-2) <span class="warning">eq - a predicate to test if 2 atoms are equal</span>
-------------------------------------------------
+2) <span class="warning">eq - equality</span>
+----------------
+
+Atoms can be tested for equality using '<span class="constant">eq</span>'.
+
 Example:
 
     (eq t t) =&gt; t
@@ -352,20 +399,29 @@ Example:
     (eq `x `y) =&gt; ()
     (eq 1 1) =&gt; t
     (eq 1 2) =&gt; ()
-    (eq `(1 2 3) `(1 2 3)) =&gt; () <span class="comment">; notice!
+    (eq `(1 2 3) `(1 2 3)) =&gt; () <span class="comment">; notice! see '</span><span class="constant">equal</span><span class="comment">', below.
 </span>
 3) <span class="warning">cons - create a new list cell</span>
 --------------------------------
+
+A cons cell is a 2 element cell that has a head slot and an a tail
+slot.  The '<span class="constant">cons</span>' function allocates one of these cells and assigns
+the first argument to the head slot and the second argument to the
+tail slot.
 
 Example:
 
     (cons 1 ()) =&gt; (1)
     (cons `x ()) =&gt; (x)
-    (cons 1 2) =&gt; (1 . 2) <span class="comment">; notice! an improper list
-</span>    (cons (1 (cons 2 ()))) =&gt; (1 2) <span class="comment">; a proper list
+    (cons () ()) =&gt; (())
+    (cons `x `y) =&gt; (x . y) <span class="comment">; notice! an improper lis</span><span class="comment">t
+</span>    (cons 1 2) =&gt; (1 . 2) <span class="comment">; and again</span><span class="comment">
+</span>    (cons (1 (cons 2 ()))) =&gt; (1 2) <span class="comment">; making a proper list
 </span>
 4) <span class="warning">car - return the first element of a list</span>
 -------------------------------------------
+
+Take a list and return the head slot of its first cell.
 
 Example:
 
@@ -378,6 +434,8 @@ Example:
 5) <span class="warning">cdr - return everything but the first element of a list</span>
 ----------------------------------------------------------
 
+Take a list and return the tail slot of its first cell.
+
 Example:
 
     (cdr `(1 2 3)) =&gt; (2 3)
@@ -389,6 +447,14 @@ Example:
 6) <span class="warning">cond - conditional statement, execute tests until one returns not (),</span>
           and then execute the following statement
 ------------------------------------------------------------------------
+
+Cond is used to make decisions on what statements to execute.  It goes
+through it's arguments, excuting the each test, the first element of
+the argument, until one of them returns not (), after which it then
+excutes the statements following the test and returns the value of the
+last one.  You will often set 't' as the last test in a cond, meaning
+to always excute that set of statements if none of the previous tests
+pass.
 
 Example:
 
@@ -405,22 +471,12 @@ Example:
       (y `should-get-here)
       (t `wont-get-here)) <span class="warning">=&gt; should-get-here</span>
 
-7) <span class="warning">qquote - prevent evaluation of the argument, allowing for unquote</span>
-            and unquote splicing, normally abbreviated with `
---------------------------------------------------------------------
-
-Example:
-
-    `(1 2 3) =&gt; (1 2 3)
-    (set `x 1) =&gt; 1
-    `(,x 2 3) =&gt; (1 2 3) <span class="comment">; unquote with ,
-</span>    `(,@x 2 3) =&gt; (1 2 3) <span class="comment">; Error
-</span>    (set `x `(1 2 3)) =&gt; (1 2 3)
-    `(,x 2 3) =&gt; ((1 2 3) 2 3) <span class="comment">; unquote with ,
-</span>    `(,@x 2 3) =&gt; (1 2 3 2 3) <span class="comment">; unquote splice a list with ,@</span><span class="comment">
-</span>
-8) <span class="warning">set - assign a symbol a value (variables)</span>
+7) <span class="warning">set - assign a symbol a value (variables)</span>
 --------------------------------------------
+
+Sometimes it is convenient to create a shortcut to certain values,
+known as a variable. '<span class="constant">set</span>' can be used to create or change the values
+of variables.
 
 Example:
 
@@ -432,29 +488,55 @@ Example:
     x =&gt; (1 2 3)
     (set `x 1 `y 2 `z 3) =&gt; 3
 
-9) <span class="warning">lambda - create an anonymous function</span>
-----------------------------------------
+8) <span class="warning">lambda - create a function</span>
+-----------------------------
+
+A function is a set of variables and a series of statements, which can
+be '<span class="constant">called</span>', assigning values to the variables and executing the
+statements sequentially, until the value of the last one is returned
+to the caller.
+
 Example:
 
     (<span class="keyword">lambda</span> (x) x) =&gt; (<span class="keyword">lambda</span> (x) x)
     ((<span class="keyword">lambda</span> (x) x) 1) =&gt; 1 <span class="comment">; call the function immediately
-</span>    ((<span class="keyword">lambda</span> (x) (+ x x)) 2) =&gt; 4
-    (set `double (<span class="keyword">lambda</span> (x) (+ x x))) <span class="comment">; declare function
+</span>    ((<span class="keyword">lambda</span> (x) (+ x x)) 2) =&gt; 4 <span class="comment">; x is bound to 2
+</span>    ((<span class="keyword">lambda</span> (x y) (* x y)) 2 3) =&gt; 6 <span class="comment">; x is bound to 2, y is bound to 3
+</span>    (set `double (<span class="keyword">lambda</span> (x) (+ x x))) =&gt; ... <span class="comment">; declare a named function
 </span>    (double 2) =&gt; 4 <span class="comment">; call declared function
 </span>
-10) <span class="warning">self - the current function that is executing, used for recursion</span>
+9) <span class="warning">self - the current function that is executing, used for recursion</span>
 ---------------------------------------------------------------------
+
+Recursion is a fundamental concept used for looping, or doing
+something more than once.  To count the number of elements in a list,
+one can break the problem into counting the first element of the list,
+which is always 1, and adding that to the number of elements in the
+rest of the list.  This can be done in a function by calling itself,
+or recursing, with the rest of the list the empty list is found.
 
 Example:
 
+((<span class="keyword">lambda</span> (l n)
+   (<span class="keyword">cond</span>
+     ((cdr l)
+      (self (cdr l) (+ 1 n)))
+     (t
+      n)))`(a b c) 0) =&gt; 3 <span class="comment">; return the length of a list,</span><span class="comment">
+</span>                           <span class="comment">; recursively
+</span>
     ((<span class="keyword">lambda</span> (l)
        (<span class="keyword">cond</span>
-         ((cdr l) (car l))
-         (t (self (cdr l))))) `(1 2 3)) =&gt; (3) <span class="comment">; return the last element</span><span class="comment">
-</span>                                               <span class="comment">; of the list, recursively
+         ((null (cdr l))
+          (car l))
+         (t
+          (self (cdr l))))) `(1 2 3)) =&gt; (3) <span class="comment">; return the last element</span><span class="comment">
+</span>                                             <span class="comment">; of the list, recursively
 </span>
-11) <span class="warning">apply - call a function with a list of arguments</span>
+10) <span class="warning">apply - call a function with a list of arguments</span>
 ----------------------------------------------------
+
+Call a function with a list of arguments.
 
 Example:
 
@@ -462,8 +544,10 @@ Example:
     (apply (<span class="keyword">lambda</span> (x y z) (+ x y z)) `(1 2 3)) =&gt; 6
     (apply double 2) =&gt; 4 <span class="comment">; using previously defined function in 9)
 </span>
-12) <span class="warning">values - return multiple values from a function</span>
+11) <span class="warning">values - return multiple values from a function</span>
 ---------------------------------------------------
+
+For when you want to return more than one value from a function.
 
 Example:
 
@@ -474,102 +558,104 @@ Example:
     ((<span class="keyword">lambda</span> (x y) (values x y)) 1 2) =&gt; 1
     2
 
-13) <span class="warning">bind - bind multiple values to symbols</span>
+12) <span class="warning">bind - bind multiple values to symbols</span>
 ------------------------------------------
+
+For when a function returns more than one value, '<span class="constant">bind</span>' the returned
+values returned to names and excute the statements in the body.
 
 Example:
 
     (set `multiple-values (<span class="keyword">lambda</span> (x y) (values x y))) =&gt; ...
     (bind (a b) (multiple-values 1 2) (cons a b)) =&gt; (1 . 2)
 
-14) <span class="warning">defmacro - define a macro</span>
+13) <span class="warning">defmacro - define a macro</span>
 -----------------------------
 
-Just watch the show, that's what it's about, mostly:
+Define a symbol in the function namespace that when called, like a
+function, has it's body executed which is to return '<span class="constant">code</span>' that is
+then executed.  This is in contrary to regular functions that can
+return anything.  Macros are a powerful tool that give Lisp it's
+power.  There are many examples that follow that use defmacro, so
+study them carefully to understand it's use.
 
-    https://www.livecoding.tv/burtonsamograd/videos
-
-WRITEME
-
-15) <span class="warning">+ - addition, sum</span>
+14) <span class="warning">+ - addition, sum</span>
 ---------------------
+
+Mathematical addition, or sum with more than 2 arguments.
 
 Example:
 
     (+ 1 2) =&gt; 3
     (+ 1 2 3) =&gt; 6
 
-16) <span class="warning">- - subtraction, difference</span>
+15) <span class="warning">- - subtraction, difference</span>
 -------------------------------
+
+Mathematical subtraction, or difference with more than 2 arguments.
 
     (- 1 2) =&gt; -1
     (- 1 2 3) =&gt; -4
 
-17) <span class="warning">* - multipley, product</span>
---------------------------
+16) <span class="warning">* - multiply, product</span>
+-------------------------
+
+Mathematical multiply, or product with more than 2 arguments.
 
     (* 1 2) =&gt; 2
     (* 1 2 3) =&gt; 6
 
-18) <span class="warning">/ - divide, quotient</span>
+17) <span class="warning">/ - divide, quotient</span>
 ------------------------
+
+Mathematical divide, or quotient with more than 2 arguments.
 
 Example: 
 
     (/ 1 2) =&gt; .5
     (/ 1 2 3) =&gt; 0.1666....
 
-19) <span class="warning">% - remainder, mod</span>
+18) <span class="warning">% - remainder, mod</span>
 ----------------------
+
+Mathematical remainder, or '<span class="constant">mod</span>'.
 
 Example:
 
     (% 5 2) =&gt; 1
 
-20) <span class="warning">rm - remove a symbol from the environment</span>
-
-Example:
-
-    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
-</span>    x =&gt; 1
-    (rm `x) =&gt; 1 <span class="comment">; returns the old value of x
-</span>    x =&gt; <span class="comment">; Error, undefined symbol
-</span>
-21) <span class="warning">rmf - remove a macro from the function environment</span>
-
-Example:
-
-    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ x x)) =&gt; (macro (x) `(+ ,x ,x))
-    (double 2) =&gt; 4
-    (rmf `double) =&gt; (macro (x) `(+ ,x ,x))
-    (rm `double) =&gt; (<span class="keyword">lambda</span> (x) (+ x x))
-    (double 2) =&gt; <span class="comment">; Error, undefined function
-</span>
-22) <span class="warning">env - return the current environment</span>
+19) <span class="warning">env - return the current environment</span>
 
 Example:
 
      (env) =&gt; ((t . t) ...)
 
-23) <span class="warning">fenv - return the current function environment</span>
+20) <span class="warning">fenv - return the current function environment</span>
 
 Example:
 
     (fenv) =&gt; ((set . builtin) (cons . builtin) ...)
 
-24) <span class="warning">save - save the current environment and function environment to</span>
-           local storage using argument as the name of the core
---------------------------------------------------------------------
+21) <span class="warning">save - save the current environment</span>
+---------------------------------------
+
+The environment where you store your variables and macros can be saved
+to local storage in your browser using the '<span class="constant">save</span>' command.
 
 (save) =&gt; <span class="comment">; default /core is saved
 </span>(save /backup) =&gt; <span class="comment">; saved to /backup in local storage
 </span>
-25) <span class="warning">load - load a core into the current environment</span>
+22) <span class="warning">load - load a core into the current environment</span>
+
+The environment can be loaded from local storage using the '<span class="constant">load</span>' command.
 
 THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 
-26) <span class="warning">me - macro expand</span>
+23) <span class="warning">me - macro expand</span>
 ---------------------
+
+Expand macros in the code given as an argument.  Helpful for
+debugging.
 
 Example: (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
 
@@ -781,8 +867,24 @@ Examples:
     (xor () t) =&gt; t
     (xor t t) =&gt; ()
 
+
 <span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS ALL UNTESTED
 </span>
+13) <span class="warning">length - return the length of a list</span>
+----------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">length</span> (l)
+  `((<span class="keyword">lambda</span> (l n)
+      (<span class="keyword">if</span> l
+          (self (cdr l) (+ n 1))
+          n)) <span class="warning">,l))</span>
+
+Examples:
+
+    (length ()) =&gt; 0
+    (length `(1 2 3)) =&gt; 3
+    (length `((1 2 3) a b c)) =&gt; 4
+
 13) <span class="warning">mapn - like map, but takes n lists as arguments (map is faster)</span>
 ------------------------------------------------------------------
 
@@ -930,12 +1032,36 @@ Examples:
 
 <span class="comment-delimiter">;; </span><span class="comment">TO BE CONTINUED
 </span>
-assoc
 
+push
+pop
+shift
+unshift
+rotate n
+assoc
 flatten
 sort
 defun(?)
 
+rm - remove a symbol from the environment
+
+Example:
+
+    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
+</span>    x =&gt; 1
+    (rm `x) =&gt; 1 <span class="comment">; returns the old value of x
+</span>    x =&gt; <span class="comment">; Error, undefined symbol
+</span>
+rmf - remove a macro from the function environment
+
+Example:
+
+    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ x x)) =&gt; (macro (x) `(+ ,x ,x))
+    (double 2) =&gt; 4
+    (rmf `double) =&gt; (macro (x) `(+ ,x ,x))
+    (rm `double) =&gt; (<span class="keyword">lambda</span> (x) (+ x x))
+    (double 2) =&gt; <span class="comment">; Error, undefined function
+</span>
 ==========
 |THE MIDS|
 ==========
@@ -978,9 +1104,9 @@ Mathmatical Exercises 2 - Ray Tracer
 Exercises 4 - GPS (General Problem Solver)
 ==========================================
 
-=============================================
-Exercises 5 - A (Simulated) FOREX Trading Bot
-=============================================
+=================================================
+Exercises 5 - A (Simulated) Arbitrage Trading Bot
+=================================================
 
 ==============
 |THE ADVANCED|
@@ -1035,14 +1161,17 @@ or unknowningly.  I hope you find the material as useful and
 entertaining as I have writing it down and preparing it.
 
 Burton Samograd &lt;root@busfactor1.ca&gt;
-Homepage: http://busfactor1.ca/old/old (maybe)
+Homepage: http://busfactor1.ca/old/old
 Facebook: https://www.facebook.com/KRUHFT-17546219842
-Twitter: @kruhft
+Twitter: https://twitter.com/kruhft (@kruhft)
 
 Copyright - 2016
 
-Yes, copyright.  If you wish to reproduce any of this work, please ask
-my permission first.  Linking is fine.  That is all.
+All rights reserved.  
+
+If you wish to reproduce this work, please ask my permission first.
+Fair use provisions apply.  The computer code contained in this
+document can be used for any purpose without restriction.
 </pre>
 
  </body>

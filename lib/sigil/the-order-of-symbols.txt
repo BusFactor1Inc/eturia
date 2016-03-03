@@ -1,11 +1,8 @@
 ;; -*- mode: lisp -*-
 ;;
-;; Note: Click in the title bar of the 'Listener' window to type in it
+;; Questions, comments or problems? Email root@busfactor1.ca
 ;;
 ;; WORK IN PROGRESS
-;;
-;; Problems? Email root@busfactor1.ca
-;;
 
 The Order of Symbols
 --------------------
@@ -38,6 +35,7 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
+
 Intended Audience
 -----------------
 
@@ -55,6 +53,12 @@ little on how to get a job as a programmer.  But knowing what this
 course will teach you will benefit you for as long as you act as a
 programmer during your life [citation needed].
 
+This course assumes a basic understanding of arithmetic and algebra,
+along with the idea that a computer is something that simply follows
+the instructions that they are told, nothing more.  As Picasso
+noted, "Computers...they can only give you answers."
+
+
 Eturia
 ------
 
@@ -70,6 +74,7 @@ The current version of Eturia can always be found at:
     http://busfactor1.ca/bin/eturia
 
 along with videos and other information about the project.
+
 
 The Listener
 ------------
@@ -140,28 +145,34 @@ Example:
     ; this is a comment
 
 
+Quoting - stops evaluation
+--------------------------
+
+Example:
+1 => 1
+`1 => 1
+x => ; Error, undefined symbol
+`x => x
+(1 2 3) => ; Error, undefined function
+`(1 2 3) => (1 2 3)
+
+
 List - build lists
 ------------------
 
 Example:
 
-    () ; the empty list
-    (1) ; a 'proper' list containing the digit 1
-    (1 2 3) ; is a 'proper' list of the digits 1 2 3
-    (1 2 3 . ()) ; is a 'proper' list of the digits 1 2 3
-    (1 . 2) ; is an 'improper' list of the digits 1 and 2
+    `() => (); the empty list
+    `(1) => (1) ; a 'proper' list containing the digit 1
+    `(1 . ()) => (1) ; a 'proper' list containing the digit 1
+    `(1 2 3) => (1 2 3) ; is a 'proper' list of the digits 1 2 3
+    `(1 2 3 . ()) => (1 2 3) ; is a 'proper' list of the digits 1 2 3
+    `(1 . 2) => (1 . 2) ; is an 'improper' list of the digits 1 and 2
+    `(x . y) => (x . y) ; is an 'improper' list of the symbols x and y
 
-A proper list has () as its last element it is just not normally
-shown.  An improper list does not.
-
-Quoting - stops evaluation
---------------------------
-
-Example: 
-`1 => 1
-x => ; Error, undefined symbol
-`x => x
-`(1 2 3) => (1 2 3)
+A proper list has () as its last element, and it is not normally
+shown.  An improper list does not have () as it's last element, and
+this is shown by preceeding the last element with a dot.
 
 
 Comma - evaulate inside of a quote
@@ -204,20 +215,54 @@ known as 'predicates'.
 Builtins
 ========
 
-The following are the builtin commands for Sigil:
+The following are the builtin commands for Sigil.  
 
-1) atom - a predicate to test if its argument is an atom (string, number, or ())
----------------------------------------------------------------------------------
+Note: in the Examples, '=>' means 'evaulates to' or 'the value of'.
+
+0) quote - prevent evaluation
+-----------------------------
+
+Evaluation means to 'give me the value of something', and to prevent
+the evauation of something means to just 'give me something'.
+Sometimes you want, in a list, to say 'just give me these things but
+give me the value of these other things', which can be done with ','
+and ',@'.
+
+Example:
+
+    1 => 1 ; 'give me the value of' 1
+    `1 => 1 ; 'give me' 1
+    x => ; 'give me the value of' x, error, as x has no value
+    `x => x ; 'give me' x
+    `(1 2 3) => (1 2 3) ; give me the list of digits 1, 2 and 3
+
+    ;; ADVANCED, unquoting with ',' and splicing with ',@'
+    (set `x 1) => 1 ; give x the value 1
+    `(,x 2 3) => (1 2 3) ; evaluate inside of a quoted list with ,
+    `(,@x 2 3) => (1 2 3) ; Error, cannot unquote 'splice' a non-list
+    (set `x `(1 2 3)) => (1 2 3) ; give x a value that is a list
+    `(,x 2 3) => ((1 2 3) 2 3) ; unquote (evaulate) x with ,
+    `(,@x 2 3) => (1 2 3 2 3) ; 'splice' with ,@
+
+1) atom - a predicate to test if its argument is an atom
+--------------------------------------------------------
+
+Everything in Sigil is either an atom (symbol, number, or ()) or a
+list.
 
 Example:
 
     (atom t) => t
     (atom ()) => t
     (atom `x) => t
+    (atom 1) => t
     (atom `(1 2 3)) => ()
 
-2) eq - a predicate to test if 2 atoms are equal
-------------------------------------------------
+2) eq - equality
+----------------
+
+Atoms can be tested for equality using 'eq'.
+
 Example:
 
     (eq t t) => t
@@ -227,20 +272,29 @@ Example:
     (eq `x `y) => ()
     (eq 1 1) => t
     (eq 1 2) => ()
-    (eq `(1 2 3) `(1 2 3)) => () ; notice!
+    (eq `(1 2 3) `(1 2 3)) => () ; notice! see 'equal', below.
 
 3) cons - create a new list cell
 --------------------------------
+
+A cons cell is a 2 element cell that has a head slot and an a tail
+slot.  The 'cons' function allocates one of these cells and assigns
+the first argument to the head slot and the second argument to the
+tail slot.
 
 Example:
 
     (cons 1 ()) => (1)
     (cons `x ()) => (x)
-    (cons 1 2) => (1 . 2) ; notice! an improper list
-    (cons (1 (cons 2 ()))) => (1 2) ; a proper list
+    (cons () ()) => (())
+    (cons `x `y) => (x . y) ; notice! an improper list
+    (cons 1 2) => (1 . 2) ; and again
+    (cons (1 (cons 2 ()))) => (1 2) ; making a proper list
 
 4) car - return the first element of a list
 -------------------------------------------
+
+Take a list and return the head slot of its first cell.
 
 Example:
 
@@ -253,6 +307,8 @@ Example:
 5) cdr - return everything but the first element of a list
 ----------------------------------------------------------
 
+Take a list and return the tail slot of its first cell.
+
 Example:
 
     (cdr `(1 2 3)) => (2 3)
@@ -264,6 +320,14 @@ Example:
 6) cond - conditional statement, execute tests until one returns not (),
           and then execute the following statement
 ------------------------------------------------------------------------
+
+Cond is used to make decisions on what statements to execute.  It goes
+through it's arguments, excuting the each test, the first element of
+the argument, until one of them returns not (), after which it then
+excutes the statements following the test and returns the value of the
+last one.  You will often set 't' as the last test in a cond, meaning
+to always excute that set of statements if none of the previous tests
+pass.
 
 Example:
 
@@ -280,22 +344,12 @@ Example:
       (y `should-get-here)
       (t `wont-get-here)) => should-get-here
 
-7) qquote - prevent evaluation of the argument, allowing for unquote
-            and unquote splicing, normally abbreviated with `
---------------------------------------------------------------------
-
-Example:
-
-    `(1 2 3) => (1 2 3)
-    (set `x 1) => 1
-    `(,x 2 3) => (1 2 3) ; unquote with ,
-    `(,@x 2 3) => (1 2 3) ; Error
-    (set `x `(1 2 3)) => (1 2 3)
-    `(,x 2 3) => ((1 2 3) 2 3) ; unquote with ,
-    `(,@x 2 3) => (1 2 3 2 3) ; unquote splice a list with ,@
-
-8) set - assign a symbol a value (variables)
+7) set - assign a symbol a value (variables)
 --------------------------------------------
+
+Sometimes it is convenient to create a shortcut to certain values,
+known as a variable. 'set' can be used to create or change the values
+of variables.
 
 Example:
 
@@ -307,29 +361,55 @@ Example:
     x => (1 2 3)
     (set `x 1 `y 2 `z 3) => 3
 
-9) lambda - create an anonymous function
-----------------------------------------
+8) lambda - create a function
+-----------------------------
+
+A function is a set of variables and a series of statements, which can
+be 'called', assigning values to the variables and executing the
+statements sequentially, until the value of the last one is returned
+to the caller.
+
 Example:
 
     (lambda (x) x) => (lambda (x) x)
     ((lambda (x) x) 1) => 1 ; call the function immediately
-    ((lambda (x) (+ x x)) 2) => 4
-    (set `double (lambda (x) (+ x x))) ; declare function
+    ((lambda (x) (+ x x)) 2) => 4 ; x is bound to 2
+    ((lambda (x y) (* x y)) 2 3) => 6 ; x is bound to 2, y is bound to 3
+    (set `double (lambda (x) (+ x x))) => ... ; declare a named function
     (double 2) => 4 ; call declared function
 
-10) self - the current function that is executing, used for recursion
+9) self - the current function that is executing, used for recursion
 ---------------------------------------------------------------------
+
+Recursion is a fundamental concept used for looping, or doing
+something more than once.  To count the number of elements in a list,
+one can break the problem into counting the first element of the list,
+which is always 1, and adding that to the number of elements in the
+rest of the list.  This can be done in a function by calling itself,
+or recursing, with the rest of the list the empty list is found.
 
 Example:
 
+((lambda (l n)
+   (cond
+     ((cdr l)
+      (self (cdr l) (+ 1 n)))
+     (t
+      n)))`(a b c) 0) => 3 ; return the length of a list,
+                           ; recursively
+
     ((lambda (l)
        (cond
-         ((cdr l) (car l))
-         (t (self (cdr l))))) `(1 2 3)) => (3) ; return the last element
-                                               ; of the list, recursively
+         ((null (cdr l))
+          (car l))
+         (t
+          (self (cdr l))))) `(1 2 3)) => (3) ; return the last element
+                                             ; of the list, recursively
 
-11) apply - call a function with a list of arguments
+10) apply - call a function with a list of arguments
 ----------------------------------------------------
+
+Call a function with a list of arguments.
 
 Example:
 
@@ -337,8 +417,10 @@ Example:
     (apply (lambda (x y z) (+ x y z)) `(1 2 3)) => 6
     (apply double 2) => 4 ; using previously defined function in 9)
 
-12) values - return multiple values from a function
+11) values - return multiple values from a function
 ---------------------------------------------------
+
+For when you want to return more than one value from a function.
 
 Example:
 
@@ -349,102 +431,104 @@ Example:
     ((lambda (x y) (values x y)) 1 2) => 1
     2
 
-13) bind - bind multiple values to symbols
+12) bind - bind multiple values to symbols
 ------------------------------------------
+
+For when a function returns more than one value, 'bind' the returned
+values returned to names and excute the statements in the body.
 
 Example:
 
     (set `multiple-values (lambda (x y) (values x y))) => ...
     (bind (a b) (multiple-values 1 2) (cons a b)) => (1 . 2)
 
-14) defmacro - define a macro
+13) defmacro - define a macro
 -----------------------------
 
-Just watch the show, that's what it's about, mostly:
+Define a symbol in the function namespace that when called, like a
+function, has it's body executed which is to return 'code' that is
+then executed.  This is in contrary to regular functions that can
+return anything.  Macros are a powerful tool that give Lisp it's
+power.  There are many examples that follow that use defmacro, so
+study them carefully to understand it's use.
 
-    https://www.livecoding.tv/burtonsamograd/videos
-
-WRITEME
-
-15) + - addition, sum
+14) + - addition, sum
 ---------------------
+
+Mathematical addition, or sum with more than 2 arguments.
 
 Example:
 
     (+ 1 2) => 3
     (+ 1 2 3) => 6
 
-16) - - subtraction, difference
+15) - - subtraction, difference
 -------------------------------
+
+Mathematical subtraction, or difference with more than 2 arguments.
 
     (- 1 2) => -1
     (- 1 2 3) => -4
 
-17) * - multipley, product
---------------------------
+16) * - multiply, product
+-------------------------
+
+Mathematical multiply, or product with more than 2 arguments.
 
     (* 1 2) => 2
     (* 1 2 3) => 6
 
-18) / - divide, quotient
+17) / - divide, quotient
 ------------------------
+
+Mathematical divide, or quotient with more than 2 arguments.
 
 Example: 
 
     (/ 1 2) => .5
     (/ 1 2 3) => 0.1666....
 
-19) % - remainder, mod
+18) % - remainder, mod
 ----------------------
+
+Mathematical remainder, or 'mod'.
 
 Example:
 
     (% 5 2) => 1
 
-20) rm - remove a symbol from the environment
-
-Example:
-
-    (set `x 1) => 1 ; define a symbol in the environment
-    x => 1
-    (rm `x) => 1 ; returns the old value of x
-    x => ; Error, undefined symbol
-
-21) rmf - remove a macro from the function environment
-
-Example:
-
-    (defmacro double (x) `(+ x x)) => (macro (x) `(+ ,x ,x))
-    (double 2) => 4
-    (rmf `double) => (macro (x) `(+ ,x ,x))
-    (rm `double) => (lambda (x) (+ x x))
-    (double 2) => ; Error, undefined function
-
-22) env - return the current environment
+19) env - return the current environment
 
 Example:
 
      (env) => ((t . t) ...)
 
-23) fenv - return the current function environment
+20) fenv - return the current function environment
 
 Example:
 
     (fenv) => ((set . builtin) (cons . builtin) ...)
 
-24) save - save the current environment and function environment to
-           local storage using argument as the name of the core
---------------------------------------------------------------------
+21) save - save the current environment
+---------------------------------------
+
+The environment where you store your variables and macros can be saved
+to local storage in your browser using the 'save' command.
 
 (save) => ; default /core is saved
 (save /backup) => ; saved to /backup in local storage
 
-25) load - load a core into the current environment
+22) load - load a core into the current environment
+
+The environment can be loaded from local storage using the 'load' command.
 
 THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 
-26) me - macro expand
+23) me - macro expand
 ---------------------
+
+Expand macros in the code given as an argument.  Helpful for
+debugging.
 
 Example: (me (cadr `(1 2 3))) => (car (cdr `(1 2 3)))
 
@@ -832,6 +916,25 @@ flatten
 sort
 defun(?)
 
+rm - remove a symbol from the environment
+
+Example:
+
+    (set `x 1) => 1 ; define a symbol in the environment
+    x => 1
+    (rm `x) => 1 ; returns the old value of x
+    x => ; Error, undefined symbol
+
+rmf - remove a macro from the function environment
+
+Example:
+
+    (defmacro double (x) `(+ x x)) => (macro (x) `(+ ,x ,x))
+    (double 2) => 4
+    (rmf `double) => (macro (x) `(+ ,x ,x))
+    (rm `double) => (lambda (x) (+ x x))
+    (double 2) => ; Error, undefined function
+
 ==========
 |THE MIDS|
 ==========
@@ -874,9 +977,9 @@ Mathmatical Exercises 2 - Ray Tracer
 Exercises 4 - GPS (General Problem Solver)
 ==========================================
 
-=============================================
-Exercises 5 - A (Simulated) FOREX Trading Bot
-=============================================
+=================================================
+Exercises 5 - A (Simulated) Arbitrage Trading Bot
+=================================================
 
 ==============
 |THE ADVANCED|
@@ -931,11 +1034,14 @@ or unknowningly.  I hope you find the material as useful and
 entertaining as I have writing it down and preparing it.
 
 Burton Samograd <root@busfactor1.ca>
-Homepage: http://busfactor1.ca/old/old (maybe)
+Homepage: http://busfactor1.ca/old/old
 Facebook: https://www.facebook.com/KRUHFT-17546219842
-Twitter: @kruhft
+Twitter: https://twitter.com/kruhft (@kruhft)
 
 Copyright - 2016
 
-Yes, copyright.  If you wish to reproduce any of this work, please ask
-my permission first.  Linking is fine.  That is all.
+All rights reserved.  
+
+If you wish to reproduce this work, please ask my permission first.
+Fair use provisions apply.  The computer code contained in this
+document can be used for any purpose without restriction.
