@@ -236,7 +236,7 @@ typed manually into the '<span class="constant">Listener</span>'.  This way the 
 your fingers and your brain, giving you a better chance of learning
 the concepts as you go along and build your own language in Sigil.
 
-This '<span class="constant">Listener</span>' is like Like VI, but a bit different:
+This '<span class="constant">Listener</span>' is like Like VI, but a bit different[1]:
 
 i - insert mode, allows you to type overwrite text in the buffer
 ? - command mode, allows you to execute the following commands
@@ -252,6 +252,12 @@ console.  To '<span class="constant">escape</span>' out of insert mode, press '?
 
 REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
 LISTENER.
+
+[1] VI and Emacs are programmers text editors.  There has been a
+decades long debate over the merits and benfits of using each.  Emacs
+is a modern day Lisp Machine, VI is akin to a Unix machine.  I chose a
+VI-like editor interface for Eturia due to the simplicity of
+implementing it.
 
 Window Manager
 --------------
@@ -269,6 +275,9 @@ The following is the syntax of Sigil:
 Numbers - a string of digits
 ----------------------------
 
+A number can be used with mathematical functions and should be
+familiar to all that have taken introductory mathmatics.
+
 Example:
 
     1 is a number
@@ -277,8 +286,10 @@ Example:
     -3 is a number
 
 
-Symbol - a string of characters not containing '(', or ')'.
------------------------------------------------------------
+Symbol - a string of characters
+-------------------------------
+
+A symbol is a string of characters not containing '(', or ')'.
 
 Example:
 
@@ -290,8 +301,11 @@ Example:
     |a symbol with spaces| is a symbol
 
 
-Comments - a string of characters up to a newline that is ignored
-------------------------------------------------------------------
+Comments - a note to your self
+------------------------------
+
+Comments can be important in programs as they are used to explain the
+purpose of the code you are writing.
 
 Example:
 
@@ -300,6 +314,10 @@ Example:
 
 Quoting - stops evaluation
 --------------------------
+
+Evaluation means to 'get the value of something'.  Sometimes you want
+this to not happen and just get '<span class="constant">something</span>'.  Quoting is used for that
+and is an essential part of the following examples.
 
 Example:
 1 =&gt; 1
@@ -312,6 +330,9 @@ x =&gt; <span class="comment">; Error, undefined symbol
 
 List - build lists
 ------------------
+
+Besides numbers and symbols, Sigil also has '<span class="constant">lists</span>'.  A list is a
+collection of things, being symbols, numbers or other lists.
 
 Example:
 
@@ -327,9 +348,18 @@ A proper list has () as its last element, and it is not normally
 shown.  An improper list does not have () as it's last element, and
 this is shown by preceeding the last element with a dot.
 
+Note: even the code in Sigil is lists.  This is a very iportant
+concept to remember, as Sigil is all about building and generating
+code using the functions we are going to be defining in the following
+chapters.
 
-Comma - evaulate inside of a quote
-----------------------------------
+
+Comma ',' - evaulate inside of a quote
+---------------------------------------
+
+Sometimes you want to quote a list, but also want to include the
+values of other symbols inside of it.  To perform this action, you use
+the comma operator inside of a quoted list.
 
 Example:
 
@@ -339,8 +369,12 @@ Example:
     `(,x 2 3) =&gt; (1 2 3)
 
 
-Commaat - evaluate a list inside of a quote, and splice it
-----------------------------------------------------------
+Commaat ',@' - evaluate a list inside of a quote, and splice it
+----------------------------------------------------------------
+
+Other times when building code, you want to embed the contents of a
+list inside of a quoted list.  This is done with the commaat (,@)
+operator inside of a quoted list.
 
 Example:
 
@@ -368,7 +402,9 @@ known as '<span class="constant">predicates</span>'.
 Builtins
 ========
 
-The following are the builtin commands for Sigil.  
+The following are the builtin commands for Sigil.  A builtin is a
+function that is available by default in the language and is always
+available.
 
 Note: in the Examples, '<span class="constant">=&gt;</span>' means 'evaulates to' or 'the value of'.
 
@@ -590,8 +626,9 @@ Example:
 12) <span class="warning">bind - bind multiple values to symbols</span>
 ------------------------------------------
 
-For when a function returns more than one value, '<span class="constant">bind</span>' the returned
-values returned to names and excute the statements in the body.
+For when a function returns more than one value, you can '<span class="constant">bind</span>' the
+returned values returned to names and excute the statements in the
+body using these bindings.
 
 Example:
 
@@ -616,12 +653,14 @@ carefully to understand it's use.
 14) <span class="warning">+ - addition, sum</span>
 ---------------------
 
-Mathematical addition, or sum with more than 2 arguments.
+Mathematical addition, or sum with more than 2 arguments.  Also used
+to concatenate symbols.
 
 Example:
 
     (+ 1 2) =&gt; 3
     (+ 1 2 3) =&gt; 6
+    (+ `x `y) =&gt; xy
 
 15) <span class="warning">- - subtraction, difference</span>
 -------------------------------
@@ -692,6 +731,20 @@ Expand macros in the code given as an argument.  Helpful for
 debugging.
 
 Example: (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
+
+24) <span class="warning">=&gt; - evaluate javascript code</span>
+---------------------------------
+
+Used to execute javascript code that can be built by concatenating symbols.
+
+(=&gt; |console.log(&quot;Testing&quot;)|) =&gt; <span class="comment">; prints Testing in the javascript console
+</span>
+This builtin allows for the interaction between Sigil and the
+underlying web browser. It is an advanced operation that will be used
+to build Eturia as a Lisp Machine from within Sigil itself.  Eturia is
+written in Javascript, but the goal of the system is to modify the
+javascript code as little as possible from outside of it.
+
 
 ===============================================================================
 ===============================================================================
@@ -1262,8 +1315,6 @@ All rights reserved.
 If you wish to reproduce this work, please ask my permission first.
 Fair use provisions apply.  The computer code contained in this
 document can be used for any purpose without restriction.
-
-
 </pre>
 
  </body>
