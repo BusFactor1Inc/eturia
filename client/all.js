@@ -11240,7 +11240,6 @@ var Sigil = new Model({
 
     bset: function(args) {
         var v, retval;
-        debugger
         while(this._null(args) !== 't') {
             v = args[0];
             var expr = args[1][0];
