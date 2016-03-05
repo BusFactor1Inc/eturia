@@ -11447,7 +11447,6 @@ var Sigil = new Model({
         }
 
         function isNumberThing(c, i, l) {
-            debugger
             return c === '0' ||
 	        c === '1' ||
 	        c === '2' ||
