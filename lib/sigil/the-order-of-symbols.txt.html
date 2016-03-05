@@ -444,7 +444,7 @@ Examples:
 </span>
     <span class="comment-delimiter">;; </span><span class="comment">longhand evaluation with ',' and splicing with ',@'
 </span>    (set (quote x) 1) =&gt; 1 <span class="comment">; give x the value 1
-</span>    (quote ((unquote x) 2 3) =&gt; (1 2 3) <span class="comment">; evaluate inside of a quoted list with as ','
+</span>    (quote ((unquote x) 2 3) =&gt; (1 2 3) <span class="comment">; evaluate inside of quoted list as with ','
 </span>    (quote ((unquote-splice x) 2 3) =&gt; <span class="comment">; error, cannot unquote-splice a non-list
 </span>    (set (quote x) (quote (1 2 3))) =&gt; (1 2 3) <span class="comment">; give x a value that is a list
 </span>    (quote ((quote x) 2 3)) =&gt; ((1 2 3) 2 3) <span class="comment">; unquote x with as with ','
@@ -889,7 +889,11 @@ Examples:
 </span>    (me (third `(1 2 3))) =&gt; (car (cdr (cdr `(1 2 3))))
     (rest `(1 2 3)) =&gt; (2 3) <span class="comment">; expands to (cdr `(1 2 3))
 </span>    (me (rest `(1 2 3))) =&gt; (cdr `(1 2 3))
-
+    (caar `((1 2 3) 2 3)) =&gt; 1
+    (cdar `((1 2 3) 2 3)) =&gt; (2 3)
+    (cadr `(1 (1 2 3) 2 3)) =&gt; (1 2 3)
+    (cddr `(1 2 3)) =&gt; (3)
+    
 The final 4 shortcuts above show how the names '<span class="constant">car</span>' and '<span class="constant">cdr</span>' can be
 combined into terse, longer combinations to allow for selection into
 more complex list structures.
@@ -918,6 +922,8 @@ statement, and when not, it runs the second statement.
 </span>    
 Examples: 
 
+    (<span class="keyword">if</span> t 1 2) =&gt; 1
+    (<span class="keyword">if</span> () 1 2) =&gt; 2
     (<span class="keyword">if</span> (eq t t) 1 2) =&gt; 1
     (<span class="keyword">if</span> (eq t ()) 1 2) =&gt; 2
 
@@ -937,26 +943,13 @@ to the variable name following <span class="type">&amp;body</span> in the arugum
 
 Examples: 
 
+    (<span class="keyword">when</span> t 1) =&gt; 1
+    (<span class="keyword">when</span> () 1) =&gt; ()
     (<span class="keyword">when</span> (eq t t) 1) =&gt; 1
     (<span class="keyword">when</span> (eq t ()) 1) =&gt; ()
 
 
-3) <span class="warning">unless - negative single branch conditional</span>
-----------------------------------------------
-
-Like when, but the logical opposite. It runs its body of when test
-returns ().
-
-(<span class="keyword">defmacro</span> <span class="function-name">unless</span> (test <span class="type">&amp;body</span> body)
-  (<span class="keyword">cond</span> ,test ,@body))
-
-Examples:
-
-    (<span class="keyword">unless</span> (eq t t) 1) =&gt; ()
-    (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
-
-
-4) <span class="warning">reverse - reverse a list</span>
+3) <span class="warning">reverse - reverse a list</span>
 ---------------------------
 
 Reverse a list by building a new list in opposite order using
@@ -976,7 +969,7 @@ Examples:
     (reverse `(1 2 3)) =&gt; (3 2 1)
 
 
-5) <span class="warning">map - build a list by running a function over another list</span>
+4) <span class="warning">map - build a list by running a function over another list</span>
 -------------------------------------------------------------
 
 '<span class="constant">map</span>' is what is known as a higher order function, that is, one which
@@ -1001,7 +994,7 @@ Exercises:
     1. Write a map statement that takes a list `(1 2 3) and
        returns `(3 6 9).
 
-6) <span class="warning">let - declare local variables</span>
+5) <span class="warning">let - declare local variables</span>
 --------------------------------
 
 Often you need to use additional temporary variables when performing a
@@ -1027,21 +1020,21 @@ Examples:
     a =&gt; <span class="comment">; error, undefined symbol
 </span>    b =&gt; <span class="comment">; error, undefined symbol</span><span class="comment">
 </span>
-7) <span class="warning">aif - anamorphic if</span>
+6) <span class="warning">aif - anamorphic if</span>
 ----------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">aif</span> (test true false)
   `(<span class="keyword">let</span> ((it ,test))
      (<span class="keyword">if</span> it ,true ,false)))
 
-8) <span class="warning">awhen - anamorphic when</span>
+7) <span class="warning">awhen - anamorphic when</span>
 --------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">awhen</span> (test <span class="type">&amp;body</span> body)
   `(<span class="keyword">let</span> ((it ,test))
      (<span class="keyword">when</span> it ,@body)))
 
-9) <span class="warning">not - logical compliment</span>
+8) <span class="warning">not - logical compliment</span>
 ---------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">not</span> (x)
@@ -1055,6 +1048,21 @@ Examples:
     (not ()) =&gt; t
     (not t) =&gt; ()
     (not 1) =&gt; ()
+
+9) <span class="warning">unless - negative single branch conditional</span>
+----------------------------------------------
+
+Like when, but the logical opposite. It runs its body of when test
+returns ().
+
+(<span class="keyword">defmacro</span> <span class="function-name">unless</span> (test <span class="type">&amp;body</span> body)
+  (<span class="keyword">cond</span> ,test ,@body))
+
+Examples:
+
+    (<span class="keyword">unless</span> (eq t t) 1) =&gt; ()
+    (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
+
 
 10) <span class="warning">and - logical and</span>
 ---------------------
