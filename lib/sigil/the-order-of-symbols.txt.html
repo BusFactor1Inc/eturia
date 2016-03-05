@@ -291,7 +291,7 @@ Numbers - a string of digits
 A number can be used with mathematical functions and should be
 familiar to all that have taken introductory mathmatics.
 
-Example:
+Examples:
 
     1 is a number
     100 is a number
@@ -304,7 +304,7 @@ Symbol - a string of characters
 
 A symbol is a string of characters not containing '(', or ')'.
 
-Example:
+Examples:
 
     x is a symbol
     abc is a symbol
@@ -320,7 +320,7 @@ Comments - a note to your self
 Comments can be important in programs as they are used to explain the
 purpose of the code you are writing.
 
-Example:
+Examples:
 
     <span class="comment">; this is a comment
 </span>
@@ -332,7 +332,7 @@ Evaluation means to 'get the value of something'.  Sometimes you want
 this to not happen and just get '<span class="constant">something</span>'.  Quoting is used for that
 and is an essential part of the following examples.
 
-Example:
+Examples:
 1 =&gt; 1
 `1 =&gt; 1
 x =&gt; <span class="comment">; Error, undefined symbol
@@ -347,7 +347,7 @@ List - build lists
 Besides '<span class="constant">atoms</span>' (numbers and symbols), Sigil also has '<span class="constant">lists</span>'.  A list
 is a collection of atoms or other lists.
 
-Example:
+Examples:
 
     `() =&gt; ()<span class="comment">; the empty list
 </span>    `(1) =&gt; (1) <span class="comment">; a '</span><span class="constant">proper</span><span class="comment">' list containing the digit 1
@@ -375,7 +375,7 @@ Sometimes you want to quote a list, but also want to include the
 values of other symbols inside of it.  To perform this action, you use
 the comma operator inside of a quoted list.
 
-Example:
+Examples:
 
     (set `x 1) =&gt; 1
     x =&gt; 1
@@ -390,7 +390,7 @@ Other times when building code, you want to embed the contents of a
 list inside of a quoted list.  This is done with the commaat (,@)
 operator inside of a quoted list.
 
-Example:
+Examples:
 
     (set `x `(a b c))
     x =&gt; (a b c)
@@ -433,7 +433,7 @@ Rather than use the shorthands described above, you can also call
 '<span class="constant">quote</span>', '<span class="constant">unquote</span>' and '<span class="constant">unquote-splice</span>' directly to build lists and
 control evalutation within a quoted list.
 
-Example:
+Examples:
 
     1 =&gt; 1 <span class="comment">; 'give me the value of' 1
 </span>    (quote 1) =&gt; 1 <span class="comment">; 'give me' 1
@@ -458,7 +458,7 @@ Normally you would use the shorthands.
 Everything in Sigil is either an atom (symbol, number, or ()) or a
 list.
 
-Example:
+Examples:
 
     (atom t) =&gt; t
     (atom ()) =&gt; t
@@ -471,7 +471,7 @@ Example:
 
 Atoms can be tested for equality using '<span class="constant">eq</span>'.
 
-Example:
+Examples:
 
     (eq t t) =&gt; t
     (eq () ()) =&gt; t
@@ -490,12 +490,12 @@ slot.  The '<span class="constant">cons</span>' function allocates one of these 
 the first argument to the head slot and the second argument to the
 tail slot.
 
-Example:
+Examples:
 
-    (cons 1 ()) =&gt; (1)
-    (cons `x ()) =&gt; (x)
-    (cons () ()) =&gt; (())
-    (cons `x `y) =&gt; (x . y) <span class="comment">; notice! an improper lis</span><span class="comment">t
+    (cons 1 ()) =&gt; (1) <span class="comment">; build a proper list with () at the tail
+</span>    (cons `x ()) =&gt; (x) <span class="comment">; build another proper list
+</span>    (cons () ()) =&gt; (()) <span class="comment">; again, but with () at the head
+</span>    (cons `x `y) =&gt; (x . y) <span class="comment">; notice! an improper lis</span><span class="comment">t
 </span>    (cons 1 2) =&gt; (1 . 2) <span class="comment">; and again</span><span class="comment">
 </span>    (cons (1 (cons 2 ()))) =&gt; (1 2) <span class="comment">; making a proper list
 </span>
@@ -504,7 +504,7 @@ Example:
 
 Take a list and return the head slot of its first cell.
 
-Example:
+Examples:
 
     (car `(1 2 3)) =&gt; 1
     (car `((1 2 3) 2 3)) =&gt; (1 2 3)
@@ -517,7 +517,7 @@ Example:
 
 Take a list and return the tail slot of its first cell.
 
-Example:
+Examples:
 
     (cdr `(1 2 3)) =&gt; (2 3)
     (cdr `((1 2 3) 2 3)) =&gt; (2 3)
@@ -537,7 +537,7 @@ last one.  You will often set 't' as the last test in a cond, meaning
 to always excute that set of statements if none of the previous tests
 pass.
 
-Example:
+Examples:
 
     (<span class="keyword">cond</span> (t 1)) =&gt; 1
     (<span class="keyword">cond</span> (() 1)) =&gt; ()
@@ -559,33 +559,42 @@ Sometimes it is convenient to create a shortcut to certain values,
 known as a variable. '<span class="constant">set</span>' can be used to create or change the values
 of symbols in the variable namespace.
 
-Example:
+Examples:
 
-    (set `x 1) =&gt; 1
-    x =&gt; 1
+    (set `x 1) =&gt; 1 <span class="comment">; set single values
+</span>    x =&gt; 1
     (set `x 2) =&gt; 2
     x =&gt; 2
     (set `x `(1 2 3)) =&gt; (1 2 3)
     x =&gt; (1 2 3)
-    (set `x 1 `y 2 `z 3) =&gt; 3
-
+    (set `x 1 `y 2 `z 3) =&gt; 3 <span class="comment">; set multiple values at once
+</span>
 8) <span class="warning">lambda - create a function</span>
 -----------------------------
 
-A function is a set of variables and a series of statements, which can
-be '<span class="constant">called</span>', assigning values to the variables and executing the
-statements sequentially, until the value of the last one is returned
-to the caller.
+A function is a set of bound variables and a series of statements,
+known as the body, that can be '<span class="constant">called</span>', which assigns values to the
+variables and executes the statements of the body sequentially, until
+the value of the last evaluated expression is returned.
 
-Example:
+Examples:
 
     (<span class="keyword">lambda</span> (x) x) =&gt; (<span class="keyword">lambda</span> (x) x)
     ((<span class="keyword">lambda</span> (x) x) 1) =&gt; 1 <span class="comment">; call the function immediately
-</span>    ((<span class="keyword">lambda</span> (x) (+ x x)) 2) =&gt; 4 <span class="comment">; x is bound to 2
+</span>    (set `x 1) =&gt; 1
+    ((<span class="keyword">lambda</span> (x) (+ x x)) 2) =&gt; 4 <span class="comment">; x is bound to 2 during the call
+</span>    x =&gt; 1 <span class="comment">; the value of x was not changed by calling the function
+</span>    ((<span class="keyword">lambda</span> (x) (set x 2))) <span class="comment">; set x in the function
+</span>    x =&gt; 1 <span class="comment">; the value of x is still unchanged
 </span>    ((<span class="keyword">lambda</span> (x y) (* x y)) 2 3) =&gt; 6 <span class="comment">; x is bound to 2, y is bound to 3
 </span>    (set `double (<span class="keyword">lambda</span> (x) (+ x x))) =&gt; ... <span class="comment">; declare a named function
 </span>    (double 2) =&gt; 4 <span class="comment">; call declared function
 </span>
+We use the keyword '<span class="constant">lambda</span>' to declare functions because of Lisp's
+close ties to what is known as the <span class="string">&quot;Lambda Calculus&quot;</span>, discovered by
+Alonzo Church in the 1930's.
+
+
 9) <span class="warning">self - the current function that is executing, used for recursion</span>
 ---------------------------------------------------------------------
 
@@ -593,47 +602,59 @@ Example:
   -- L. Peter Deutsch
 
 Recursion is a fundamental concept used for looping, or doing
-something more than once.  To count the number of elements in a list,
-one can break the problem into counting the first element of the list,
-which is always 1, and adding that to the number of elements in the
-rest of the list.  This can be done in a function by calling itself,
-or recursing, with the rest of the list the empty list is found.
+something more than once in Sigil.  To count the number of elements in
+a list, one can break the problem into counting the first element of
+the list, which is always 1, and adding that to the number of elements
+in the rest of the list.  This can be done in a function by calling
+itself, or recursing, with the rest of the list until the empty list
+is found, meaning we are done and can return the computed length by
+adding all of the 1's together.
 
-Example:
+Examples:
 
-((<span class="keyword">lambda</span> (l n)
-   (<span class="keyword">cond</span>
-     ((cdr l)
-      (self (cdr l) (+ 1 n)))
-     (t
-      n)))`(a b c) 0) =&gt; 3 <span class="comment">; return the length of a list,</span><span class="comment">
-</span>                           <span class="comment">; recursively
-</span>
-    ((<span class="keyword">lambda</span> (l)
-       (<span class="keyword">cond</span>
-         ((null (cdr l))
-          (car l))
-         (t
-          (self (cdr l))))) `(1 2 3)) =&gt; (3) <span class="comment">; return the last element</span><span class="comment">
-</span>                                             <span class="comment">; of the list, recursively
-</span>
+    ((<span class="keyword">lambda</span> (l n) <span class="comment">; return the length of a list, recursively
+</span>       (<span class="keyword">cond</span>
+         ((cdr l)  <span class="comment">; if there are still elements in the list
+</span>          (self (cdr l) (+ 1 n))) <span class="comment">; recurse with the tail of the list,
+</span>                                  <span class="comment">; and increment accumulator
+</span>         (t <span class="comment">; there are no elements left in the list
+</span>          n))) <span class="comment">; return accumulator
+</span>      `(a b c) 0) <span class="warning">=&gt; 3 </span>
+
+    ((<span class="keyword">lambda</span> (l) <span class="comment">; return the last element of the lis</span><span class="comment">t</span><span class="comment">, recursively
+</span>       (<span class="keyword">cond</span>
+         ((null (cdr l)) <span class="comment">; if the next element is ()
+</span>          (car l)) <span class="comment">; return the head of the list
+</span>         (t <span class="comment">; the next element is not ()
+</span>           (self (cdr l))))) <span class="comment">; recurse down the list
+</span>     `(1 2 3)) <span class="warning">=&gt; 3</span>
+
+Recursion may be confusing at first.  It is highly reccomended you
+take the time to step through the above examples so you can gain a
+solid understanding of recursion and how it works.
+
+
 10) <span class="warning">apply - call a function with a list of arguments</span>
 ----------------------------------------------------
 
-Call a function with a list of arguments.
+Sometimes you want to call a function with a prepared list of
+arguments.  The reason for this will become more apparent later as we
+work through the examples and projects.
 
-Example:
+Examples:
 
     (apply (<span class="keyword">lambda</span> (x) (+ x x)) `(1)) =&gt; 2
     (apply (<span class="keyword">lambda</span> (x y z) (+ x y z)) `(1 2 3)) =&gt; 6
-    (apply double 2) =&gt; 4 <span class="comment">; using previously defined function in 9)
+    (apply double `(2)) =&gt; 4 <span class="comment">; using previously defined function in 9)
 </span>
 11) <span class="warning">values - return multiple values from a function</span>
 ---------------------------------------------------
 
 For when you want to return more than one value from a function.
+Notice how the multiple values are printed after evaulating a function
+returning them in the listener.
 
-Example:
+Examples:
 
     (values 1) =&gt; 1
     (values 1 2) =&gt; 1
@@ -642,32 +663,32 @@ Example:
     ((<span class="keyword">lambda</span> (x y) (values x y)) 1 2) =&gt; 1
     2
 
+
 12) <span class="warning">bind - bind multiple values to symbols</span>
 ------------------------------------------
 
-For when a function returns more than one value, you can '<span class="constant">bind</span>' the
-returned values returned to names and excute the statements in the
-body using these bindings.
+When a function returns more than one value, you can '<span class="constant">bind</span>' the
+returned values to variables and excute the statements in the body
+using these bindings.
 
-Example:
+Examples:
 
     (set `multiple-values (<span class="keyword">lambda</span> (x y) (values x y))) =&gt; ...
     (bind (a b) (multiple-values 1 2) (cons a b)) =&gt; (1 . 2)
 
+
 13) <span class="warning">defmacro - define a macro</span>
 -----------------------------
 
-Define a symbol in the function namespace that when called, like a
-function, has it's body executed which is to return '<span class="constant">code</span>' that is
-then executed.  This is in contrary to regular functions that can
-return anything.  Macros are a powerful tool that give Lisp it's power
-and allow you to grow the language in a way that is no different than
-adding primitives to itself, but on '<span class="constant">top</span>' of the language rather than
-from the '<span class="constant">bottom</span>'.
+Macros are functions that return code that is executed immediately
+after.  This is in contrary to regular functions that can return
+anything. Using macros we can build the our language from the
+primitives described in this section.
 
+Macros are a powerful tool that give Lisp it's power and are the
+reason for its form.  There are many examples that follow that use
+defmacro, so study them carefully to understand it's use.
 
-There are many examples that follow that use defmacro, so study them
-carefully to understand it's use.
 
 14) <span class="warning">+ - addition, sum</span>
 ---------------------
@@ -675,61 +696,80 @@ carefully to understand it's use.
 Mathematical addition, or sum with more than 2 arguments.  Also used
 to concatenate symbols.
 
-Example:
+Examples:
 
-    (+ 1 2) =&gt; 3
-    (+ 1 2 3) =&gt; 6
-    (+ `x `y) =&gt; xy
+    (+ 1 2) =&gt; 3 <span class="comment">; arithmeical addition of numbers
+</span>    (+ 1 2 3) =&gt; 6 <span class="comment">; sum of multiple numbers
+</span>    (+ `x `y) =&gt; xy <span class="comment">; concatenation of symbols
+</span>
 
 15) <span class="warning">- - subtraction, difference</span>
 -------------------------------
 
 Mathematical subtraction, or difference with more than 2 arguments.
 
-    (- 1 2) =&gt; -1
-    (- 1 2 3) =&gt; -4
+    (- 1 2) =&gt; -1 <span class="comment">; arithmetical subtraction
+</span>    (- 1 2 3) =&gt; -4 <span class="comment">; difference of multiple numbers
+</span>
 
 16) <span class="warning">* - multiply, product</span>
 -------------------------
 
 Mathematical multiply, or product with more than 2 arguments.
 
-    (* 1 2) =&gt; 2
-    (* 1 2 3) =&gt; 6
+    (* 1 2) =&gt; 2 <span class="comment">; arithmetical multiplication
+</span>    (* 1 2 3) =&gt; 6 <span class="comment">; product of multiple numbers
+</span>
 
 17) <span class="warning">/ - divide, quotient</span>
 ------------------------
 
 Mathematical divide, or quotient with more than 2 arguments.
 
-Example: 
+Examples: 
 
-    (/ 1 2) =&gt; .5
-    (/ 1 2 3) =&gt; 0.1666....
+    (/ 1 2) =&gt; .5 <span class="comment">; arithmetical division
+</span>    (/ 1 2 3) =&gt; 0.1666... <span class="comment">; quotient of multiple numbers
+</span>
 
 18) <span class="warning">% - remainder, mod</span>
 ----------------------
 
 Mathematical remainder, or '<span class="constant">mod</span>'.
 
-Example:
+Examples:
 
-    (% 5 2) =&gt; 1
+    (% 5 2) =&gt; 1 <span class="comment">; 1 is the remainder of dividing 5 by 2
+</span>
 
 19) <span class="warning">env - return the current environment</span>
 
-Example:
+Variables are defined in the 'variable namespace'.  env is used to
+return this namespace for inspection and modification.  If env is
+called with an argument, it will set the current 'variable namespace'
+to the argument given.
 
-     (env) =&gt; ((t . t) ...)
+Examples:
+
+     (env) =&gt; ((t . t) ...) <span class="comment">; return the current environment
+</span>     (env (env)) =&gt; ... <span class="comment">; set the current environment
+</span>
 
 20) <span class="warning">fenv - return the current function environment</span>
 
-Example:
+Functions are defined in the 'function namespace'.  fenv is used to
+return this namespace for inspection and modification.  If fenv is
+called with an argument, it will set the current 'variable namespace'
+to the argument given.
+
+Examples:
 
     (fenv) =&gt; ((set . builtin) (cons . builtin) ...)
+    (fenv (fenv)) =&gt; ... <span class="comment">; set the current function environment
+</span>
 
-21) <span class="warning">save - save the current environment</span>
----------------------------------------
+21) <span class="warning">save - save the current environments</span>
+----------------------------------------
 
 The environment where you store your variables and macros can be saved
 to local storage in your browser using the '<span class="constant">save</span>' command.
@@ -737,11 +777,13 @@ to local storage in your browser using the '<span class="constant">save</span>' 
 (save) =&gt; <span class="comment">; default /core is saved
 </span>(save /backup) =&gt; <span class="comment">; saved to /backup in local storage
 </span>
+
 22) <span class="warning">load - load a core into the current environment</span>
 
 The environment can be loaded from local storage using the '<span class="constant">load</span>' command.
 
 THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
+
 
 23) <span class="warning">me - macro expand</span>
 ---------------------
@@ -749,20 +791,27 @@ THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
 Expand macros in the code given as an argument.  Helpful for
 debugging.
 
-Example: (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
+Examples:
 
-24) <span class="warning">=&gt; - evaluate javascript code</span>
+    (<span class="keyword">defmacro</span> <span class="function-name">cadr</span> (l) `(car (cdr ,l)) <span class="comment">; define the macro cadr
+</span>    (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3))) <span class="comment">; expand it
+</span>
+
+24) <span class="warning">=&gt; - evaluate JavaScript code</span>
 ---------------------------------
 
-Used to execute javascript code that can be built by concatenating symbols.
+Used to execute JavaScript code that can be built by concatenating symbols.
 
-(=&gt; |console.log(&quot;Testing&quot;)|) =&gt; <span class="comment">; prints Testing in the javascript console
+Examples:
+
+    (=&gt; |1 + 1|) =&gt; 2
+    (=&gt; |console.log(&quot;Testing&quot;)|) =&gt; <span class="comment">; prints Testing in the JavaScript console
 </span>
 This builtin allows for the interaction between Sigil and the
 underlying web browser. It is an advanced operation that will be used
 to build Eturia as a Lisp Machine from within Sigil itself.  Eturia is
-written in Javascript, but the goal of the system is to modify the
-javascript code as little as possible from outside of it.
+written in JavaScript, but the goal of the system is to modify the
+JavaScript code as little as possible from outside of it.
 
 
 ===============================================================================
@@ -825,7 +874,7 @@ Examples:
     (,test ,true)
     (t ,false)))
     
-Example: 
+Examples: 
 
     (<span class="keyword">if</span> (eq t t) 1 2) =&gt; 1
     (<span class="keyword">if</span> (eq t ()) 1 2) =&gt; 2
@@ -837,7 +886,7 @@ Example:
   (<span class="keyword">cond</span>
     (,test ,@body)))
 
-Example: 
+Examples: 
     (<span class="keyword">when</span> (eq t t) 1) =&gt; 1
     (<span class="keyword">when</span> (eq t ()) 1) =&gt; ()
 
@@ -847,7 +896,7 @@ Example:
 (<span class="keyword">defmacro</span> <span class="function-name">unless</span> (test <span class="type">&amp;body</span> body)
   (<span class="keyword">cond</span> ,test ,@body))
 
-Example:
+Examples:
     (<span class="keyword">unless</span> (eq t t) 1) =&gt; ()
     (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
 
@@ -860,7 +909,7 @@ Example:
           (self (cdr l) (cons (car l) a))
           a))))
 
-Example: 
+Examples: 
 
     (reverse `(1 2 3)) =&gt; (3 2 1)
 
@@ -874,7 +923,7 @@ Example:
           (self (cdr l) (cons (,f (car l))))
           (reverse a))) <span class="warning">,l ()))</span>
 
-Example:
+Examples:
 
     (map (<span class="keyword">lambda</span> (x) (+ x x)) `(1 2 3)) =&gt; (2 4 6)
 
@@ -1118,7 +1167,7 @@ Examples:
   `(<span class="keyword">lambda</span> (rest)
      rest) <span class="warning">,@rest)</span>
 
-Example:
+Examples:
 
     (list `a `b `c) =&gt; (a b c)
     (list 1 2 3) =&gt; (1 2 3)
@@ -1134,7 +1183,7 @@ Example:
                (self x (cdr l)))
            ())) <span class="warning">,x ,l))</span>
 
-Example:
+Examples:
 
     (member 1 `(1 2 3)) =&gt; (1 2 3)
     (member 3 `(1 2 3)) =&gt; (3)
@@ -1173,7 +1222,7 @@ defun(?)
 
 rm - remove a symbol from the environment
 
-Example:
+Examples:
 
     (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
 </span>    x =&gt; 1
@@ -1182,7 +1231,7 @@ Example:
 </span>
 rmf - remove a macro from the function environment
 
-Example:
+Examples:
 
     (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
     (double 2) =&gt; 4
