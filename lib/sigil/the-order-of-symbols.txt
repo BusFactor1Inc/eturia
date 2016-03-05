@@ -210,15 +210,15 @@ Example:
 `1 => 1
 x => ; Error, undefined symbol
 `x => x
-(1 2 3) => ; Error, undefined function
+(1 2 3) => ; Error, undefined function: 1
 `(1 2 3) => (1 2 3)
 
 
 List - build lists
 ------------------
 
-Besides numbers and symbols, Sigil also has 'lists'.  A list is a
-collection of things, being symbols, numbers or other lists.
+Besides 'atoms' (numbers and symbols), Sigil also has 'lists'.  A list
+is a collection of atoms or other lists.
 
 Example:
 

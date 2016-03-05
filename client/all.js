@@ -10947,7 +10947,10 @@ var Sigil = new Model({
                 this.each(l.slice(1), f);
             } else {
                 f(l[0]);
-                this.each(this.cdr(l), f);
+                if(!(typeof l === "string" || typeof l === "number"))
+                    this.each(this.cdr(l), f);
+                else
+                    f(l, true);
             }
         } else {
             f(l, true);
@@ -11358,6 +11361,7 @@ var Sigil = new Model({
 	        } else {
                     if(last && this._null(e) !== 't') {
                         if(result.length) {
+                            result = this.reverse(result)
                             var result2 = result;
                             while(this._null(result2[1]) !== 't')
                                 result2 = result2[1];
@@ -11366,7 +11370,8 @@ var Sigil = new Model({
                             result = e;
                         dotted = true;
                     } else {
-                        result = [e, result];
+                        if(e !== undefined)
+                            result = [e, result];
                     }
                 }
             }.bind(this));
@@ -11549,12 +11554,13 @@ var Sigil = new Model({
                         elt = readSexpr.call(this, string);
 
                         if(elt === undefined) {
+                            debugger
                             var elt2 = readSexpr.call(this, string);
                             var elt3 = readSexpr.call(this, string);
                             if(elt3 !== null) {
-                                throw new Error("dot at wrong place in list!");
+                                throw new Error("error in s-expression (missing close paren?)");
                             }
-                            var result2 = result;
+                            var result2 = this.reverse(result);
                             var result3 = result2;
                             while(this._null(result2[1]) !== 't')
                                 result2 = result2[1];
@@ -11566,9 +11572,6 @@ var Sigil = new Model({
                         }
                     } while(elt || elt === 0 || elt === '');
                     
-                    if(!(result.length === 0 || result.length === 2))
-                        throw new Error("read an improper list!: " + result.length);
-
 		    return this.reverse(result);
 	        }
 
