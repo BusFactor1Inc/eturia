@@ -298,30 +298,32 @@ available.
 
 Note: in the Examples, '=>' means 'evaulates to' or 'the value of'.
 
-0) quote - prevent evaluation
------------------------------
 
-Evaluation means to 'give me the value of something', and to prevent
-the evauation of something means to just 'give me something'.
-Sometimes you want, in a list, to say 'just give me these things but
-give me the value of these other things', which can be done with ','
-and ',@'.
+0) quote, unquote, unquote-splice - control evaluation
+------------------------------------------------------
+
+Rather than use the shorthands described above, you can also call
+'quote', 'unquote' and 'unquote-splice' directly to build lists and
+control evalutation within a quoted list.
 
 Example:
 
     1 => 1 ; 'give me the value of' 1
-    `1 => 1 ; 'give me' 1
+    (quote 1) => 1 ; 'give me' 1
     x => ; 'give me the value of' x, error, as x has no value
-    `x => x ; 'give me' x
-    `(1 2 3) => (1 2 3) ; give me the list of digits 1, 2 and 3
+    (quote x) => x ; 'give me' x
+    (quote (1 2 3)) => (1 2 3) ; give me the list of digits 1, 2 and 3
 
-    ;; ADVANCED, unquoting with ',' and splicing with ',@'
-    (set `x 1) => 1 ; give x the value 1
-    `(,x 2 3) => (1 2 3) ; evaluate inside of a quoted list with ,
-    `(,@x 2 3) => (1 2 3) ; Error, cannot unquote 'splice' a non-list
-    (set `x `(1 2 3)) => (1 2 3) ; give x a value that is a list
-    `(,x 2 3) => ((1 2 3) 2 3) ; unquote (evaulate) x with ,
-    `(,@x 2 3) => (1 2 3 2 3) ; 'splice' with ,@
+    ;; longhand evaluation with ',' and splicing with ',@'
+    (set (quote x) 1) => 1 ; give x the value 1
+    (quote ((unquote x) 2 3) => (1 2 3) ; evaluate inside of a quoted list with as ','
+    (quote ((unquote-splice x) 2 3) => ; error, cannot unquote-splice a non-list
+    (set (quote x) (quote (1 2 3))) => (1 2 3) ; give x a value that is a list
+    (quote ((quote x) 2 3)) => ((1 2 3) 2 3) ; unquote x with as with ','
+    (quote ((unquote-splice x) 2 3)) => (1 2 3 2 3) ; splice the list as with ',@'
+
+Normally you would use the shorthands.
+
 
 1) atom - a predicate to test if its argument is an atom
 --------------------------------------------------------

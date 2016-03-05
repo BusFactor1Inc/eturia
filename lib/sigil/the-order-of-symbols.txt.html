@@ -425,31 +425,33 @@ available.
 
 Note: in the Examples, '<span class="constant">=&gt;</span>' means 'evaulates to' or 'the value of'.
 
-0) <span class="warning">quote - prevent evaluation</span>
------------------------------
 
-Evaluation means to 'give me the value of something', and to prevent
-the evauation of something means to just 'give me something'.
-Sometimes you want, in a list, to say 'just give me these things but
-give me the value of these other things', which can be done with ','
-and ',@'.
+0) <span class="warning">quote, unquote, unquote-splice - control evaluation</span>
+------------------------------------------------------
+
+Rather than use the shorthands described above, you can also call
+'<span class="constant">quote</span>', '<span class="constant">unquote</span>' and '<span class="constant">unquote-splice</span>' directly to build lists and
+control evalutation within a quoted list.
 
 Example:
 
     1 =&gt; 1 <span class="comment">; 'give me the value of' 1
-</span>    `1 =&gt; 1 <span class="comment">; 'give me' 1
+</span>    (quote 1) =&gt; 1 <span class="comment">; 'give me' 1
 </span>    x =&gt; <span class="comment">; 'give me the value of' x, error, as x has no value</span><span class="comment">
-</span>    `x =&gt; x <span class="comment">; 'give me' x</span><span class="comment">
-</span>    `(1 2 3) =&gt; (1 2 3) <span class="comment">; give me the list of digits 1, 2 and 3
+</span>    (quote x) =&gt; x <span class="comment">; 'give me' x</span><span class="comment">
+</span>    (quote (1 2 3)) =&gt; (1 2 3) <span class="comment">; give me the list of digits 1, 2 and 3
 </span>
-    <span class="comment-delimiter">;; </span><span class="comment">ADVANCED, unquoting with ',' and splicing with ',@'
-</span>    (set `x 1) =&gt; 1 <span class="comment">; give x the value 1
-</span>    `(,x 2 3) =&gt; (1 2 3) <span class="comment">; evaluate inside of a quoted list with ,
-</span>    `(,@x 2 3) =&gt; (1 2 3) <span class="comment">; Error, cannot unquote '</span><span class="constant">splice</span><span class="comment">' a non-list
-</span>    (set `x `(1 2 3)) =&gt; (1 2 3) <span class="comment">; give x a value that is a list
-</span>    `(,x 2 3) =&gt; ((1 2 3) 2 3) <span class="comment">; unquote (evaulate) x with ,
-</span>    `(,@x 2 3) =&gt; (1 2 3 2 3) <span class="comment">; '</span><span class="constant">splice</span><span class="comment">' with ,@</span><span class="comment">
+    <span class="comment-delimiter">;; </span><span class="comment">longhand evaluation with ',' and splicing with ',@'
+</span>    (set (quote x) 1) =&gt; 1 <span class="comment">; give x the value 1
+</span>    (quote ((unquote x) 2 3) =&gt; (1 2 3) <span class="comment">; evaluate inside of a quoted list with as ','
+</span>    (quote ((unquote-splice x) 2 3) =&gt; <span class="comment">; error, cannot unquote-splice a non-list
+</span>    (set (quote x) (quote (1 2 3))) =&gt; (1 2 3) <span class="comment">; give x a value that is a list
+</span>    (quote ((quote x) 2 3)) =&gt; ((1 2 3) 2 3) <span class="comment">; unquote x with as with ','
+</span>    (quote ((unquote-splice x) 2 3)) =&gt; (1 2 3 2 3) <span class="comment">; splice the list as with ',@'
 </span>
+Normally you would use the shorthands.
+
+
 1) <span class="warning">atom - a predicate to test if its argument is an atom</span>
 --------------------------------------------------------
 
