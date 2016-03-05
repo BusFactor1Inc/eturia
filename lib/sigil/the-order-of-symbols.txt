@@ -317,7 +317,7 @@ Examples:
 
     ;; longhand evaluation with ',' and splicing with ',@'
     (set (quote x) 1) => 1 ; give x the value 1
-    (quote ((unquote x) 2 3) => (1 2 3) ; evaluate inside of a quoted list with as ','
+    (quote ((unquote x) 2 3) => (1 2 3) ; evaluate inside of quoted list as with ','
     (quote ((unquote-splice x) 2 3) => ; error, cannot unquote-splice a non-list
     (set (quote x) (quote (1 2 3))) => (1 2 3) ; give x a value that is a list
     (quote ((quote x) 2 3)) => ((1 2 3) 2 3) ; unquote x with as with ','
@@ -762,7 +762,11 @@ Examples:
     (me (third `(1 2 3))) => (car (cdr (cdr `(1 2 3))))
     (rest `(1 2 3)) => (2 3) ; expands to (cdr `(1 2 3))
     (me (rest `(1 2 3))) => (cdr `(1 2 3))
-
+    (caar `((1 2 3) 2 3)) => 1
+    (cdar `((1 2 3) 2 3)) => (2 3)
+    (cadr `(1 (1 2 3) 2 3)) => (1 2 3)
+    (cddr `(1 2 3)) => (3)
+    
 The final 4 shortcuts above show how the names 'car' and 'cdr' can be
 combined into terse, longer combinations to allow for selection into
 more complex list structures.
@@ -791,6 +795,8 @@ statement, and when not, it runs the second statement.
     
 Examples: 
 
+    (if t 1 2) => 1
+    (if () 1 2) => 2
     (if (eq t t) 1 2) => 1
     (if (eq t ()) 1 2) => 2
 
@@ -810,26 +816,13 @@ to the variable name following &body in the arugument list.
 
 Examples: 
 
+    (when t 1) => 1
+    (when () 1) => ()
     (when (eq t t) 1) => 1
     (when (eq t ()) 1) => ()
 
 
-3) unless - negative single branch conditional
-----------------------------------------------
-
-Like when, but the logical opposite. It runs its body of when test
-returns ().
-
-(defmacro unless (test &body body)
-  (cond ,test ,@body))
-
-Examples:
-
-    (unless (eq t t) 1) => ()
-    (unless (eq t ()) 1) => 1
-
-
-4) reverse - reverse a list
+3) reverse - reverse a list
 ---------------------------
 
 Reverse a list by building a new list in opposite order using
@@ -849,7 +842,7 @@ Examples:
     (reverse `(1 2 3)) => (3 2 1)
 
 
-5) map - build a list by running a function over another list
+4) map - build a list by running a function over another list
 -------------------------------------------------------------
 
 'map' is what is known as a higher order function, that is, one which
@@ -874,7 +867,7 @@ Exercises:
     1. Write a map statement that takes a list `(1 2 3) and
        returns `(3 6 9).
 
-6) let - declare local variables
+5) let - declare local variables
 --------------------------------
 
 Often you need to use additional temporary variables when performing a
@@ -900,21 +893,21 @@ Examples:
     a => ; error, undefined symbol
     b => ; error, undefined symbol
 
-7) aif - anamorphic if
+6) aif - anamorphic if
 ----------------------
 
 (defmacro aif (test true false)
   `(let ((it ,test))
      (if it ,true ,false)))
 
-8) awhen - anamorphic when
+7) awhen - anamorphic when
 --------------------------
 
 (defmacro awhen (test &body body)
   `(let ((it ,test))
      (when it ,@body)))
 
-9) not - logical compliment
+8) not - logical compliment
 ---------------------------
 
 (defmacro not (x)
@@ -928,6 +921,21 @@ Examples:
     (not ()) => t
     (not t) => ()
     (not 1) => ()
+
+9) unless - negative single branch conditional
+----------------------------------------------
+
+Like when, but the logical opposite. It runs its body of when test
+returns ().
+
+(defmacro unless (test &body body)
+  (cond ,test ,@body))
+
+Examples:
+
+    (unless (eq t t) 1) => ()
+    (unless (eq t ()) 1) => 1
+
 
 10) and - logical and
 ---------------------
