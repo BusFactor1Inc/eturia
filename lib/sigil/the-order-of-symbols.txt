@@ -32,6 +32,9 @@
 ===============================================================================
 ===============================================================================
 
+Introduction
+------------
+
 Lisp as a computer programming language is as Latin is to English or
 modern day Italian.  It is the second oldest high level computer
 language still in use, invented (or found) in the 1950's by John
@@ -60,6 +63,16 @@ talk/paper 'Growing a language':
 
 All terms in the following text are (hopefully) defined before use.
 
+This material is the result of many years of study and research, of
+both myself and others.  It's opinions are all mine, built apon
+those I have admired in the past, knowingly or unknowningly. I hope
+you find the material as useful and entertaining as I have writing it
+down and preparing it.
+
+Burton Samograd <root@busfactor1.ca>
+Homepage: http://busfactor1.ca/old/old
+Facebook: https://www.facebook.com/KRUHFT-17546219842
+Twitter: https://twitter.com/kruhft (@kruhft)
 
 Intended Audience
 -----------------
@@ -1169,18 +1182,6 @@ Exercises 11 - A Multi-Core (Simulated) Lisp CPU
 ================================================
 
 --
-
-This material is the result of many years of study and research, of
-both myself and others.  It's opinions are all mine, built apon
-those I have admired in the past, knowingly or unknowningly. I hope
-you find the material as useful and entertaining as I have writing it
-down and preparing it.
-
-Burton Samograd <root@busfactor1.ca>
-Homepage: http://busfactor1.ca/old/old
-Facebook: https://www.facebook.com/KRUHFT-17546219842
-Twitter: https://twitter.com/kruhft (@kruhft)
-
 Copyright - 2016
 
 All rights reserved.  
