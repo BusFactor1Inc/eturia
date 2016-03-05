@@ -345,7 +345,8 @@ List - build lists
 ------------------
 
 Besides '<span class="constant">atoms</span>' (numbers and symbols), Sigil also has '<span class="constant">lists</span>'.  A list
-is a collection of atoms or other lists.
+is a collection of atoms or other lists, also known as an
+'<span class="constant">S-expression</span>' for historical reasons.
 
 Examples:
 
@@ -822,8 +823,8 @@ JavaScript code as little as possible from outside of it.
                              ============
 
 
-    <span class="string">&quot;..an individual's thoughts and actions are determined by the
-                             language..&quot;</span>
+             <span class="string">&quot;...an individual's thoughts and actions are
+                    determined by the language...&quot;</span>
 
                     -- The Sapir-Whorf Hypothesis
    
@@ -840,12 +841,15 @@ JavaScript code as little as possible from outside of it.
 ===============================================================================
 
 
-The following exercies build upon the primitives defined above and are
-meant to be typed into the Eturia '<span class="constant">Listener</span>' console.  The '<span class="constant">Examples</span>'
-can be used as test cases to ensure the correctness of your inputs.
+The following exercies build upon the primitive builtins defined
+previously and are meant to be typed into the Eturia '<span class="constant">Listener</span>'
+console.  The '<span class="constant">Examples</span>' can be used as test cases to ensure the
+correctness of your inputs.
 
-0) <span class="warning">first, second, third, rest - shortcuts</span>
------------------------------------------
+0) <span class="warning">first, second, third, rest, ... - shortcuts</span>
+----------------------------------------------
+
+These first code examples show the most basic of macro, the shortcut.
 
 (<span class="keyword">defmacro</span> <span class="function-name">first</span> (x)
   `(car ,x))
@@ -859,49 +863,107 @@ can be used as test cases to ensure the correctness of your inputs.
 (<span class="keyword">defmacro</span> <span class="function-name">rest</span> (x)
   `(cdr ,x))
 
+(<span class="keyword">defmacro</span> <span class="function-name">caar</span> (x)
+  `(car (car ,x)))
+
+(<span class="keyword">defmacro</span> <span class="function-name">cadr</span> (x) <span class="comment">; same a second
+</span>  `(car (cdr ,x)))
+
+(<span class="keyword">defmacro</span> <span class="function-name">cdar</span> (x)
+  `(cdr (car ,x)))
+
+(<span class="keyword">defmacro</span> <span class="function-name">cddr</span> (x)
+  `(cdr (cdr ,x)))
+
+As you can see, the above macros return non-evaluated '<span class="constant">code</span>'.  This
+'<span class="constant">code</span>' is then executed immediately after the macro is called with
+arguments, as the following examples show.
+
 Examples:
 
-    (first `(1 2 3)) =&gt; 1
-    (second `(1 2 3)) =&gt; 2
-    (third `(1 2 3)) =&gt; 3
-    (rest `(1 2 3)) =&gt; (2 3)
+    (first `(1 2 3)) =&gt; 1 <span class="comment">; expands to (car `(1 2 3))
+</span>    (me (first `(1 2 3))) =&gt; (car `(1 2 3))
+    (second `(1 2 3)) =&gt; 2 <span class="comment">; expands to (car (cdr `(1 2 3))</span><span class="comment">)</span><span class="comment">
+</span>    (me (second `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
+    (third `(1 2 3)) =&gt; 3 <span class="comment">; expands to (car (cdr (cdr `(1 2 3))</span><span class="comment">)</span><span class="comment">)
+</span>    (me (third `(1 2 3))) =&gt; (car (cdr (cdr `(1 2 3))))
+    (rest `(1 2 3)) =&gt; (2 3) <span class="comment">; expands to (cdr `(1 2 3))
+</span>    (me (rest `(1 2 3))) =&gt; (cdr `(1 2 3))
+
+The final 4 shortcuts above show how the names '<span class="constant">car</span>' and '<span class="constant">cdr</span>' can be
+combined into terse, longer combinations to allow for selection into
+more complex list structures.
+
+Spend some time to fully understand what is happening here when these
+macros are defined and run.
+
+Exercise: write '<span class="constant">fourth</span>', and '<span class="constant">fifth</span>'.
+
+    (fourth `(1 2 3 4 5 6)) =&gt; 4
+    (fifth `(1 2 3 4 5 6)) =&gt; 5
+
 
 1) <span class="warning">if - tradional conditional</span>
 -----------------------------
 
+cond is a general purpose conditional, but sometimes it can be clearer
+to use more a traditional conditional construct known as '<span class="constant">if</span>'.  It
+takes a test, evaluates it and if it is true, runs the second
+statement, and when not, it runs the second statement.
+
 (<span class="keyword">defmacro</span> <span class="function-name">if</span> (test true false)
   (<span class="keyword">cond</span>
-    (,test ,true)
-    (t ,false)))
-    
+    (,test ,true) <span class="comment">; check test, evaulate true if not ()
+</span>    (t ,false)))  <span class="comment">; else, evaluate false
+</span>    
 Examples: 
 
     (<span class="keyword">if</span> (eq t t) 1 2) =&gt; 1
     (<span class="keyword">if</span> (eq t ()) 1 2) =&gt; 2
 
+
 2) <span class="warning">when - single branch conditional</span>
 -----------------------------------
+
+Sometimes you don't need both branches of an if statement and just
+want to perform and action when the test is true.  This is when you
+use when.  This macro makes use of <span class="type">&amp;body</span> in the argument list, which
+means to take all of the arguments following as a list and bind them
+to the variable name following <span class="type">&amp;body</span> in the arugument list.
 
 (<span class="keyword">defmacro</span> <span class="function-name">when</span> (test <span class="type">&amp;body</span> body)
   (<span class="keyword">cond</span>
     (,test ,@body)))
 
 Examples: 
+
     (<span class="keyword">when</span> (eq t t) 1) =&gt; 1
     (<span class="keyword">when</span> (eq t ()) 1) =&gt; ()
 
+
 3) <span class="warning">unless - negative single branch conditional</span>
 ----------------------------------------------
+
+Like when, but the logical opposite. It runs its body of when test
+returns ().
 
 (<span class="keyword">defmacro</span> <span class="function-name">unless</span> (test <span class="type">&amp;body</span> body)
   (<span class="keyword">cond</span> ,test ,@body))
 
 Examples:
+
     (<span class="keyword">unless</span> (eq t t) 1) =&gt; ()
     (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
 
+
 4) <span class="warning">reverse - reverse a list</span>
 ---------------------------
+
+Reverse a list by building a new list in opposite order using
+cons'ing.  Building a list this way is an important idiom to
+understand, and thanfully this function is quite simple because the
+lists built using cons'ing are in '<span class="constant">reverse</span>' order, that is, items are
+added to the front rather than the back of the list.
 
 (<span class="keyword">defmacro</span> <span class="function-name">reverse</span> (l)
   `((<span class="keyword">lambda</span> (l a)
@@ -913,9 +975,14 @@ Examples:
 
     (reverse `(1 2 3)) =&gt; (3 2 1)
 
-5) <span class="warning">map - build a list by running the function f ovar the entries in</span>
-         list l
--------------------------------------------------------------------
+
+5) <span class="warning">map - build a list by running a function over another list</span>
+-------------------------------------------------------------
+
+'<span class="constant">map</span>' is what is known as a higher order function, that is, one which
+takes a function as an argument.  In this case the function is run
+over the second argument, a list. The function is called with every
+element of the list, and a new list is built using the results.
 
 (<span class="keyword">defmacro</span> <span class="function-name">map</span> (f l)
   `((<span class="keyword">lambda</span> (l a)
@@ -926,24 +993,21 @@ Examples:
 Examples:
 
     (map (<span class="keyword">lambda</span> (x) (+ x x)) `(1 2 3)) =&gt; (2 4 6)
+    (map car `((1 a) (2 b) (3 c))) =&gt; (1 2 3)
+    (map second `((1 a) (2 b) (3 c))) =&gt; (a b c)
 
-5.5) <span class="warning">caar, cadr, cdar and cddr - shortcuts</span>
-------------------------------------------
+Exercises:
 
-(<span class="keyword">defmacro</span> <span class="function-name">caar</span> (x)
-  `(car (car ,x)))
-
-(<span class="keyword">defmacro</span> <span class="function-name">cadr</span> (x)
-  `(car (cdr ,x)))
-
-(<span class="keyword">defmacro</span> <span class="function-name">cdar</span> (x)
-  `(cdr (car ,x)))
-
-(<span class="keyword">defmacro</span> <span class="function-name">cddr</span> (x)
-  `(cdr (cdr ,x)))
+    1. Write a map statement that takes a list `(1 2 3) and
+       returns `(3 6 9).
 
 6) <span class="warning">let - declare local variables</span>
 --------------------------------
+
+Often you need to use additional temporary variables when performing a
+computation. '<span class="constant">let</span>' can be used to create these temporaries, cleaning
+them up after the body of the form is completed, returning the value
+of the last executed statement.
 
 (<span class="keyword">defmacro</span> <span class="function-name">let</span> (args <span class="type">&amp;body</span> body)
   (<span class="keyword">lambda</span> (vars values)
@@ -959,8 +1023,10 @@ Examples:
 
 Examples:
 
-    (<span class="keyword">let</span> ((x 1) (y 2)) (+ x y)) =&gt; 3
-
+    (<span class="keyword">let</span> ((a 1) (b 2)) (+ a b)) =&gt; 3
+    a =&gt; <span class="comment">; error, undefined symbol
+</span>    b =&gt; <span class="comment">; error, undefined symbol</span><span class="comment">
+</span>
 7) <span class="warning">aif - anamorphic if</span>
 ----------------------
 
