@@ -11446,7 +11446,8 @@ var Sigil = new Model({
 	        c === ')';
         }
 
-        function isNumberThing(c,i, l) {
+        function isNumberThing(c, i, l) {
+            debugger
             return c === '0' ||
 	        c === '1' ||
 	        c === '2' ||
@@ -11478,7 +11479,7 @@ var Sigil = new Model({
 	    var isNumber = true;
             var i = 0;
 	    while(!terminator(string[0])) {
-	        isNumber &= isNumberThing(string[0], i);
+	        isNumber &= isNumberThing(string[0], i, string.length);
 	        number += string[0];
 	        string.shift();
                 i++;
