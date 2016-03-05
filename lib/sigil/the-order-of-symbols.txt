@@ -229,6 +229,7 @@ Example:
     `(1 2 3 . ()) => (1 2 3) ; is a 'proper' list of the digits 1 2 3
     `(1 . 2) => (1 . 2) ; is an 'improper' list of the digits 1 and 2
     `(x . y) => (x . y) ; is an 'improper' list of the symbols x and y
+    `(1 2 . (3 . (4 . ()))) => (1 2 3 4)
 
 A proper list has () as its last element, and it is not normally
 shown.  An improper list does not have () as it's last element, and
