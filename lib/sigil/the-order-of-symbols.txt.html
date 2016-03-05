@@ -337,15 +337,15 @@ Example:
 `1 =&gt; 1
 x =&gt; <span class="comment">; Error, undefined symbol
 </span>`x =&gt; x
-(1 2 3) =&gt; <span class="comment">; Error, undefined function
+(1 2 3) =&gt; <span class="comment">; Error, undefined function: 1
 </span>`(1 2 3) =&gt; (1 2 3)
 
 
 List - build lists
 ------------------
 
-Besides numbers and symbols, Sigil also has '<span class="constant">lists</span>'.  A list is a
-collection of things, being symbols, numbers or other lists.
+Besides '<span class="constant">atoms</span>' (numbers and symbols), Sigil also has '<span class="constant">lists</span>'.  A list
+is a collection of atoms or other lists.
 
 Example:
 
@@ -355,8 +355,9 @@ Example:
 </span>    `(1 2 3) =&gt; (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3</span><span class="comment">
 </span>    `(1 2 3 . ()) =&gt; (1 2 3) <span class="comment">; is a '</span><span class="constant">proper</span><span class="comment">' list of the digits 1 2 3
 </span>    `(1 . 2) =&gt; (1 . 2) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the digits 1 and 2</span><span class="comment">
-</span>    `(x . y) =&gt; (x . y) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the symbols x and y</span><span class="comment">
-</span>
+</span>    `(x . y) =&gt; (x . y) <span class="comment">; is an '</span><span class="constant">improper</span><span class="comment">' list of the symbols x and y
+</span>    `(1 2 . (3 . (4 . ()))) =&gt; (1 2 3 4)
+
 A proper list has () as its last element, and it is not normally
 shown.  An improper list does not have () as it's last element, and
 this is shown by preceeding the last element with a dot.
@@ -396,7 +397,10 @@ Example:
     `(x 1 2 3) =&gt; (x 1 2 3)
     `(,x 1 2 3) =&gt; ((a b c) 1 2 3)
     `(,@x 1 2 3) =&gt; (a b c 1 2 3)
-
+    `(1 2 3 ,x) =&gt; (1 2 3 (a b c))
+    `(1 2 3 ,@x) =&gt; (1 2 3 a b c)
+    `(1 2 3 . ,@x) =&gt; <span class="comment">; error, no splicing after a dot
+</span>
 
 NOTE: SYMBOLS AND NUMBERS ARE ALSO KNOWN AS ATOMS.
 

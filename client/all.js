@@ -11342,8 +11342,7 @@ var Sigil = new Model({
         return lambda;
     },
 
-    /* FUCK THIS IS HAIRY */
-    bqquote: function(arg) {
+    bquote: function(arg) {
         var result = [], dotted = false;
         if(Array.isArray(arg) && (arg[0] !== 'unquote' && arg[0] !== 'unquote-splice')) {
             this.each(arg, function(e, last) {
@@ -11356,8 +11355,8 @@ var Sigil = new Model({
                         e3 = e3[1];
                     e3[1] = result;
                     result = e2;
-	        } else if(e && Array.isArray(e) && e.length) {
-	            result = [this.bqquote(e), result];
+	        } else if((e && e !== '' && e !== 0) && Array.isArray(e) && e.length) {
+	            result = [this.bquote(e), result];
 	        } else {
                     if(last && this._null(e) !== 't') {
                         if(result.length) {
@@ -11365,9 +11364,10 @@ var Sigil = new Model({
                             var result2 = result;
                             while(this._null(result2[1]) !== 't')
                                 result2 = result2[1];
-                            result2[1] = e;
-                        } else 
+                            result2[1] = this.bquote(e);
+                        } else {
                             result = e;
+                        }
                         dotted = true;
                     } else {
                         if(e !== undefined)
@@ -11399,8 +11399,8 @@ var Sigil = new Model({
 	    var car = expr[0];
 	    var cdr = expr[1];
 	    switch(car) {
-	    case 'qquote':
-	        return this.bqquote(cdr[0]);
+	    case 'quote':
+	        return this.bquote(cdr[0]);
 	    case 'cond':
 	        return this.bcond(cdr);
 	    case 'lambda':
@@ -11521,7 +11521,7 @@ var Sigil = new Model({
 	        case '`':
                     inBackquote = true;
                     var e = readSexpr.call(this, string);
-		    var retval = [ 'qquote', [ e, []]];
+		    var retval = [ 'quote', [ e, []]];
                     inBackquote = false;
                     return retval;
                     
@@ -11559,6 +11559,10 @@ var Sigil = new Model({
                             var elt3 = readSexpr.call(this, string);
                             if(elt3 !== null) {
                                 throw new Error("error in s-expression (missing close paren?)");
+                            }
+                            if(Array.isArray(elt2) && elt2[0] === 'unquote-splice') {
+                                throw new Error("no splicing after a dot.");
+                                
                             }
                             var result2 = this.reverse(result);
                             var result3 = result2;
@@ -11625,7 +11629,7 @@ var Sigil = new Model({
                 } else if(pretty && Array.isArray(val) && val[0] === "unquote-splice") {
                     retval += ',@' + removeParens(this.printToString(val[1])) + " ";
                     special = true;
-                } else if(pretty && Array.isArray(val) && val[0] === "qquote") {
+                } else if(pretty && Array.isArray(val) && val[0] === "quote") {
                     retval += '`' + removeParens(this.printToString(val[1])) + " ";
                     special = true;
                 } else if(this._null(val) !== 't') {
