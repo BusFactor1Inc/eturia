@@ -11584,7 +11584,8 @@ var Sigil = new Model({
 	        }
 	    }
 
-	    throw new Error("unterminated sexpr.");
+            if(string.length)
+	        throw new Error("unterminated sexpr.");
         }
 
         return readSexpr.call(this, string.split(''));
