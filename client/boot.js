@@ -51,13 +51,14 @@ var hello2 = x2.trigger('runApplication', { app: "hello",
 //x.placeWindow(hello, 50, 50);
 //x.sizeWindow(hello, "128px", "128px");
 var notebook = x.runApplication({ app: "notebook",
-                   title: "Listener",
-                   height: "900px",
-                   style: {
-                       top: "25px",
-                       left: "20px"
-                   }
-                 });
+                                  title: "Listener",
+                                  height: "900px",
+                                  style: {
+                                      top: "25px",
+                                      left: "20px",
+                                      maxWidth: "810px",
+                                  }
+                                });
 
 /*
 x.runApplication({app:"cell",
