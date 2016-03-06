@@ -1164,20 +1164,23 @@ Examples:
     (xor () t) => t
     (xor t t) => ()
 
-;; WARNING: THE FOLLOWING CODE IS UNTESTED
-
 17) list - create a proper list of all arguments
 ------------------------------------------------
 
+Creating lists with cons can often be tedious, so lets define a macro
+to make it easier.  This example shows how to use the underlying lisp
+to build the list and evaluate the arguments.
+
 (defmacro list (&rest rest)
-  `(lambda (rest)
-     rest) ,@rest)
+  `((lambda (&rest rest)
+     rest) ,@rest))
 
 Examples:
 
     (list `a `b `c) => (a b c)
     (list 1 2 3) => (1 2 3)
 
+;; WARNING: THE FOLLOWING CODE IS UNTESTED
 
 18) equal - compare if two things are equal, including lists
 ------------------------------------------------------------

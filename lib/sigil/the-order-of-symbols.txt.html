@@ -1291,21 +1291,24 @@ Examples:
     (xor () t) =&gt; t
     (xor t t) =&gt; ()
 
-<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
-</span>
 17) <span class="warning">list - create a proper list of all arguments</span>
 ------------------------------------------------
 
+Creating lists with cons can often be tedious, so lets define a macro
+to make it easier.  This example shows how to use the underlying lisp
+to build the list and evaluate the arguments.
+
 (<span class="keyword">defmacro</span> <span class="function-name">list</span> (<span class="type">&amp;rest</span> rest)
-  `(<span class="keyword">lambda</span> (rest)
-     rest) <span class="warning">,@rest)</span>
+  `((<span class="keyword">lambda</span> (<span class="type">&amp;rest</span> rest)
+     rest) <span class="warning">,@rest))</span>
 
 Examples:
 
     (list `a `b `c) =&gt; (a b c)
     (list 1 2 3) =&gt; (1 2 3)
 
-
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
+</span>
 18) <span class="warning">equal - compare if two things are equal, including lists</span>
 ------------------------------------------------------------
 
