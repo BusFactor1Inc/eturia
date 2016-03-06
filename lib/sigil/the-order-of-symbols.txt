@@ -1119,21 +1119,30 @@ Examples:
     (length `(1 2 3)) => 3
     (length `((1 2 3) a b c)) => 4
 
-;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+15) mapn - like map, but takes n lists as arguments
+---------------------------------------------------
 
-15) mapn - like map, but takes n lists as arguments (map is faster)
-------------------------------------------------------------------
+'mapn' is like 'map', in that it runs a function to create a new list,
+but it can take multiple lists, and therefore, functions of multiple
+arguments.  'mapn' iterates down the lists in parallel, calling the
+function f with the first elements of each of the lists, after which
+it recurses with the rest of the lists.  If you only have one list,
+'map' is faster to use computationally, although 'mapn' will work with
+a single list if needed.
 
-(defmacro mapn (f &rest xs)
-  `((lambda (a xs)
-      (let ((hs (map car xs)))
-        (self (cons (eval `(apply ,f ,@xs)) a) (cdr xs))
-        (reverse a))) () ,xs))
+(defmacro mapn (f &rest lists)
+  `((lambda (xs a)
+      (let ((heads (map car xs)))
+        (self (cdr xs) (cons (eval `(apply ,f ,@heads)) a))
+        (reverse a)))
+    ,lists ()))
 
 Examples:
 
     (mapn (lambda (x y) (+ x y)) `(1 2 3) `(1 2 3)) => (2 4 6)
     (mapn (lambda (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) => (xa1 yb2 zc3)
+
+;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
 
 16) setq
 

@@ -1246,22 +1246,31 @@ Examples:
     (length `(1 2 3)) =&gt; 3
     (length `((1 2 3) a b c)) =&gt; 4
 
-<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS ALL UNTESTED
-</span>
-15) <span class="warning">mapn - like map, but takes n lists as arguments (map is faster)</span>
-------------------------------------------------------------------
+15) <span class="warning">mapn - like map, but takes n lists as arguments</span>
+---------------------------------------------------
 
-(<span class="keyword">defmacro</span> <span class="function-name">mapn</span> (f <span class="type">&amp;rest</span> xs)
-  `((<span class="keyword">lambda</span> (a xs)
-      (<span class="keyword">let</span> ((hs (map car xs)))
-        (self (cons (eval `(apply ,f ,@xs)) a) (cdr xs))
-        (reverse a))) <span class="warning">() ,xs))</span>
+'<span class="constant">mapn</span>' is like '<span class="constant">map</span>', in that it runs a function to create a new list,
+but it can take multiple lists, and therefore, functions of multiple
+arguments.  '<span class="constant">mapn</span>' iterates down the lists in parallel, calling the
+function f with the first elements of each of the lists, after which
+it recurses with the rest of the lists.  If you only have one list,
+'<span class="constant">map</span>' is faster to use computationally, although '<span class="constant">mapn</span>' will work with
+a single list if needed.
+
+(<span class="keyword">defmacro</span> <span class="function-name">mapn</span> (f <span class="type">&amp;rest</span> lists)
+  `((<span class="keyword">lambda</span> (xs a)
+      (<span class="keyword">let</span> ((heads (map car xs)))
+        (self (cdr xs) (cons (eval `(apply ,f ,@heads)) a))
+        (reverse a)))
+    ,lists ()))
 
 Examples:
 
     (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(1 2 3) `(1 2 3)) =&gt; (2 4 6)
     (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) =&gt; (xa1 yb2 zc3)
 
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+</span>
 16) <span class="warning">setq</span>
 
 (<span class="keyword">defmacro</span> <span class="function-name">setq</span> (<span class="type">&amp;rest</span> rest)
