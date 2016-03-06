@@ -151,15 +151,15 @@ span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretc
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS
 </span><span class="comment-delimiter">;;</span><span class="comment">
-</span><span class="comment-delimiter">;; </span><span class="flyspell-incorrect-0000">Pre</span><span class="comment">-order the book here:
+</span><span class="comment-delimiter">;; </span><span class="flyspell-incorrect-0000">Pre</span><span class="comment">-order the hardcopy book here:
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;;    </span><span class="comment">https://www.inkshares.com/books/the-order-of-symbols-9907
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;; </span><span class="comment">Questions, comments or problems? Email root@busfactor1.ca
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span>
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
                         ======================
                         |The Order of Symbols|
@@ -182,8 +182,8 @@ span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretc
 
                            -- Donald Knuth
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
 Introduction
 ------------
@@ -850,8 +850,8 @@ written in JavaScript, but the goal of the system is to modify the
 JavaScript code as little as possible from outside of it.
 
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
                              ============
                              |The Basics|
@@ -872,8 +872,8 @@ JavaScript code as little as possible from outside of it.
                           -- Linus Torvalds
 
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
 
 The following exercises build upon the primitive <span class="flyspell-duplicate-0002">builtins</span> defined
@@ -1481,24 +1481,85 @@ Examples:
 
 <span class="comment-delimiter">;; </span><span class="comment">TO BE CONTINUED
 </span>
-push - add an element to a list
--------------------------------
+push - add an element to the head of a list
+-------------------------------------------
 
 '<span class="constant">push</span>' is used to insert elements onto the head of a list.
 
 (<span class="flyspell-duplicate-0005">defmacro</span> <span class="function-name">push</span> (x l)
   `(<span class="keyword">let</span> ((<span class="flyspell-duplicate-0002">xe</span> ,x))
      (set <span class="flyspell-duplicate-0002">xe</span> (cons <span class="flyspell-duplicate-0002">xe</span> l))))
-pop
-shift
-<span class="flyspell-incorrect-0001">unshift</span>
-rotate n
-assoc
-flatten
-sort
 
-===============================================================================
-===============================================================================
+Examples:
+
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (push 0 x) =&gt; (0 1 2 3)
+    (push 0 `(1 2 3)) =&gt; <span class="comment">; error, list is not a symbol
+</span>
+pop - remove the head of a list
+-------------------------------
+
+'<span class="constant">pop</span>' is the compliment to '<span class="constant">push</span>' and removes the head of the list
+that was (possibly) added last by pop.  With '<span class="constant">push</span>' and '<span class="constant">pop</span>' one can
+use a list as a '<span class="constant">stack</span>', or a FIFO (first in first out) queue.
+
+(<span class="keyword">defmacro</span> <span class="function-name">pop</span> (l)
+  `(<span class="keyword">let</span> ((le ,l))
+     ((<span class="keyword">lambda</span> (o)
+        (set ll (cdr le))
+        o) <span class="warning">(car le))))</span>
+
+Examples:
+
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (pop x) =&gt; 1
+    x =&gt; (2 3)
+
+shift - add an element to the tail of a list
+--------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">shift</span> (x l)
+  `(<span class="keyword">let</span> ((le ,l))
+     (set le (reverse (cons ,x (reverse le))))))
+
+Examples:
+
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (shift 4 x) =&gt; (1 2 3 4)
+
+<span class="flyspell-incorrect-0001">unshift</span> - remove an element from the tail of a list
+----------------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">unshift</span> (l)
+  `(<span class="keyword">let</span> ((le ,l))
+     ((<span class="keyword">lambda</span> (o)
+        (set le (cdr (reverse le)))
+        o) <span class="warning">(car (reverse le)))))</span>
+
+Examples:
+
+(set `x `(1 2 3)) =&gt; (1 2 3)
+(unshift x) =&gt; 3
+x =&gt; (1 2)
+
+rotate - rotate a list
+----------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">rotate</span> (l n))
+
+
+assoc - associative lookup
+--------------------------
+
+
+flatten - build a list from nested lists
+----------------------------------------
+
+sort - sort a list based on a predicate
+---------------------------------------
+
+========================================================================
+========================================================================
 
                               ==========
                               |THE <span class="flyspell-incorrect-0001">MIDS</span>|
@@ -1513,8 +1574,8 @@ sort
 
                               - Alan Kay
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
 =======================
 Exercises 0 - <span class="flyspell-incorrect-0001">TODO</span> List
@@ -1554,12 +1615,12 @@ Exercises 3 - Life
 Exercises 4 - <span class="flyspell-incorrect-0001">GPS</span> (General Problem Solver)
 ==========================================
 
-=================================================
-Exercises 5 - A (Simulated) Arbitrage Trading Bot
-=================================================
+=======================================
+Exercises 5 - A (Simulated) Trading Bot
+=======================================
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
                             ==============
                             |THE ADVANCED|
@@ -1569,8 +1630,8 @@ Exercises 5 - A (Simulated) Arbitrage Trading Bot
 
                         -- Ludwig Wittgenstein
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
 =========================================
 Exercises 6 - Boolean Propagator Networks
@@ -1592,8 +1653,8 @@ Exercises 8 - <span class="flyspell-incorrect-0001">Prolog</span>, a Logic Langu
 <span class="flyspell-duplicate-0002">Mathmatical</span> Exercises 4 - <span class="flyspell-duplicate-0002">Multi</span>-Core Ray Tracer
 ===============================================
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
 
                                ========
                                |DREAMS|
@@ -1603,23 +1664,27 @@ Exercises 8 - <span class="flyspell-incorrect-0001">Prolog</span>, a Logic Langu
 
                          -- K. David Harrison
 
-===============================================================================
-===============================================================================
+========================================================================
+========================================================================
+
+================================
+Exercise 9 - Genetic Programming
+================================
 
 ===================================
-Exercise 9 - A (Simulated) <span class="flyspell-duplicate-0002">RISC</span> CPU
+Exercise 10 - A (Simulated) <span class="flyspell-duplicate-0002">RISC</span> CPU
 ===================================
 
 ==========================================================
-Exercise 10 - A Lisp Compiler for the (Simulated) <span class="flyspell-duplicate-0002">RISC</span> CPU
+Exercise 11 - A Lisp Compiler for the (Simulated) <span class="flyspell-duplicate-0002">RISC</span> CPU
 ==========================================================
 
 =====================================
-Exercises 10 - A (Simulated) Lisp CPU 
+Exercises 12 - A (Simulated) Lisp CPU 
 =====================================
 
 ================================================
-Exercises 11 - A <span class="flyspell-duplicate-0002">Multi</span>-Core (Simulated) Lisp CPU 
+Exercises 13 - A <span class="flyspell-duplicate-0002">Multi</span>-Core (Simulated) Lisp CPU 
 ================================================
 
 --
@@ -1630,6 +1695,10 @@ All rights reserved.
 If you wish to reproduce this work, please ask my permission first.
 Fair use provisions apply.  The computer code contained in this
 document can be used for any purpose without restriction.
+
+<span class="string">&quot;Things don't have to change the world to be important.&quot;</span>
+
+  -- Steve Jobs
 </pre>
 
  </body>
