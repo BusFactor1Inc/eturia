@@ -1218,8 +1218,6 @@ Examples:
     (pallindromep `(1 2 3 4)) => ()
     (pallindromep `(1 2 3 4 3 2 1)) => t
 
-;; WARNING: THE FOLLOWING CODE IS UNTESTED
-
 19) member - find if something is in a list
 -------------------------------------------
 
@@ -1231,7 +1229,7 @@ value is the contents of the list up to the item found, else () if the
 'thing' is not found in the 'list'.
 
 (defmacro member (thing list &rest test)
-  `(let ((t (aif test it eq)))
+  `(let ((t (aif ,(car test) it eq)))
      ((lambda (x l)
         (if l
             (if (t x (car l))
@@ -1249,16 +1247,21 @@ Examples:
     (member `(1 2 3) `(a b c (1 2 3)) equal) => ((1 2 3))  
 
 
-21) filter - remove elements from a list based on a predicate
--------------------------------------------------------------
+21) filter - remove elements from a list
+----------------------------------------
 
-(defun filter (f l)
+'filter' is like map, in that it is a higher order function.  It takes
+a predicate and a list, building a new list by running the predicate
+over the list and including the members for which the predicate
+returns true.
+
+(defmacro filter (f l)
   `((lambda (l a)
       (if l
           (if (,f (car l))
               (self (cdr l) (cons (car l) a))
               (self (cdr l) a))
-          (reverse a))) ,l))
+          (reverse a))) ,l ()))
 
 Examples:
 
@@ -1266,6 +1269,8 @@ Examples:
     (filter (lambda (x) (or (eq x 1) (eq x 3)) `(1 2 3)) => (2)
 
             
+;; WARNING: THE FOLLOWING CODE IS UNTESTED
+
 22) rm - remove a symbol from the environment
 ---------------------------------------------
 
