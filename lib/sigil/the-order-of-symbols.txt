@@ -1136,7 +1136,7 @@ a single list if needed.
   `((lambda (xs a)
       (if xs
           (let ((heads (map car xs)))
-            (self (cdr xs) (cons (apply ,f heads) a)))
+            (self (cdr xs) (cons (eval `(,f ,@heads) a)))
         (reverse a)))
     `,lists ()))
 

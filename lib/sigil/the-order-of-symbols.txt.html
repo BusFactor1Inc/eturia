@@ -1263,7 +1263,7 @@ a single list if needed.
   `((<span class="keyword">lambda</span> (xs a)
       (<span class="keyword">if</span> xs
           (<span class="keyword">let</span> ((heads (map car xs)))
-            (self (cdr xs) (cons (apply ,f heads) a)))
+            (self (cdr xs) (cons (eval `(,f ,@heads) a)))
         (reverse a)))
     `,lists ()))
 
