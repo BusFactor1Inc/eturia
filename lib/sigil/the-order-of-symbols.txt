@@ -1132,8 +1132,9 @@ a single list if needed.
 
 (defmacro mapn (f &rest lists)
   `((lambda (xs a)
-      (let ((heads (map car xs)))
-        (self (cdr xs) (cons (eval `(apply ,f ,@heads)) a))
+      (if xs
+          (let ((heads (map car xs)))
+            (self (cdr xs) (cons (eval `(apply ,f ,@heads)) a)))
         (reverse a)))
     ,lists ()))
 

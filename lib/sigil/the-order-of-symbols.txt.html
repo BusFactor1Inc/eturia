@@ -1259,8 +1259,9 @@ a single list if needed.
 
 (<span class="keyword">defmacro</span> <span class="function-name">mapn</span> (f <span class="type">&amp;rest</span> lists)
   `((<span class="keyword">lambda</span> (xs a)
-      (<span class="keyword">let</span> ((heads (map car xs)))
-        (self (cdr xs) (cons (eval `(apply ,f ,@heads)) a))
+      (<span class="keyword">if</span> xs
+          (<span class="keyword">let</span> ((heads (map car xs)))
+            (self (cdr xs) (cons (eval `(apply ,f ,@heads)) a)))
         (reverse a)))
     ,lists ()))
 
