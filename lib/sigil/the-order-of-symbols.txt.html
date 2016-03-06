@@ -1312,13 +1312,17 @@ Examples:
 18) <span class="warning">equal - compare if two things are equal, including lists</span>
 ------------------------------------------------------------
 
+If you recall from the discussion of '<span class="constant">eq</span>', it does not compare the
+equality of lists, just atoms.  The following is a function that does
+a '<span class="constant">deep</span>' comparison between 2 items, including lists.
+
 (<span class="keyword">defmacro</span> <span class="function-name">equal</span> (x y)
-  `((<span class="keyword">lambda</span> (x y)
+  `((<span class="keyword">lambda</span> (a b)
       (<span class="keyword">cond</span>
-        ((and (atom x) (atom y)) (eq x y))
-        ((and (null x) (null y)) t)
+        ((and (atom a) (atom b)) (eq a b))
+        ((and (null a) (null b)) t)
         (t
-         (self (cdr x) (cdr y))))) <span class="warning">,x ,y))</span>
+         (self (cdr a) (cdr b))))) <span class="warning">,x ,y))</span>
 
 Examples:
 
@@ -1328,7 +1332,8 @@ Examples:
     (equal `(1 2 3) `(1 2 3)) =&gt; t
     (equal `((1 2 3 (x y z)) a b c) `((1 2 3 (x y z)) a b c)) =&gt; t
     (<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
-      `(equal l (reverse l))) <span class="warning">=&gt; ...</span>
+      `(<span class="keyword">let</span> ((le ,l))
+         (equal le (reverse le))))
     (pallindromep `(1 2 3 4)) =&gt; ()
     (pallindromep `(1 2 3 4 3 2 1)) =&gt; t
 
