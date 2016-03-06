@@ -789,9 +789,9 @@ takes a test, evaluates it and if it is true, runs the second
 statement, and when not, it runs the second statement.
 
 (defmacro if (test true false)
-  (cond
-    (,test ,true) ; check test, evaulate true if not ()
-    (t ,false)))  ; else, evaluate false
+  `(cond
+     (,test ,true) ; check test, evaulate true if not ()
+     (t ,false)))  ; else, evaluate false
     
 Examples: 
 
@@ -811,8 +811,8 @@ means to take all of the arguments following as a list and bind them
 to the variable name following &body in the arugument list.
 
 (defmacro when (test &body body)
-  (cond
-    (,test ,@body)))
+  `(cond
+     (,test ,@body)))
 
 Examples: 
 
@@ -832,29 +832,36 @@ lists built using cons'ing are in 'reverse' order, that is, items are
 added to the front rather than the back of the list.
 
 (defmacro reverse (l)
-  `((lambda (l a)
-      (if l
-          (self (cdr l) (cons (car l) a))
-          a))))
+  `((lambda (l2 a) ; an anonymous function
+      (if l2 ; if l2 is not null
+          (self (cdr l2) (cons (car l2) a)) ; recurse
+          a)) ; else return a, the accumlator
+    ,l ())) ; call the anonymous function immediately
 
 Examples: 
 
     (reverse `(1 2 3)) => (3 2 1)
+    (reverse `((1 2 3) a b c)) => (c b a (1 2 3))
+
+Exercises:
+
+    1. Will reverse work with improper lists?  Why not?
 
 
 4) map - build a list by running a function over another list
 -------------------------------------------------------------
 
 'map' is what is known as a higher order function, that is, one which
-takes a function as an argument.  In this case the function is run
-over the second argument, a list. The function is called with every
-element of the list, and a new list is built using the results.
+takes a function as an argument.  In this case the function given is
+'run over' the second argument, a list. The function is called with
+every element of the list, and a new list is built using the results.
 
 (defmacro map (f l)
-  `((lambda (l a)
-      (if l
-          (self (cdr l) (cons (,f (car l))))
-          (reverse a))) ,l ()))
+  `((lambda (l2 a)
+      (if l2
+          (self (cdr l2) (cons (,f (car l2)) a))
+          (reverse a)))
+    ,l ()))
 
 Examples:
 
@@ -867,7 +874,39 @@ Exercises:
     1. Write a map statement that takes a list `(1 2 3) and
        returns `(3 6 9).
 
-5) let - declare local variables
+5) ls - show the current environment
+------------------------------------
+
+'env' is a useful function but it's output can be a bit verbose.  'ls'
+is a macro that returns you just the variables that are defined in the
+environment but not their values, making for less output to that you
+have to parse mentally.
+
+(defmacro ls ()
+  `(map car (env)))
+
+Examples:
+
+    (ls) => (t nil)
+    (set `x 1) => 1
+    (ls) => (t nil x)
+
+5) lsf - show the current function environment
+----------------------------------------------
+
+Like 'ls', but shows the names of the functions and macros that have
+been defined.
+
+(defmacro lsf ()
+  `(map car (fenv)))
+
+Examples:
+
+    (lsf) => (atom null ...  ls lsf)
+    (defmacro f (x) x) => (macro (x) x)
+    (lsf) => (atom null ... lsf f)
+
+6) let - declare local variables
 --------------------------------
 
 Often you need to use additional temporary variables when performing a
@@ -893,21 +932,21 @@ Examples:
     a => ; error, undefined symbol
     b => ; error, undefined symbol
 
-6) aif - anamorphic if
+7) aif - anamorphic if
 ----------------------
 
 (defmacro aif (test true false)
   `(let ((it ,test))
      (if it ,true ,false)))
 
-7) awhen - anamorphic when
+8) awhen - anamorphic when
 --------------------------
 
 (defmacro awhen (test &body body)
   `(let ((it ,test))
      (when it ,@body)))
 
-8) not - logical compliment
+9) not - logical compliment
 ---------------------------
 
 (defmacro not (x)
@@ -922,7 +961,7 @@ Examples:
     (not t) => ()
     (not 1) => ()
 
-9) unless - negative single branch conditional
+10) unless - negative single branch conditional
 ----------------------------------------------
 
 Like when, but the logical opposite. It runs its body of when test
@@ -937,7 +976,7 @@ Examples:
     (unless (eq t ()) 1) => 1
 
 
-10) and - logical and
+11) and - logical and
 ---------------------
 
 (defmacro and (&rest args)
@@ -956,7 +995,7 @@ Examples:
     (and t t) => t
     (and 1 1) => t
 
-11) or - logicial or
+12) or - logicial or
 ---------------------
 
 (defmacro or (&rest args)
@@ -975,7 +1014,7 @@ Examples:
     (or t t) => t
     (or 1 1) => t
 
-12) xor - logical exclusive or
+13) xor - logical exclusive or
 
 (defmacro xor (x y)
   `(let ((xe ,x)
@@ -994,7 +1033,7 @@ Examples:
 
 ;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
 
-13) length - return the length of a list
+14) length - return the length of a list
 ----------------------------------------
 
 (defmacro length (l)
@@ -1009,7 +1048,7 @@ Examples:
     (length `(1 2 3)) => 3
     (length `((1 2 3) a b c)) => 4
 
-13) mapn - like map, but takes n lists as arguments (map is faster)
+15) mapn - like map, but takes n lists as arguments (map is faster)
 ------------------------------------------------------------------
 
 (defmacro mapn (f &rest xs)
@@ -1023,7 +1062,7 @@ Examples:
     (mapn (lambda (x y) (+ x y)) `(1 2 3) `(1 2 3)) => (2 4 6)
     (mapn (lambda (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) => (xa1 yb2 zc3)
 
-14) setq
+16) setq
 
 (defmacro setq (&rest rest)
   (lambda (vars values)
@@ -1040,7 +1079,7 @@ Examples:
     x => 2
     y => 3
 
-15) last - return the last element of a list
+17) last - return the last element of a list
 --------------------------------------------
 
 (defmacro last (l)
@@ -1053,7 +1092,7 @@ Examples:
 
 (last `(1 2 3)) => 3
 
-16) nth - return the nth element of a list
+18) nth - return the nth element of a list
 ------------------------------------------
 
 (defmacro nth (n l)
@@ -1068,7 +1107,7 @@ Examples:
     (nth 1 `(1 2 3)) => 2
     (nth 2 `(1 2 3)) => 3
 
-17) equal - compare if two things are equal, including lists
+19) equal - compare if two things are equal, including lists
 ------------------------------------------------------------
 
 (defmacro equal (x y)
@@ -1079,7 +1118,7 @@ Examples:
         (t
          (self (cdr x) (cdr y))))) ,x ,y))
 
-18) pallindromep - see if a list is the same forwards and backwards
+20) pallindromep - see if a list is the same forwards and backwards
 -------------------------------------------------------------------
 
 (defmacro pallindromep (l)
@@ -1090,25 +1129,8 @@ Examples:
     (pallindromep `(1 2 3)) => ()
     (pallindromep `(1 2 3 2 1)) => t
 
-19) ls - list the current environment, briefly
-
-(defmacro ls ()
-  `(map car (env)))
-
-Examples:
-
-    (ls) => (t ...)
-
-20) lsf - list the current function environment, briefly
-
-(defmacro ls ()
-  `(map car (fenv)))
-
-Examples:
-
-    (lsf) => (atom eval ...)
-
 21) list - create a proper list of all arguments
+------------------------------------------------
 
 (defmacro list (&rest rest)
   `(lambda (rest)
@@ -1120,6 +1142,7 @@ Examples:
     (list 1 2 3) => (1 2 3)
 
 22) member - see if something is in a list
+------------------------------------------
 
 (defmacro member (x l &rest test)
   `(let ((t (if ,test ,test eq)))
@@ -1140,6 +1163,7 @@ Examples:
 
 
 23) filter - remove elements from a list based on a predicate
+-------------------------------------------------------------
 
 (defun filter (f l)
   `((lambda (l a)
@@ -1156,7 +1180,8 @@ Examples:
 
 ;; TO BE CONTINUED
 
-
+rm
+rmf
 push
 pop
 shift

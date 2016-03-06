@@ -11138,8 +11138,13 @@ var Sigil = new Model({
 
         var oldSelf = this.fenv['self'];
         this.fenv['self'] = fun;
-        
-        var result = this.progn(fun[1][1]);
+
+        var error;
+        try {
+            var result = this.progn(fun[1][1]);
+        } catch(e) {
+            error = e;
+        }
         
         this.each(vars, function (e, last) {
             if(!last) {
@@ -11153,6 +11158,9 @@ var Sigil = new Model({
         delete this.fenv['self']
         this.fenv['self'] = oldSelf;
         
+        if(error)
+            throw error;
+
         return result;
     },
 

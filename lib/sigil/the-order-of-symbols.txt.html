@@ -916,9 +916,9 @@ takes a test, evaluates it and if it is true, runs the second
 statement, and when not, it runs the second statement.
 
 (<span class="keyword">defmacro</span> <span class="function-name">if</span> (test true false)
-  (<span class="keyword">cond</span>
-    (,test ,true) <span class="comment">; check test, evaulate true if not ()
-</span>    (t ,false)))  <span class="comment">; else, evaluate false
+  `(<span class="keyword">cond</span>
+     (,test ,true) <span class="comment">; check test, evaulate true if not ()
+</span>     (t ,false)))  <span class="comment">; else, evaluate false
 </span>    
 Examples: 
 
@@ -938,8 +938,8 @@ means to take all of the arguments following as a list and bind them
 to the variable name following <span class="type">&amp;body</span> in the arugument list.
 
 (<span class="keyword">defmacro</span> <span class="function-name">when</span> (test <span class="type">&amp;body</span> body)
-  (<span class="keyword">cond</span>
-    (,test ,@body)))
+  `(<span class="keyword">cond</span>
+     (,test ,@body)))
 
 Examples: 
 
@@ -959,29 +959,36 @@ lists built using cons'ing are in '<span class="constant">reverse</span>' order,
 added to the front rather than the back of the list.
 
 (<span class="keyword">defmacro</span> <span class="function-name">reverse</span> (l)
-  `((<span class="keyword">lambda</span> (l a)
-      (<span class="keyword">if</span> l
-          (self (cdr l) (cons (car l) a))
-          a))))
-
+  `((<span class="keyword">lambda</span> (l2 a) <span class="comment">; an anonymous function
+</span>      (<span class="keyword">if</span> l2 <span class="comment">; if l2 is not null
+</span>          (self (cdr l2) (cons (car l2) a)) <span class="comment">; recurse
+</span>          a)) <span class="comment">; else return a, the accumlator
+</span>    ,l ())) <span class="comment">; call the anonymous function immediately
+</span>
 Examples: 
 
     (reverse `(1 2 3)) =&gt; (3 2 1)
+    (reverse `((1 2 3) a b c)) =&gt; (c b a (1 2 3))
+
+Exercises:
+
+    1. Will reverse work with improper lists?  Why not?
 
 
 4) <span class="warning">map - build a list by running a function over another list</span>
 -------------------------------------------------------------
 
 '<span class="constant">map</span>' is what is known as a higher order function, that is, one which
-takes a function as an argument.  In this case the function is run
-over the second argument, a list. The function is called with every
-element of the list, and a new list is built using the results.
+takes a function as an argument.  In this case the function given is
+'run over' the second argument, a list. The function is called with
+every element of the list, and a new list is built using the results.
 
 (<span class="keyword">defmacro</span> <span class="function-name">map</span> (f l)
-  `((<span class="keyword">lambda</span> (l a)
-      (<span class="keyword">if</span> l
-          (self (cdr l) (cons (,f (car l))))
-          (reverse a))) <span class="warning">,l ()))</span>
+  `((<span class="keyword">lambda</span> (l2 a)
+      (<span class="keyword">if</span> l2
+          (self (cdr l2) (cons (,f (car l2)) a))
+          (reverse a)))
+    ,l ()))
 
 Examples:
 
@@ -994,7 +1001,39 @@ Exercises:
     1. Write a map statement that takes a list `(1 2 3) and
        returns `(3 6 9).
 
-5) <span class="warning">let - declare local variables</span>
+5) <span class="warning">ls - show the current environment</span>
+------------------------------------
+
+'<span class="constant">env</span>' is a useful function but it's output can be a bit verbose.  '<span class="constant">ls</span>'
+is a macro that returns you just the variables that are defined in the
+environment but not their values, making for less output to that you
+have to parse mentally.
+
+(<span class="keyword">defmacro</span> <span class="function-name">ls</span> ()
+  `(map car (env)))
+
+Examples:
+
+    (ls) =&gt; (t nil)
+    (set `x 1) =&gt; 1
+    (ls) =&gt; (t nil x)
+
+5) <span class="warning">lsf - show the current function environment</span>
+----------------------------------------------
+
+Like '<span class="constant">ls</span>', but shows the names of the functions and macros that have
+been defined.
+
+(<span class="keyword">defmacro</span> <span class="function-name">lsf</span> ()
+  `(map car (fenv)))
+
+Examples:
+
+    (lsf) =&gt; (atom null ...  ls lsf)
+    (<span class="keyword">defmacro</span> <span class="function-name">f</span> (x) x) =&gt; (macro (x) x)
+    (lsf) =&gt; (atom null ... lsf f)
+
+6) <span class="warning">let - declare local variables</span>
 --------------------------------
 
 Often you need to use additional temporary variables when performing a
@@ -1020,21 +1059,21 @@ Examples:
     a =&gt; <span class="comment">; error, undefined symbol
 </span>    b =&gt; <span class="comment">; error, undefined symbol</span><span class="comment">
 </span>
-6) <span class="warning">aif - anamorphic if</span>
+7) <span class="warning">aif - anamorphic if</span>
 ----------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">aif</span> (test true false)
   `(<span class="keyword">let</span> ((it ,test))
      (<span class="keyword">if</span> it ,true ,false)))
 
-7) <span class="warning">awhen - anamorphic when</span>
+8) <span class="warning">awhen - anamorphic when</span>
 --------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">awhen</span> (test <span class="type">&amp;body</span> body)
   `(<span class="keyword">let</span> ((it ,test))
      (<span class="keyword">when</span> it ,@body)))
 
-8) <span class="warning">not - logical compliment</span>
+9) <span class="warning">not - logical compliment</span>
 ---------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">not</span> (x)
@@ -1049,7 +1088,7 @@ Examples:
     (not t) =&gt; ()
     (not 1) =&gt; ()
 
-9) <span class="warning">unless - negative single branch conditional</span>
+10) <span class="warning">unless - negative single branch conditional</span>
 ----------------------------------------------
 
 Like when, but the logical opposite. It runs its body of when test
@@ -1064,7 +1103,7 @@ Examples:
     (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
 
 
-10) <span class="warning">and - logical and</span>
+11) <span class="warning">and - logical and</span>
 ---------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">and</span> (<span class="type">&amp;rest</span> args)
@@ -1083,7 +1122,7 @@ Examples:
     (and t t) =&gt; t
     (and 1 1) =&gt; t
 
-11) <span class="warning">or - logicial or</span>
+12) <span class="warning">or - logicial or</span>
 ---------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">or</span> (<span class="type">&amp;rest</span> args)
@@ -1102,7 +1141,7 @@ Examples:
     (or t t) =&gt; t
     (or 1 1) =&gt; t
 
-12) <span class="warning">xor - logical exclusive or</span>
+13) <span class="warning">xor - logical exclusive or</span>
 
 (<span class="keyword">defmacro</span> <span class="function-name">xor</span> (x y)
   `(<span class="keyword">let</span> ((xe ,x)
@@ -1121,7 +1160,7 @@ Examples:
 
 <span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS ALL UNTESTED
 </span>
-13) <span class="warning">length - return the length of a list</span>
+14) <span class="warning">length - return the length of a list</span>
 ----------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">length</span> (l)
@@ -1136,7 +1175,7 @@ Examples:
     (length `(1 2 3)) =&gt; 3
     (length `((1 2 3) a b c)) =&gt; 4
 
-13) <span class="warning">mapn - like map, but takes n lists as arguments (map is faster)</span>
+15) <span class="warning">mapn - like map, but takes n lists as arguments (map is faster)</span>
 ------------------------------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">mapn</span> (f <span class="type">&amp;rest</span> xs)
@@ -1150,7 +1189,7 @@ Examples:
     (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(1 2 3) `(1 2 3)) =&gt; (2 4 6)
     (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) =&gt; (xa1 yb2 zc3)
 
-14) <span class="warning">setq</span>
+16) <span class="warning">setq</span>
 
 (<span class="keyword">defmacro</span> <span class="function-name">setq</span> (<span class="type">&amp;rest</span> rest)
   (<span class="keyword">lambda</span> (vars values)
@@ -1167,7 +1206,7 @@ Examples:
     x =&gt; 2
     y =&gt; 3
 
-15) <span class="warning">last - return the last element of a list</span>
+17) <span class="warning">last - return the last element of a list</span>
 --------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">last</span> (l)
@@ -1180,7 +1219,7 @@ Examples:
 
 (last `(1 2 3)) =&gt; 3
 
-16) <span class="warning">nth - return the nth element of a list</span>
+18) <span class="warning">nth - return the nth element of a list</span>
 ------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">nth</span> (n l)
@@ -1195,7 +1234,7 @@ Examples:
     (nth 1 `(1 2 3)) =&gt; 2
     (nth 2 `(1 2 3)) =&gt; 3
 
-17) <span class="warning">equal - compare if two things are equal, including lists</span>
+19) <span class="warning">equal - compare if two things are equal, including lists</span>
 ------------------------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">equal</span> (x y)
@@ -1206,7 +1245,7 @@ Examples:
         (t
          (self (cdr x) (cdr y))))) <span class="warning">,x ,y))</span>
 
-18) <span class="warning">pallindromep - see if a list is the same forwards and backwards</span>
+20) <span class="warning">pallindromep - see if a list is the same forwards and backwards</span>
 -------------------------------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
@@ -1217,25 +1256,8 @@ Examples:
     (pallindromep `(1 2 3)) =&gt; ()
     (pallindromep `(1 2 3 2 1)) =&gt; t
 
-19) <span class="warning">ls - list the current environment, briefly</span>
-
-(<span class="keyword">defmacro</span> <span class="function-name">ls</span> ()
-  `(map car (env)))
-
-Examples:
-
-    (ls) =&gt; (t ...)
-
-20) <span class="warning">lsf - list the current function environment, briefly</span>
-
-(<span class="keyword">defmacro</span> <span class="function-name">ls</span> ()
-  `(map car (fenv)))
-
-Examples:
-
-    (lsf) =&gt; (atom eval ...)
-
 21) <span class="warning">list - create a proper list of all arguments</span>
+------------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">list</span> (<span class="type">&amp;rest</span> rest)
   `(<span class="keyword">lambda</span> (rest)
@@ -1247,6 +1269,7 @@ Examples:
     (list 1 2 3) =&gt; (1 2 3)
 
 22) <span class="warning">member - see if something is in a list</span>
+------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">member</span> (x l <span class="type">&amp;rest</span> test)
   `(<span class="keyword">let</span> ((t (<span class="keyword">if</span> ,test ,test eq)))
@@ -1267,6 +1290,7 @@ Examples:
 
 
 23) <span class="warning">filter - remove elements from a list based on a predicate</span>
+-------------------------------------------------------------
 
 (<span class="keyword">defun</span> <span class="function-name">filter</span> (f l)
   `((<span class="keyword">lambda</span> (l a)
@@ -1283,7 +1307,8 @@ Examples:
 
 <span class="comment-delimiter">;; </span><span class="comment">TO BE CONTINUED
 </span>
-
+rm
+rmf
 push
 pop
 shift

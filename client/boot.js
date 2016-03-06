@@ -56,7 +56,7 @@ var notebook = x.runApplication({ app: "notebook",
                                   style: {
                                       top: "25px",
                                       left: "20px",
-                                      maxWidth: "810px",
+                                      maxWidth: "820px",
                                   }
                                 });
 
