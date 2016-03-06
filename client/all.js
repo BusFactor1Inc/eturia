@@ -12628,11 +12628,13 @@ var AppView = (function () {
                 this.disableCursor(e.value, this.cursorY())
                 this.onCharacter(this.cursorX(), this.cursorY());
                 this.setCursor(this.cursorX(), this.cursorY());
+                this.matchParen();
             });
             this.on("change:cursorY", function(e) {
                 this.disableCursor(this.cursorX(), e.value);
                 this.onCharacter(this.cursorX(), this.cursorY());
                 this.setCursor(this.cursorX(), this.cursorY());
+                this.matchParen();
             });
 
             this.create('mode');
@@ -12670,6 +12672,8 @@ var AppView = (function () {
                     console.error("terminal: no history at " + this.history());
                 }
             });
+
+            this.matchParenMode = true;
         },
 
         newline: function() {
@@ -12824,6 +12828,64 @@ var AppView = (function () {
                         }
                         this.cursorX(newx);
                         this.cursorY(newy);
+                    }
+                }
+            }
+        },
+
+        getBuffer: function () {
+            var buffer = [];
+            for(var y = 0; y < this.rows(); y++) {
+                for(var x = 0; x < this.cols(); x++) {
+                    buffer.push(this.getCursor(x, y).$el.text());
+                }
+            }
+            return buffer;
+        },
+
+        matchParen: function () {
+            if(this.matchParenMode) {
+                var x = this.cursorX()-1;
+                var y = this.cursorY();
+
+                for(var j = 0; j < this.rows(); j++) {
+                    for(var k = 0; k < this.cols(); k++) {
+                        cell = this.getCursor(k, j);
+                        cell.$el.css({color: "black", textDecoration: "none"});
+                    }
+                }
+                
+                if(x >= 0) {
+                    var cell;
+                    
+                    cell = this.getCursor(this.cursorX()-1, this.cursorY());
+                    var c = cell.$el.text();
+                    if(c === ')') {
+                        var buffer = this.getBuffer();
+                        var i = x + y*this.cols();
+                        var closes = 0;
+                        while(i >= 0) {
+                            c = buffer[i];
+                            if(c == '(') {
+                                closes--;
+                            } else if(c === ')') {
+                                closes++;
+                            }
+
+                            if(closes === 0)
+                                break;
+
+                            i--;
+                        }
+                        console.log('closes', closes);
+                        if(closes === 0) {
+                            x = i % this.cols();
+                            y = Math.floor(i / this.cols());
+                            console.log('x,y', x, y);
+
+                            this.setCharacter(x, y, undefined, false,
+                                              {color: "red", textDecoration: "underline"});
+                        }
                     }
                 }
             }
