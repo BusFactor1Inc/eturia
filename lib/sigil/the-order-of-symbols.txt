@@ -68,8 +68,8 @@ talk/paper 'Growing a language':
 All terms in the following text are (hopefully) defined before use.
 
 This material is the result of many years of study and research, of
-both myself and others.  It's opinions are all mine, built apon
-those I have admired in the past, knowingly or unknowningly. I hope
+both myself and others.  It's opinions are all mine, built upon
+those I have admired in the past, knowingly or unknowingly. I hope
 you find the material as useful and entertaining as I have writing it
 down and preparing it.
 
@@ -82,7 +82,7 @@ Intended Audience
 -----------------
 
 This work is intended for both beginners and professionals alike.  For
-beginners, if they work through the exercies, should gain an
+beginners, if they work through the exercises, should gain an
 understanding for all of the code and exercises given, with a little
 thought.  Professionals may benefit in the same way, finding the
 material refreshing over the typical code chaos one might see at work,
@@ -104,7 +104,7 @@ noted, "Computers...they can only give you answers."
 Eturia
 ------
 
-Eturia is a (similated) computer for Computer Science Education.  It
+Eturia is a (simulated) computer for Computer Science Education.  It
 is designed to be simple and limited, perfect for teaching and
 learning with few distractions.  Although probably unfamiliar at
 first, it's spartan interface can be quickly learned by any newcomer
@@ -126,7 +126,7 @@ typed manually into the 'Listener'.  This way the code will go through
 your fingers and your brain, giving you a better chance of learning
 the concepts as you go along and build your own language in Sigil.
 
-This 'Listener' is like Like VI, but a bit different[1]:
+This 'Listener' is like VI, but a bit different[1]:
 
 i - insert mode, allows you to type overwrite text in the buffer
 ? - command mode, allows you to execute the following commands
@@ -166,7 +166,7 @@ Numbers - a string of digits
 ----------------------------
 
 A number can be used with mathematical functions and should be
-familiar to all that have taken introductory mathmatics.
+familiar to all that have taken introductory mathematics.
 
 Examples:
 
@@ -240,14 +240,14 @@ A proper list has () as its last element, and it is not normally
 shown.  An improper list does not have () as it's last element, and
 this is shown by preceeding the last element with a dot.
 
-Note: even the code in Sigil is lists.  This is a very iportant
+Note: even the code in Sigil is lists.  This is a very important
 concept to remember, as Sigil is all about building and generating
 code using the functions we are going to be defining in the following
 chapters.
 
 
-Comma ',' - evaulate inside of a quote
----------------------------------------
+Comma ',' - evaluate inside of a quote
+--------------------------------------
 
 Sometimes you want to quote a list, but also want to include the
 values of other symbols inside of it.  To perform this action, you use
@@ -301,7 +301,7 @@ The following are the builtin commands for Sigil.  A builtin is a
 function that is available by default in the language and is always
 available.
 
-Note: in the Examples, '=>' means 'evaulates to' or 'the value of'.
+Note: in the Examples, '=>' means 'evaluates to' or 'the value of'.
 
 
 0) quote, unquote, unquote-splice - control evaluation
@@ -309,7 +309,7 @@ Note: in the Examples, '=>' means 'evaulates to' or 'the value of'.
 
 Rather than use the shorthands described above, you can also call
 'quote', 'unquote' and 'unquote-splice' directly to build lists and
-control evalutation within a quoted list.
+control evaluation within a quoted list.
 
 Examples:
 
@@ -403,17 +403,15 @@ Examples:
     (cdr `x) => ; Error
     (cdr 1) => ; Error
 
-6) cond - conditional statement, execute tests until one returns not (),
-          and then execute the following statement
-------------------------------------------------------------------------
+6) cond - conditional statement
+-------------------------------
 
 Cond is used to make decisions on what statements to execute.  It goes
-through it's arguments, excuting the each test, the first element of
-the argument, until one of them returns not (), after which it then
-excutes the statements following the test and returns the value of the
-last one.  You will often set 't' as the last test in a cond, meaning
-to always excute that set of statements if none of the previous tests
-pass.
+through it's arguments, executing each test, until one of them returns
+true (not ()), after which it then executes the statements following
+the test and returns the value of the last one.  You will often set
+'t' as the last test in a cond, meaning to always execute that set of
+statements if none of the previous tests pass.
 
 Examples:
 
@@ -507,7 +505,7 @@ Examples:
            (self (cdr l))))) ; recurse down the list
      `(1 2 3)) => 3
 
-Recursion may be confusing at first.  It is highly reccomended you
+Recursion may be confusing at first.  It is highly recommended you
 take the time to step through the above examples so you can gain a
 solid understanding of recursion and how it works.
 
@@ -529,7 +527,7 @@ Examples:
 ---------------------------------------------------
 
 For when you want to return more than one value from a function.
-Notice how the multiple values are printed after evaulating a function
+Notice how the multiple values are printed after evaluating a function
 returning them in the listener.
 
 Examples:
@@ -546,7 +544,7 @@ Examples:
 ------------------------------------------
 
 When a function returns more than one value, you can 'bind' the
-returned values to variables and excute the statements in the body
+returned values to variables and execute the statements in the body
 using these bindings.
 
 Examples:
@@ -576,7 +574,7 @@ to concatenate symbols.
 
 Examples:
 
-    (+ 1 2) => 3 ; arithmeical addition of numbers
+    (+ 1 2) => 3 ; arithmetical addition of numbers
     (+ 1 2 3) => 6 ; sum of multiple numbers
     (+ `x `y) => xy ; concatenation of symbols
 
@@ -660,7 +658,7 @@ to local storage in your browser using the 'save' command.
 
 The environment can be loaded from local storage using the 'load' command.
 
-THIS FEATURE IS CURRENTLY NOT IMPLMENTED.
+THIS FEATURE IS CURRENTLY NOT IMPLEMENTED.
 
 
 23) me - macro expand
@@ -729,7 +727,7 @@ JavaScript code as little as possible from outside of it.
 ===============================================================================
 
 
-The following exercies build upon the primitive builtins defined
+The following exercises build upon the primitive builtins defined
 previously and are meant to be typed into the Eturia 'Listener'
 console.  The 'Examples' can be used as test cases to ensure the
 correctness of your inputs.
@@ -823,7 +821,7 @@ Sometimes you don't need both branches of an if statement and just
 want to perform and action when the test is true.  This is when you
 use when.  This macro makes use of &body in the argument list, which
 means to take all of the arguments following as a list and bind them
-to the variable name following &body in the arugument list.
+to the variable name following &body in the argument list.
 
 (defmacro when (test &body body)
   `(cond
@@ -842,7 +840,7 @@ Examples:
 
 Reverse a list by building a new list in opposite order using
 cons'ing.  Building a list this way is an important idiom to
-understand, and thanfully this function is quite simple because the
+understand, and thankfully this function is quite simple because the
 lists built using cons'ing are in 'reverse' order, that is, items are
 added to the front rather than the back of the list.
 
@@ -872,11 +870,11 @@ takes a function as an argument.  In this case the function given is
 every element of the list, and a new list is built using the results.
 
 (defmacro map (f l)
-  `((lambda (l2 a) ; delcare an anonymous function
+  `((lambda (l2 a) ; declare an anonymous function
       (if l2 ; if l2 is not null
           (self (cdr l2) (cons (,f (car l2)) a)) ; recurse
-          (reverse a))) ; return the accumlator, reversed
-    ,l ())) ; call the anonymous function, evaulating l
+          (reverse a))) ; return the acummulator, reversed
+    ,l ())) ; call the anonymous function, evaluating l
             ; and passing () for a
 
 Examples:
@@ -1117,7 +1115,7 @@ Examples:
 --------------------
 
 Similar to and, or returns true if any of its arguments are true.  We
-can also take advantage of this and 'short ciruit' on this behaviour
+can also take advantage of this and 'short circuit' on this behaviour
 as well.
 
 (defmacro or (&rest args)
@@ -1147,7 +1145,7 @@ its arguments is true.  You will notice that we are use 'let' to hold
 the value of our evaluated arguments.  You generally only want to
 evaluate the arguments you are passed once. This is because the
 evaluation of certain arguments may cause 'side effects', and
-evaluating them more than once may cause unintended conciquences and
+evaluating them more than once may cause unintended consiquences and
 should be avoided.
 
 (defmacro xor (x y)
@@ -1180,24 +1178,31 @@ Examples:
     (list `a `b `c) => (a b c)
     (list 1 2 3) => (1 2 3)
 
-;; WARNING: THE FOLLOWING CODE IS UNTESTED
-
 18) equal - compare if two things are equal, including lists
 ------------------------------------------------------------
 
 If you recall from the discussion of 'eq', it does not compare the
 equality of lists, just atoms.  The following is a function that does
-a 'deep' comparison between 2 items, including lists.
+a 'deep' comparison between 2 items, including lists.  If you want,
+you can always use 'equal' instead of 'eq', but 'equal' is slower than
+using just 'eq' when you know you are dealing with only atoms.
 
 (defmacro equal (x y)
-  `((lambda (a b)
+  `((lambda (a b) ; anonymous function
       (cond
+        ; 2 atoms, test with eq
         ((and (atom a) (atom b)) (eq a b))
+        ; both lists null, must be equal
         ((and (null a) (null b)) t)
+        ; one list is null, cannot be equal
         ((or (null a) (null b)) ())
+        ; one is an atom, the other not, so not equal
         ((or (atom a) (atom b)) ())
+        ; if the heads are equal
         ((equal (car a) (car b))
-         (self (cdr a) (cdr b))))) ,x ,y))
+         (self (cdr a) (cdr b)))))
+    ; return () if none of the above are true
+    ,x ,y)) ; call anonymous function with evaluated arguments
 
 Examples:
 
@@ -1213,18 +1218,27 @@ Examples:
     (pallindromep `(1 2 3 4)) => ()
     (pallindromep `(1 2 3 4 3 2 1)) => t
 
+;; WARNING: THE FOLLOWING CODE IS UNTESTED
 
-19) member - see if something is in a list
-------------------------------------------
+19) member - find if something is in a list
+-------------------------------------------
 
-(defmacro member (x l &rest test)
-  `(let ((t (if ,test ,test eq)))
-     (lambda (x l)
-       (if l
-           (if (t x (car l))
-               l
-               (self x (cdr l)))
-           ())) ,x ,l))
+Often you want to search a list to see if an item is contained in it.
+'member' takes a 'thing', a 'list' and a 'test'.  The 'test', if
+omitted, defaults to 'eq', can be any predicate, and normally is given
+as 'equals' so that you can search for lists within lists.  The return
+value is the contents of the list up to the item found, else () if the
+'thing' is not found in the 'list'.
+
+(defmacro member (thing list &rest test)
+  `(let ((t (aif test it eq)))
+     ((lambda (x l)
+        (if l
+            (if (t x (car l))
+                l
+                (self x (cdr l)))
+            ()))
+      ,thing ,list)))
 
 Examples:
 
@@ -1318,9 +1332,14 @@ Examples:
 
 ;; TO BE CONTINUED
 
-rm
-rmf
-push
+push - add an element to a list
+-------------------------------
+
+'push' is used to insert elements onto the head of a list.
+
+(defmacro push (x l)
+  `(let ((xe ,x))
+     (set xe (cons xe l))))
 pop
 shift
 unshift
@@ -1328,8 +1347,6 @@ rotate n
 assoc
 flatten
 sort
-defun(?)
-
 
 ===============================================================================
 ===============================================================================
