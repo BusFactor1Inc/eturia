@@ -1003,8 +1003,8 @@ Examples:
 ----------------------------------------
 
 Knowing the length of a list is generally very useful during
-computations.  Here is a recursive macro that recursively computes it
-given a list using an accumulator.
+computations.  Here is a macro that recursively computes it given a
+list using an accumulator.
 
 (defmacro length (l)
   `((lambda (l n)
@@ -1023,11 +1023,16 @@ Examples:
 11) nth - return the nth element of a list
 ------------------------------------------
 
+Although macros like 'first', 'second' and 'third' are useful, you
+often want a general purpose way of getting a certain element from a
+list.  'nth' is designed to perform that operation, given a list and
+an integer.
+
 (defmacro nth (n l)
   `((lambda (n l)
       (if (eq n 0)
-          l
-          (self (- n 1) (cdr l))))) ,n ,l)
+          (car l)
+          (self (- n 1) (cdr l)))) ,n ,l))
 
 Examples:
 
