@@ -701,8 +701,8 @@ written in JavaScript, but the goal of the system is to modify the
 JavaScript code as little as possible from outside of it.
 
 
-==============================================================================
-==============================================================================
+========================================================================
+========================================================================
 
                              ============
                              |The Basics|
@@ -723,8 +723,8 @@ JavaScript code as little as possible from outside of it.
                           -- Linus Torvalds
 
 
-==============================================================================
-==============================================================================
+========================================================================
+========================================================================
 
 
 The following exercises build upon the primitive builtins defined
@@ -1332,21 +1332,82 @@ Examples:
 
 ;; TO BE CONTINUED
 
-push - add an element to a list
--------------------------------
+push - add an element to the head of a list
+-------------------------------------------
 
 'push' is used to insert elements onto the head of a list.
 
 (defmacro push (x l)
   `(let ((xe ,x))
      (set xe (cons xe l))))
-pop
-shift
-unshift
-rotate n
-assoc
-flatten
-sort
+
+Examples:
+
+    (set `x `(1 2 3)) => (1 2 3)
+    (push 0 x) => (0 1 2 3)
+    (push 0 `(1 2 3)) => ; error, list is not a symbol
+
+pop - remove the head of a list
+-------------------------------
+
+'pop' is the compliment to 'push' and removes the head of the list
+that was (possibly) added last by pop.  With 'push' and 'pop' one can
+use a list as a 'stack', or a FIFO (first in first out) queue.
+
+(defmacro pop (l)
+  `(let ((le ,l))
+     ((lambda (o)
+        (set ll (cdr le))
+        o) (car le))))
+
+Examples:
+
+    (set `x `(1 2 3)) => (1 2 3)
+    (pop x) => 1
+    x => (2 3)
+
+shift - add an element to the tail of a list
+--------------------------------------------
+
+(defmacro shift (x l)
+  `(let ((le ,l))
+     (set le (reverse (cons ,x (reverse le))))))
+
+Examples:
+
+    (set `x `(1 2 3)) => (1 2 3)
+    (shift 4 x) => (1 2 3 4)
+
+unshift - remove an element from the tail of a list
+----------------------------------------------------
+
+(defmacro unshift (l)
+  `(let ((le ,l))
+     ((lambda (o)
+        (set le (cdr (reverse le)))
+        o) (car (reverse le)))))
+
+Examples:
+
+(set `x `(1 2 3)) => (1 2 3)
+(unshift x) => 3
+x => (1 2)
+
+rotate - rotate a list
+----------------------
+
+(defmacro rotate (l n))
+
+
+assoc - associative lookup
+--------------------------
+
+
+flatten - build a list from nested lists
+----------------------------------------
+
+sort - sort a list based on a predicate
+---------------------------------------
 
 ========================================================================
 ========================================================================
@@ -1405,9 +1466,9 @@ Mathmatical Exercises 2 - Ray Tracer
 Exercises 4 - GPS (General Problem Solver)
 ==========================================
 
-=================================================
-Exercises 5 - A (Simulated) Arbitrage Trading Bot
-=================================================
+=======================================
+Exercises 5 - A (Simulated) Trading Bot
+=======================================
 
 ========================================================================
 ========================================================================
@@ -1457,20 +1518,24 @@ Mathmatical Exercises 4 - Multi-Core Ray Tracer
 ========================================================================
 ========================================================================
 
+================================
+Exercise 9 - Genetic Programming
+================================
+
 ===================================
-Exercise 9 - A (Simulated) RISC CPU
+Exercise 10 - A (Simulated) RISC CPU
 ===================================
 
 ==========================================================
-Exercise 10 - A Lisp Compiler for the (Simulated) RISC CPU
+Exercise 11 - A Lisp Compiler for the (Simulated) RISC CPU
 ==========================================================
 
 =====================================
-Exercises 10 - A (Simulated) Lisp CPU 
+Exercises 12 - A (Simulated) Lisp CPU 
 =====================================
 
 ================================================
-Exercises 11 - A Multi-Core (Simulated) Lisp CPU 
+Exercises 13 - A Multi-Core (Simulated) Lisp CPU 
 ================================================
 
 --
