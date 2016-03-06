@@ -34,9 +34,9 @@ var AppView = (function () {
             this.create('mode');
             this.on('change:mode', function(e) {
                 if(this.mode()) {
-                    this.$el.css({border: "1px solid green"});
+                    this.$el.css({boxShadow: "0px 0px 12px green"});
                 } else {
-                    this.$el.css({border: "0px"});
+                    this.$el.css({boxShadow: "0px 0px 0px grey"});
                 }
             });
 
@@ -52,7 +52,8 @@ var AppView = (function () {
             this.insert(";'i' for insert mode        cond, lambda, apply, cond, bind, values\n"); 
             this.insert(";'e' to execute code        defmacro, self, save, load, rm, rmf\n"); 
             this.insert(";'z' to clear               env, fenv, +, -, *, /\n"); 
-            this.insert(";'0' to first column");        
+            this.insert(";'0' to first column\n\n");        
+            this.insert(";Click the titlebar, hit 'z' to begin, and then 'i' to start typing.");
  
             this.create('history', 0);
             this.on('change:history', function(e) {
