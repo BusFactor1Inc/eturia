@@ -700,6 +700,17 @@ to build Eturia as a Lisp Machine from within Sigil itself.  Eturia is
 written in JavaScript, but the goal of the system is to modify the
 JavaScript code as little as possible from outside of it.
 
+26) split - split an atom
+-------------------------
+
+Used to break a symbol atom into a list of symbol pieces.  Takes an
+optional argument that specifies where to perform the split in the atom.
+
+Examples:
+
+    (split `a-long-atom) => (a long atom) ; default: '-'
+    (split `a/long/atom `/) => (a long atom) ; specify: '/'
+
 
 ========================================================================
 ========================================================================

@@ -10899,6 +10899,7 @@ var Sigil = new Model({
             'rm': this.brm.bind(this),
             'rmf': this.brmf.bind(this),
             '=>': this.bmagic.bind(this),
+            'split': this.bsplit.bind(this),
         };
         
         var _env = {
@@ -11268,7 +11269,6 @@ var Sigil = new Model({
     },
 
     benv: function (args) {
-        debugger
         var e = args[0];
         if(e !== undefined) {
             var newenv = {};
@@ -11290,10 +11290,38 @@ var Sigil = new Model({
         }
     },
 
-    bfenv: function () {
+    bfenv: function (args) {
+        var e = args[0];
+        if(e !== undefined) {
+            var newenv = {};
+            while(this._null(e) !== 't') {
+                var o = e[0];
+                var s = o[0];
+                var v = o[1]
+                newenv[s] = v;
+                e = e[1];
+            }
+            this.fenv = newenv; // poof!
+            return args[0];
+        } else {
+            var retval = [];
+            for(i in this.fenv) {
+                retval = this.cons(this.cons(i, this.fenv[i]), retval);
+            }
+            return this.reverse(retval);
+        }
+    },
+
+    bsplit: function (args) {
+        var s = args[0];
+        var d = args[1][0] || '-';
+
         var retval = [];
-        for(i in this.fenv) {
-            retval = this.cons(this.cons(i, this.fenv[i]), retval);
+        var v = s.split(d);
+        for(var i in v) {
+            var x = v[i];
+
+            retval = [x, retval];
         }
         return this.reverse(retval);
     },

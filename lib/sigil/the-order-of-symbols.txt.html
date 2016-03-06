@@ -849,6 +849,17 @@ to build <span class="flyspell-duplicate-0002">Eturia</span> as a Lisp Machine f
 written in JavaScript, but the goal of the system is to modify the
 JavaScript code as little as possible from outside of it.
 
+26) <span class="warning">split - split an atom</span>
+-------------------------
+
+Used to break a symbol atom into a list of symbol pieces.  Takes an
+optional argument that specifies where to perform the split in the atom.
+
+Examples:
+
+    (split `a-long-atom) =&gt; (a long atom) <span class="comment">; default: '-'</span><span class="comment">
+</span>    (split `a/long/atom `/) =&gt; (a long atom) <span class="comment">; specify: '/'</span><span class="comment">
+</span>
 
 ========================================================================
 ========================================================================
@@ -1414,14 +1425,19 @@ returns true.
 
 Examples:
 
-    (filter (<span class="keyword">lambda</span> (x) (<span class="flyspell-duplicate-0002">eq</span> x 1)) `(1 2 3)) =&gt; (2 3)
-    (filter (<span class="keyword">lambda</span> (x) (or (<span class="flyspell-duplicate-0002">eq</span> x 1) (<span class="flyspell-duplicate-0002">eq</span> x 3)) `(1 2 3)) =&gt; (2)
+    (filter (<span class="keyword">lambda</span> (x) (<span class="flyspell-duplicate-0002">eq</span> x 1)) `(1 2 3)) =&gt; (1)
+    (filter (<span class="keyword">lambda</span> (x) (or (<span class="flyspell-duplicate-0002">eq</span> x 1) (<span class="flyspell-duplicate-0002">eq</span> x 3)) `(1 2 3)) =&gt; (1 3)
 
             
 <span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
 </span>
 22) <span class="warning">rm - remove a symbol from the environment</span>
 ---------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">rm</span> (x)
+  `(env (filter
+         (<span class="keyword">lambda</span> (e)
+           (not (eq (car e) ,x))) <span class="warning">(env))))</span>
 
 Examples:
 
