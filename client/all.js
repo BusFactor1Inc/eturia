@@ -11156,7 +11156,8 @@ var Sigil = new Model({
             }
         }.bind(this));
         delete this.fenv['self']
-        this.fenv['self'] = oldSelf;
+        if(oldSelf)
+            this.fenv['self'] = oldSelf;
         
         if(error)
             throw error;
