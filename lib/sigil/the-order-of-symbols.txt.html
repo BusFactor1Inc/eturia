@@ -1322,7 +1322,7 @@ a '<span class="constant">deep</span>' comparison between 2 items, including lis
         ((and (atom a) (atom b)) (eq a b))
         ((and (null a) (null b)) t)
         ((or (null a) (null b)) ())
-        (t
+        ((equal (car a) (car b))
          (self (cdr a) (cdr b))))) <span class="warning">,x ,y))</span>
 
 Examples:

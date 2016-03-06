@@ -1195,7 +1195,7 @@ a 'deep' comparison between 2 items, including lists.
         ((and (atom a) (atom b)) (eq a b))
         ((and (null a) (null b)) t)
         ((or (null a) (null b)) ())
-        (t
+        ((equal (car a) (car b))
          (self (cdr a) (cdr b))))) ,x ,y))
 
 Examples:
