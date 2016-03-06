@@ -11267,12 +11267,27 @@ var Sigil = new Model({
         return retval;
     },
 
-    benv: function () {
-        var retval = [];
-        for(i in this.env) {
-            retval = this.cons(this.cons(i, this.env[i]), retval);
+    benv: function (args) {
+        debugger
+        var e = args[0];
+        if(e !== undefined) {
+            var newenv = {};
+            while(this._null(e) !== 't') {
+                var o = e[0];
+                var s = o[0];
+                var v = o[1]
+                newenv[s] = v;
+                e = e[1];
+            }
+            this.env = newenv; // poof!
+            return args[0];
+        } else {
+            var retval = [];
+            for(i in this.env) {
+                retval = this.cons(this.cons(i, this.env[i]), retval);
+            }
+            return this.reverse(retval);
         }
-        return this.reverse(retval);
     },
 
     bfenv: function () {
