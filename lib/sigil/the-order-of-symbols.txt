@@ -1546,3 +1546,7 @@ All rights reserved.
 If you wish to reproduce this work, please ask my permission first.
 Fair use provisions apply.  The computer code contained in this
 document can be used for any purpose without restriction.
+
+"Things don't have to change the world to be important."
+
+  -- Steve Jobs
