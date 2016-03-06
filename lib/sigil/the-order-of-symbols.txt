@@ -1099,22 +1099,27 @@ Examples:
     (xor t t) => ()
 
 
-;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
-
 14) length - return the length of a list
 ----------------------------------------
+
+Knowing the length of a list is generally very useful during
+computations.  Here is a recursive macro function that computes it
+given a list using an accumulator.
 
 (defmacro length (l)
   `((lambda (l n)
       (if l
           (self (cdr l) (+ n 1))
-          n)) ,l))
+          n))
+    ,l 0))
 
 Examples:
 
     (length ()) => 0
     (length `(1 2 3)) => 3
     (length `((1 2 3) a b c)) => 4
+
+;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
 
 15) mapn - like map, but takes n lists as arguments (map is faster)
 ------------------------------------------------------------------

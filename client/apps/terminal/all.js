@@ -130,7 +130,7 @@ var AppView = (function () {
                 }
                 console.log('terminal: execute', x);
             }
-            
+
             this.trigger('lispCode', code);
         },
 

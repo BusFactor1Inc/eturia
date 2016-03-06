@@ -12057,7 +12057,7 @@ var SkynetDefaults = {
         'lispCode': function(e) {
             var result, error;
             try {
-                result = this.lisp().exec(e.value);
+                result = String(this.lisp().exec(e.value));
             } catch(e) {
                 error = true;
                 result = e.message;
@@ -12511,7 +12511,7 @@ var AppView = new View({
                     x.runApplication({
                         app: "hello",
                         title: code,
-                        text: this.lisp().exec(code)
+                        text: String(this.lisp().exec(code))
                     });
                 }
                 this.$el.val('');
@@ -12561,7 +12561,7 @@ var AppView = new View({
             var code = e.value;
             var result, error = false;
             try {
-                result = this.lisp.exec(code);
+                result = String(this.lisp.exec(code));
             } catch (e) {
                 error = true;
  
@@ -12733,7 +12733,7 @@ var AppView = (function () {
                 }
                 console.log('terminal: execute', x);
             }
-            
+
             this.trigger('lispCode', code);
         },
 

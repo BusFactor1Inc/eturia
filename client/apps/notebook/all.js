@@ -21,7 +21,7 @@ var AppView = new View({
             var code = e.value;
             var result, error = false;
             try {
-                result = this.lisp.exec(code);
+                result = String(this.lisp.exec(code));
             } catch (e) {
                 error = true;
  

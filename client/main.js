@@ -342,7 +342,7 @@ var SkynetDefaults = {
         'lispCode': function(e) {
             var result, error;
             try {
-                result = this.lisp().exec(e.value);
+                result = String(this.lisp().exec(e.value));
             } catch(e) {
                 error = true;
                 result = e.message;

@@ -14,7 +14,7 @@ var AppView = new View({
                     x.runApplication({
                         app: "hello",
                         title: code,
-                        text: this.lisp().exec(code)
+                        text: String(this.lisp().exec(code))
                     });
                 }
                 this.$el.val('');
