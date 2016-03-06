@@ -1,23 +1,3 @@
-x.runApplication({ app: "image",
-                   appOptions: {
-                       title: "Source: https://twitter.com/archillect/status/704876401904783360",
-                       uri: "images/Ccg5WfWW8AAe3pz.jpg"
-                   },
-                   style: {
-                       left: "845px"
-                   }
-                 });
-
-x.runApplication({ app: "image",
-                   appOptions: {
-                       title: "3x3 Magic Prime Square",
-                       uri: "images/3x3-magic-prime-square.jpg",
-                   },
-                   style: {
-                       left: "1245px"
-                   }
-                 });
-
 /*
 var x2 = x.runApplication({
     app: "skynet",
@@ -83,7 +63,7 @@ x.runApplication({ app: "audioplayer",
                        playlist: "music/playlist"
                    },
                    style: {
-                       top: "465px",
+                       top: "25px",
                        left: "845px"
                    }
                  });
@@ -91,23 +71,11 @@ x.runApplication({ app: "audioplayer",
 x.runApplication({ app: "iframe",
                    appOptions: {
                        title: "The Order of Symbols",
-                       uri: 'the-order-of-symbols.txt.html',
+                       uri: 'the-order-of-symbols.txt',
                    },
                    style: {
-                       top: "300px",
-                       left: "1000px",
+                       top: "100px",
+                       left: "845px"
                    }
-                 });
-
-x.runApplication({ app: "hello",
-                   appOptions: {
-                       title: "What Makes Lisp Macros So Special(?)",
-                       text: "<a href='http://stackoverflow.com/questions/267862/what-makes-lisp-macros-so-special' target=_blank>Find out here!</a>"
-                   },
-                   style: {
-                       top: "64px",
-                       left: "1000px"
-                   }
-
                  });
 
