@@ -984,12 +984,13 @@ takes a function as an argument.  In this case the function given is
 every element of the list, and a new list is built using the results.
 
 (<span class="keyword">defmacro</span> <span class="function-name">map</span> (f l)
-  `((<span class="keyword">lambda</span> (l2 a)
-      (<span class="keyword">if</span> l2
-          (self (cdr l2) (cons (,f (car l2)) a))
-          (reverse a)))
-    ,l ()))
-
+  `((<span class="keyword">lambda</span> (l2 a) <span class="comment">; delcare an anonymous function
+</span>      (<span class="keyword">if</span> l2 <span class="comment">; if l2 is not null
+</span>          (self (cdr l2) (cons (,f (car l2)) a)) <span class="comment">; recurse
+</span>          (reverse a))) <span class="comment">; return the accumlator, reversed
+</span>    ,l ())) <span class="comment">; call the anonymous function, evaulating l
+</span>            <span class="comment">; and passing () for a
+</span>
 Examples:
 
     (map (<span class="keyword">lambda</span> (x) (+ x x)) `(1 2 3)) =&gt; (2 4 6)
@@ -1042,51 +1043,77 @@ them up after the body of the form is completed, returning the value
 of the last executed statement.
 
 (<span class="keyword">defmacro</span> <span class="function-name">let</span> (args <span class="type">&amp;body</span> body)
-  (<span class="keyword">lambda</span> (vars values)
-    `((<span class="keyword">lambda</span> ,vars ,@body) ,@args)
-    (map car args)
-    (map cadr args))) <span class="comment">; FIXME: this should work, if not, try the below version
+  ((<span class="keyword">lambda</span> (vars values) <span class="comment">; notice! we are processing the arguments to let
+</span>     `((<span class="keyword">lambda</span> ,vars ,@body) ,@args)) <span class="comment">; notice! this is the code that
+</span>                                      <span class="comment">; is returned by let
+</span>     (map car args) <span class="comment">; argument 1 above, vars
+</span>     (map cadr args))) <span class="comment">; argument 2 above, values
 </span>
-(<span class="keyword">defmacro</span> <span class="function-name">let</span> (args <span class="type">&amp;body</span> body)
-  (<span class="keyword">lambda</span> (vars values)
-    `((<span class="keyword">lambda</span> ,vars ,@body) ,@args)
-    (map car args)
-    (map (<span class="keyword">lambda</span> (x) (car (cdr x)) args))))
-
 Examples:
 
-    (<span class="keyword">let</span> ((a 1) (b 2)) (+ a b)) =&gt; 3
+    (map car `((a 1) (b 2))) =&gt; (a b) <span class="comment">; like vars, above
+</span>    (map cadr `((a 1) (b 2))) =&gt; (1 2) <span class="comment">; like values, above
+</span>    (<span class="keyword">let</span> ((a 1) (b 2)) (+ a b)) =&gt; 3
     a =&gt; <span class="comment">; error, undefined symbol
 </span>    b =&gt; <span class="comment">; error, undefined symbol</span><span class="comment">
 </span>
 7) <span class="warning">aif - anamorphic if</span>
 ----------------------
 
+Since () is always false and anything else is true, sometimes we may
+want to know the value that is returned by the test that is passed to
+'<span class="constant">if</span>'.  This can be done by saving the value in the environment for the
+body of the '<span class="constant">if</span>', which we are going to call '<span class="constant">it</span>'.  You can then
+reference the value of '<span class="constant">it</span>' anywhere in the body of the '<span class="constant">if</span>' statement.
+
 (<span class="keyword">defmacro</span> <span class="function-name">aif</span> (test true false)
   `(<span class="keyword">let</span> ((it ,test))
      (<span class="keyword">if</span> it ,true ,false)))
 
+Examples:
+
+    (aif 1 it ()) =&gt; 1
+    (aif (car `(1 2 3)) it 2) =&gt; 1
+    (aif (car `(() 2 3)) it 2) =&gt; 2
+
+Note: the injection of variables that can be used in the body of a
+macro makes the macro '<span class="constant">anamorphic</span>'.  For a further explanation of this
+concept, see <span class="string">&quot;On Lisp&quot;</span>, chapter 14.
+
 8) <span class="warning">awhen - anamorphic when</span>
 --------------------------
+
+Like '<span class="constant">aif</span>', but with when.
 
 (<span class="keyword">defmacro</span> <span class="function-name">awhen</span> (test <span class="type">&amp;body</span> body)
   `(<span class="keyword">let</span> ((it ,test))
      (<span class="keyword">when</span> it ,@body)))
 
+Examples:
+
+    (awhen 1 it) =&gt; 1
+    (awhen () it) =&gt; () <span class="comment">; notice! awhen by default returns ()
+</span>
 9) <span class="warning">not - logical compliment</span>
 ---------------------------
 
-(<span class="keyword">defmacro</span> <span class="function-name">not</span> (x)
-  `((<span class="keyword">lambda</span> (x)
-      (<span class="keyword">cond</span>
-        ((null x) t)
-        (t ())))))
+When using boolean values, sometimes you want the opposite of the
+value you have. In this case you use '<span class="constant">not</span>', which returns the
+compliment of any value, logically.
 
+(<span class="keyword">defmacro</span> <span class="function-name">not</span> (x)
+  `((<span class="keyword">lambda</span> (v)
+      (<span class="keyword">cond</span>
+        ((null v) t) <span class="comment">; check for (), if so, return t
+</span>        (t ()))) <span class="comment">; else return () for everything els</span><span class="comment">e</span><span class="comment">
+</span>    ,x)) <span class="comment">; evaulate the argument x
+</span>
 Examples:
 
     (not ()) =&gt; t
     (not t) =&gt; ()
     (not 1) =&gt; ()
+
 
 10) <span class="warning">unless - negative single branch conditional</span>
 ----------------------------------------------

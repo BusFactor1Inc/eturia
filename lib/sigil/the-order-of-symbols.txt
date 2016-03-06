@@ -857,11 +857,12 @@ takes a function as an argument.  In this case the function given is
 every element of the list, and a new list is built using the results.
 
 (defmacro map (f l)
-  `((lambda (l2 a)
-      (if l2
-          (self (cdr l2) (cons (,f (car l2)) a))
-          (reverse a)))
-    ,l ()))
+  `((lambda (l2 a) ; delcare an anonymous function
+      (if l2 ; if l2 is not null
+          (self (cdr l2) (cons (,f (car l2)) a)) ; recurse
+          (reverse a))) ; return the accumlator, reversed
+    ,l ())) ; call the anonymous function, evaulating l
+            ; and passing () for a
 
 Examples:
 
@@ -915,19 +916,16 @@ them up after the body of the form is completed, returning the value
 of the last executed statement.
 
 (defmacro let (args &body body)
-  (lambda (vars values)
-    `((lambda ,vars ,@body) ,@args)
-    (map car args)
-    (map cadr args))) ; FIXME: this should work, if not, try the below version
-
-(defmacro let (args &body body)
-  (lambda (vars values)
-    `((lambda ,vars ,@body) ,@args)
-    (map car args)
-    (map (lambda (x) (car (cdr x)) args))))
+  ((lambda (vars values) ; notice! we are processing the arguments to let
+     `((lambda ,vars ,@body) ,@args)) ; notice! this is the code that
+                                      ; is returned by let
+     (map car args) ; argument 1 above, vars
+     (map cadr args))) ; argument 2 above, values
 
 Examples:
 
+    (map car `((a 1) (b 2))) => (a b) ; like vars, above
+    (map cadr `((a 1) (b 2))) => (1 2) ; like values, above
     (let ((a 1) (b 2)) (+ a b)) => 3
     a => ; error, undefined symbol
     b => ; error, undefined symbol
@@ -935,31 +933,60 @@ Examples:
 7) aif - anamorphic if
 ----------------------
 
+Since () is always false and anything else is true, sometimes we may
+want to know the value that is returned by the test that is passed to
+'if'.  This can be done by saving the value in the environment for the
+body of the 'if', which we are going to call 'it'.  You can then
+reference the value of 'it' anywhere in the body of the 'if' statement.
+
 (defmacro aif (test true false)
   `(let ((it ,test))
      (if it ,true ,false)))
 
+Examples:
+
+    (aif 1 it ()) => 1
+    (aif (car `(1 2 3)) it 2) => 1
+    (aif (car `(() 2 3)) it 2) => 2
+
+Note: the injection of variables that can be used in the body of a
+macro makes the macro 'anamorphic'.  For a further explanation of this
+concept, see "On Lisp", chapter 14.
+
 8) awhen - anamorphic when
 --------------------------
+
+Like 'aif', but with when.
 
 (defmacro awhen (test &body body)
   `(let ((it ,test))
      (when it ,@body)))
 
+Examples:
+
+    (awhen 1 it) => 1
+    (awhen () it) => () ; notice! awhen by default returns ()
+
 9) not - logical compliment
 ---------------------------
 
+When using boolean values, sometimes you want the opposite of the
+value you have. In this case you use 'not', which returns the
+compliment of any value, logically.
+
 (defmacro not (x)
-  `((lambda (x)
+  `((lambda (v)
       (cond
-        ((null x) t)
-        (t ())))))
+        ((null v) t) ; check for (), if so, return t
+        (t ()))) ; else return () for everything else
+    ,x)) ; evaulate the argument x
 
 Examples:
 
     (not ()) => t
     (not t) => ()
     (not 1) => ()
+
 
 10) unless - negative single branch conditional
 ----------------------------------------------
