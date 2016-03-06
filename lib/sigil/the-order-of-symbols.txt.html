@@ -1157,7 +1157,7 @@ useful in the future.
   `((<span class="keyword">lambda</span> (args) <span class="comment">; an anonymous function
 </span>      (<span class="keyword">if</span> args <span class="comment">; if args is not ()
 </span>          (<span class="keyword">if</span> (eval (car args)) <span class="comment">; evaluate the argument
-</span>              (self (cdr args)) <span class="comment">; if true, continue with other arguments
+</span>              (self (cdr args)) <span class="comment">; if true, continue with other args
 </span>              ()) <span class="comment">; evaluation returned false, so and is false
 </span>          t)) <span class="comment">; all evaluated args returned true, so return true
 </span>    `,args)) <span class="comment">; call anonymous function with args quoted,
@@ -1171,7 +1171,8 @@ Examples:
     (and t t) =&gt; t
     (and 1 1) =&gt; t
     (and () (set `a 1)) =&gt; ()
-    a =&gt; <span class="comment">; error, undefined variable, set was not run due to short circuiting
+    a =&gt; <span class="comment">; error, undefined variable,
+</span>         <span class="comment">; set was not run due to short circuiting
 </span>
 12) <span class="warning">or - logicial or</span>
 --------------------
@@ -1196,18 +1197,24 @@ Examples:
     (or t t) =&gt; t
     (or 1 1) =&gt; t
     (or t (set `a 1)) =&gt; ()
-    a =&gt; <span class="comment">; error, undefined variable, set was not run due to short circuiting</span><span class="comment">
+    a =&gt; <span class="comment">; error, undefined variable, </span><span class="comment">
+</span>         <span class="comment">; set was not run due to short circuitin</span><span class="comment">g</span><span class="comment">
 </span>
-
 13) <span class="warning">xor - logical exclusive or</span>
 ------------------------------
+
 Similar to '<span class="constant">and</span>' and '<span class="constant">or</span>', '<span class="constant">xor</span>' returns true if one or the other of
-its arguments is true.
+its arguments is true.  You will notice that we are use '<span class="constant">let</span>' to hold
+the value of our evaluated arguments.  You generally only want to
+evaluate the arguments you are passed once. This is because the
+evaluation of certain arguments may cause 'side effects', and
+evaluating them more than once may cause unintended conciquences and
+should be avoided.
 
 (<span class="keyword">defmacro</span> <span class="function-name">xor</span> (x y)
-  `(<span class="keyword">let</span> ((xe ,x)
-         (ye ,y))
-     (and
+  `(<span class="keyword">let</span> ((xe ,x) <span class="comment">; evaluate x once
+</span>         (ye ,y)) <span class="comment">; evaluate y once
+</span>     (and
       (or xe ye)
       (not (and xe ye)))))
 

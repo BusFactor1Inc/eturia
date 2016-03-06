@@ -1030,7 +1030,7 @@ useful in the future.
   `((lambda (args) ; an anonymous function
       (if args ; if args is not ()
           (if (eval (car args)) ; evaluate the argument
-              (self (cdr args)) ; if true, continue with other arguments
+              (self (cdr args)) ; if true, continue with other args
               ()) ; evaluation returned false, so and is false
           t)) ; all evaluated args returned true, so return true
     `,args)) ; call anonymous function with args quoted,
@@ -1044,7 +1044,8 @@ Examples:
     (and t t) => t
     (and 1 1) => t
     (and () (set `a 1)) => ()
-    a => ; error, undefined variable, set was not run due to short circuiting
+    a => ; error, undefined variable,
+         ; set was not run due to short circuiting
 
 12) or - logicial or
 --------------------
@@ -1069,17 +1070,23 @@ Examples:
     (or t t) => t
     (or 1 1) => t
     (or t (set `a 1)) => ()
-    a => ; error, undefined variable, set was not run due to short circuiting
-
+    a => ; error, undefined variable, 
+         ; set was not run due to short circuiting
 
 13) xor - logical exclusive or
 ------------------------------
+
 Similar to 'and' and 'or', 'xor' returns true if one or the other of
-its arguments is true.
+its arguments is true.  You will notice that we are use 'let' to hold
+the value of our evaluated arguments.  You generally only want to
+evaluate the arguments you are passed once. This is because the
+evaluation of certain arguments may cause 'side effects', and
+evaluating them more than once may cause unintended conciquences and
+should be avoided.
 
 (defmacro xor (x y)
-  `(let ((xe ,x)
-         (ye ,y))
+  `(let ((xe ,x) ; evaluate x once
+         (ye ,y)) ; evaluate y once
      (and
       (or xe ye)
       (not (and xe ye)))))
