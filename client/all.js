@@ -11385,7 +11385,6 @@ var Sigil = new Model({
                 }
             }.bind(this));
             
-            
             if(this._null(result[0]) === 't' && dotted) {
                 return result[1];
             } else if (this._null(result[0]) === 't') {

@@ -140,19 +140,20 @@ span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretc
                         |The Order of Symbols|
                         ======================
 
- <span class="string">&quot;...there once existed a language which perfectly and unambiguously
-    expressed the essence of all possible things and concepts...&quot;</span>
+          <span class="string">&quot;...there once existed a language which perfectly
+              and unambiguously expressed the essence of
+                 all possible things and concepts...&quot;</span>
 
         -- Umberto Eco - /The Search for the Perfect Language/
 
-   <span class="string">&quot;Most good programmers do programming not because they expect to
-  get paid or get adulation by the public, but because it is fun to
-                              program.&quot;</span>
+        <span class="string">&quot;Most good programmers do programming not because they
+          expect to get paid or get adulation by the public,
+                  but because it is fun to program.&quot;</span>
 
                           -- Linus Torvalds
 
-        <span class="string">&quot;Computers are good at following instructions, but not
-                        at reading your mind.&quot;</span>
+            <span class="string">&quot;Computers are good at following instructions,
+                    but not at reading your mind.&quot;</span>
 
                            -- Donald Knuth
 
@@ -1105,8 +1106,65 @@ Examples:
     (awhen 1 it) =&gt; 1
     (awhen () it) =&gt; () <span class="comment">; notice! awhen by default returns ()
 </span>
-9) <span class="warning">not - logical compliment</span>
----------------------------
+
+9) <span class="warning">last - return the last element of a list</span>
+--------------------------------------------
+
+Sometimes you want the last element of the list. This function shows
+recursing down a list until it reaches the end, when it return the
+last element.
+
+(<span class="keyword">defmacro</span> <span class="function-name">last</span> (l)
+  `((<span class="keyword">lambda</span> (l)
+      (<span class="keyword">if</span> (cdr l)
+          (self (cdr l))
+          (car l))))
+  ,l))
+
+Examples:
+
+    (last `(1 2 3)) =&gt; 3
+
+
+10) <span class="warning">length - return the length of a list</span>
+----------------------------------------
+
+Knowing the length of a list is generally very useful during
+computations.  Here is a recursive macro that recursively computes it
+given a list using an accumulator.
+
+(<span class="keyword">defmacro</span> <span class="function-name">length</span> (l)
+  `((<span class="keyword">lambda</span> (l n)
+      (<span class="keyword">if</span> l
+          (self (cdr l) (+ n 1))
+          n))
+    ,l 0))
+
+Examples:
+
+    (length ()) =&gt; 0
+    (length `(1 2 3)) =&gt; 3
+    (length `((1 2 3) a b c)) =&gt; 4
+
+
+11) <span class="warning">nth - return the nth element of a list</span>
+------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">nth</span> (n l)
+  `((<span class="keyword">lambda</span> (n l)
+      (<span class="keyword">if</span> (eq n 0)
+          l
+          (self (- n 1) (cdr l))))) <span class="warning">,n ,l)</span>
+
+Examples:
+
+    (nth 0 `(1 2 3)) =&gt; 1
+    (nth 1 `(1 2 3)) =&gt; 2
+    (nth 2 `(1 2 3)) =&gt; 3
+
+
+12) <span class="warning">not - logical compliment</span>
+----------------------------
 
 When using boolean values, sometimes you want the opposite of the
 value you have. In this case you use '<span class="constant">not</span>', which returns the
@@ -1126,7 +1184,7 @@ Examples:
     (not 1) =&gt; ()
 
 
-10) <span class="warning">unless - negative single branch conditional</span>
+13) <span class="warning">unless - negative single branch conditional</span>
 ----------------------------------------------
 
 Like when, but the logical opposite. It runs its body of when its test
@@ -1143,7 +1201,7 @@ Examples:
     (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
 
 
-11) <span class="warning">and - logical and</span>
+14) <span class="warning">and - logical and</span>
 ---------------------
 
 '<span class="constant">and</span>' is another boolean function, one that returns true when all of
@@ -1174,7 +1232,7 @@ Examples:
     a =&gt; <span class="comment">; error, undefined variable,
 </span>         <span class="comment">; set was not run due to short circuiting
 </span>
-12) <span class="warning">or - logicial or</span>
+15) <span class="warning">or - logicial or</span>
 --------------------
 
 Similar to and, or returns true if any of its arguments are true.  We
@@ -1200,7 +1258,7 @@ Examples:
     a =&gt; <span class="comment">; error, undefined variable, </span><span class="comment">
 </span>         <span class="comment">; set was not run due to short circuitin</span><span class="comment">g</span><span class="comment">
 </span>
-13) <span class="warning">xor - logical exclusive or</span>
+16) <span class="warning">xor - logical exclusive or</span>
 ------------------------------
 
 Similar to '<span class="constant">and</span>' and '<span class="constant">or</span>', '<span class="constant">xor</span>' returns true if one or the other of
@@ -1225,28 +1283,99 @@ Examples:
     (xor () t) =&gt; t
     (xor t t) =&gt; ()
 
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
+</span>
+17) <span class="warning">equal - compare if two things are equal, including lists</span>
+------------------------------------------------------------
 
-14) <span class="warning">length - return the length of a list</span>
-----------------------------------------
+(<span class="keyword">defmacro</span> <span class="function-name">equal</span> (x y)
+  `((<span class="keyword">lambda</span> (x y)
+      (<span class="keyword">cond</span>
+        ((and (atom x) (atom y)) (eq x y))
+        ((and (null x) (null y)) t)
+        (t
+         (self (cdr x) (cdr y))))) <span class="warning">,x ,y))</span>
 
-Knowing the length of a list is generally very useful during
-computations.  Here is a recursive macro function that computes it
-given a list using an accumulator.
+18) <span class="warning">pallindromep - see if a list is the same forwards and backwards</span>
+-------------------------------------------------------------------
 
-(<span class="keyword">defmacro</span> <span class="function-name">length</span> (l)
-  `((<span class="keyword">lambda</span> (l n)
-      (<span class="keyword">if</span> l
-          (self (cdr l) (+ n 1))
-          n))
-    ,l 0))
+(<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
+  `(equal l (reverse l)))
 
 Examples:
 
-    (length ()) =&gt; 0
-    (length `(1 2 3)) =&gt; 3
-    (length `((1 2 3) a b c)) =&gt; 4
+    (pallindromep `(1 2 3)) =&gt; ()
+    (pallindromep `(1 2 3 2 1)) =&gt; t
 
-<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+19) <span class="warning">list - create a proper list of all arguments</span>
+------------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">list</span> (<span class="type">&amp;rest</span> rest)
+  `(<span class="keyword">lambda</span> (rest)
+     rest) <span class="warning">,@rest)</span>
+
+Examples:
+
+    (list `a `b `c) =&gt; (a b c)
+    (list 1 2 3) =&gt; (1 2 3)
+
+20) <span class="warning">member - see if something is in a list</span>
+------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">member</span> (x l <span class="type">&amp;rest</span> test)
+  `(<span class="keyword">let</span> ((t (<span class="keyword">if</span> ,test ,test eq)))
+     (<span class="keyword">lambda</span> (x l)
+       (<span class="keyword">if</span> l
+           (<span class="keyword">if</span> (t x (car l))
+               l
+               (self x (cdr l)))
+           ())) <span class="warning">,x ,l))</span>
+
+Examples:
+
+    (member 1 `(1 2 3)) =&gt; (1 2 3)
+    (member 3 `(1 2 3)) =&gt; (3)
+    (member 4 `(1 2 3)) =&gt; ()
+    (member `(1 2 3) `(a b c (1 2 3))) =&gt; ()
+    (member `(1 2 3) `(a b c (1 2 3)) equal) =&gt; ((1 2 3))  
+
+
+21) <span class="warning">filter - remove elements from a list based on a predicate</span>
+-------------------------------------------------------------
+
+(<span class="keyword">defun</span> <span class="function-name">filter</span> (f l)
+  `((<span class="keyword">lambda</span> (l a)
+      (<span class="keyword">if</span> l
+          (<span class="keyword">if</span> (,f (car l))
+              (self (cdr l) (cons (car l) a))
+              (self (cdr l) a))
+          (reverse a))) <span class="warning">,l))</span>
+
+Examples:
+
+    (filter (<span class="keyword">lambda</span> (x) (eq x 1)) `(1 2 3)) =&gt; (2 3)
+    (filter (<span class="keyword">lambda</span> (x) (or (eq x 1) (eq x 3)) `(1 2 3)) =&gt; (2)
+
+            
+22) <span class="warning">rm - remove a symbol from the environment</span>
+---------------------------------------------
+
+Examples:
+
+    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
+</span>    x =&gt; 1
+    (rm `x) =&gt; 1 <span class="comment">; returns the old value of x
+</span>    x =&gt; <span class="comment">; Error, undefined symbol
+</span>
+23) <span class="warning">rmf - remove a macro from the function environment</span>
+------------------------------------------------------
+
+Examples:
+
+    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
+    (double 2) =&gt; 4
+    (rmf `double) =&gt; (macro (x) `(+ ,x ,x))
+    (double 2) =&gt; <span class="comment">; Error, undefined function</span><span class="comment">
 </span>
 15) <span class="warning">mapn - like map, but takes n lists as arguments</span>
 ---------------------------------------------------
@@ -1289,105 +1418,6 @@ Examples:
     x =&gt; 2
     y =&gt; 3
 
-17) <span class="warning">last - return the last element of a list</span>
---------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">last</span> (l)
-  `((<span class="keyword">lambda</span> (l)
-      (<span class="keyword">if</span> (cdr l)
-          (self (cdr l))
-          (car l)))) <span class="warning">,l))</span>
-
-Examples:
-
-(last `(1 2 3)) =&gt; 3
-
-18) <span class="warning">nth - return the nth element of a list</span>
-------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">nth</span> (n l)
-  `((<span class="keyword">lambda</span> (n l)
-      (<span class="keyword">if</span> (eq n 0)
-          l
-          (self (- n 1) (cdr l))))) <span class="warning">,n ,l)</span>
-
-Examples:
-
-    (nth 0 `(1 2 3)) =&gt; 1
-    (nth 1 `(1 2 3)) =&gt; 2
-    (nth 2 `(1 2 3)) =&gt; 3
-
-19) <span class="warning">equal - compare if two things are equal, including lists</span>
-------------------------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">equal</span> (x y)
-  `((<span class="keyword">lambda</span> (x y)
-      (<span class="keyword">cond</span>
-        ((and (atom x) (atom y)) (eq x y))
-        ((and (null x) (null y)) t)
-        (t
-         (self (cdr x) (cdr y))))) <span class="warning">,x ,y))</span>
-
-20) <span class="warning">pallindromep - see if a list is the same forwards and backwards</span>
--------------------------------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
-  `(equal l (reverse l)))
-
-Examples:
-
-    (pallindromep `(1 2 3)) =&gt; ()
-    (pallindromep `(1 2 3 2 1)) =&gt; t
-
-21) <span class="warning">list - create a proper list of all arguments</span>
-------------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">list</span> (<span class="type">&amp;rest</span> rest)
-  `(<span class="keyword">lambda</span> (rest)
-     rest) <span class="warning">,@rest)</span>
-
-Examples:
-
-    (list `a `b `c) =&gt; (a b c)
-    (list 1 2 3) =&gt; (1 2 3)
-
-22) <span class="warning">member - see if something is in a list</span>
-------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">member</span> (x l <span class="type">&amp;rest</span> test)
-  `(<span class="keyword">let</span> ((t (<span class="keyword">if</span> ,test ,test eq)))
-     (<span class="keyword">lambda</span> (x l)
-       (<span class="keyword">if</span> l
-           (<span class="keyword">if</span> (t x (car l))
-               l
-               (self x (cdr l)))
-           ())) <span class="warning">,x ,l))</span>
-
-Examples:
-
-    (member 1 `(1 2 3)) =&gt; (1 2 3)
-    (member 3 `(1 2 3)) =&gt; (3)
-    (member 4 `(1 2 3)) =&gt; ()
-    (member `(1 2 3) `(a b c (1 2 3))) =&gt; ()
-    (member `(1 2 3) `(a b c (1 2 3)) equal) =&gt; ((1 2 3))  
-
-
-23) <span class="warning">filter - remove elements from a list based on a predicate</span>
--------------------------------------------------------------
-
-(<span class="keyword">defun</span> <span class="function-name">filter</span> (f l)
-  `((<span class="keyword">lambda</span> (l a)
-      (<span class="keyword">if</span> l
-          (<span class="keyword">if</span> (,f (car l))
-              (self (cdr l) (cons (car l) a))
-              (self (cdr l) a))
-          (reverse a))) <span class="warning">,l))</span>
-
-Examples:
-
-    (filter (<span class="keyword">lambda</span> (x) (eq x 1)) `(1 2 3)) =&gt; (2 3)
-    (filter (<span class="keyword">lambda</span> (x) (or (eq x 1) (eq x 3)) `(1 2 3)) =&gt; (2)
-
 <span class="comment-delimiter">;; </span><span class="comment">TO BE CONTINUED
 </span>
 rm
@@ -1402,24 +1432,7 @@ flatten
 sort
 defun(?)
 
-rm - remove a symbol from the environment
 
-Examples:
-
-    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
-</span>    x =&gt; 1
-    (rm `x) =&gt; 1 <span class="comment">; returns the old value of x
-</span>    x =&gt; <span class="comment">; Error, undefined symbol
-</span>
-rmf - remove a macro from the function environment
-
-Examples:
-
-    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
-    (double 2) =&gt; 4
-    (rmf `double) =&gt; (macro (x) `(+ ,x ,x))
-    (double 2) =&gt; <span class="comment">; Error, undefined function
-</span>
 ===============================================================================
 ===============================================================================
 

@@ -13,19 +13,20 @@
                         |The Order of Symbols|
                         ======================
 
- "...there once existed a language which perfectly and unambiguously
-    expressed the essence of all possible things and concepts..."
+          "...there once existed a language which perfectly
+              and unambiguously expressed the essence of
+                 all possible things and concepts..."
 
         -- Umberto Eco - /The Search for the Perfect Language/
 
-   "Most good programmers do programming not because they expect to
-  get paid or get adulation by the public, but because it is fun to
-                              program."
+        "Most good programmers do programming not because they
+          expect to get paid or get adulation by the public,
+                  but because it is fun to program."
 
                           -- Linus Torvalds
 
-        "Computers are good at following instructions, but not
-                        at reading your mind."
+            "Computers are good at following instructions,
+                    but not at reading your mind."
 
                            -- Donald Knuth
 
@@ -978,8 +979,65 @@ Examples:
     (awhen 1 it) => 1
     (awhen () it) => () ; notice! awhen by default returns ()
 
-9) not - logical compliment
----------------------------
+
+9) last - return the last element of a list
+--------------------------------------------
+
+Sometimes you want the last element of the list. This function shows
+recursing down a list until it reaches the end, when it return the
+last element.
+
+(defmacro last (l)
+  `((lambda (l)
+      (if (cdr l)
+          (self (cdr l))
+          (car l))))
+  ,l))
+
+Examples:
+
+    (last `(1 2 3)) => 3
+
+
+10) length - return the length of a list
+----------------------------------------
+
+Knowing the length of a list is generally very useful during
+computations.  Here is a recursive macro that recursively computes it
+given a list using an accumulator.
+
+(defmacro length (l)
+  `((lambda (l n)
+      (if l
+          (self (cdr l) (+ n 1))
+          n))
+    ,l 0))
+
+Examples:
+
+    (length ()) => 0
+    (length `(1 2 3)) => 3
+    (length `((1 2 3) a b c)) => 4
+
+
+11) nth - return the nth element of a list
+------------------------------------------
+
+(defmacro nth (n l)
+  `((lambda (n l)
+      (if (eq n 0)
+          l
+          (self (- n 1) (cdr l))))) ,n ,l)
+
+Examples:
+
+    (nth 0 `(1 2 3)) => 1
+    (nth 1 `(1 2 3)) => 2
+    (nth 2 `(1 2 3)) => 3
+
+
+12) not - logical compliment
+----------------------------
 
 When using boolean values, sometimes you want the opposite of the
 value you have. In this case you use 'not', which returns the
@@ -999,7 +1057,7 @@ Examples:
     (not 1) => ()
 
 
-10) unless - negative single branch conditional
+13) unless - negative single branch conditional
 ----------------------------------------------
 
 Like when, but the logical opposite. It runs its body of when its test
@@ -1016,7 +1074,7 @@ Examples:
     (unless (eq t ()) 1) => 1
 
 
-11) and - logical and
+14) and - logical and
 ---------------------
 
 'and' is another boolean function, one that returns true when all of
@@ -1047,7 +1105,7 @@ Examples:
     a => ; error, undefined variable,
          ; set was not run due to short circuiting
 
-12) or - logicial or
+15) or - logicial or
 --------------------
 
 Similar to and, or returns true if any of its arguments are true.  We
@@ -1073,7 +1131,7 @@ Examples:
     a => ; error, undefined variable, 
          ; set was not run due to short circuiting
 
-13) xor - logical exclusive or
+16) xor - logical exclusive or
 ------------------------------
 
 Similar to 'and' and 'or', 'xor' returns true if one or the other of
@@ -1098,28 +1156,99 @@ Examples:
     (xor () t) => t
     (xor t t) => ()
 
+;; WARNING: THE FOLLOWING CODE IS UNTESTED
 
-14) length - return the length of a list
-----------------------------------------
+17) equal - compare if two things are equal, including lists
+------------------------------------------------------------
 
-Knowing the length of a list is generally very useful during
-computations.  Here is a recursive macro function that computes it
-given a list using an accumulator.
+(defmacro equal (x y)
+  `((lambda (x y)
+      (cond
+        ((and (atom x) (atom y)) (eq x y))
+        ((and (null x) (null y)) t)
+        (t
+         (self (cdr x) (cdr y))))) ,x ,y))
 
-(defmacro length (l)
-  `((lambda (l n)
-      (if l
-          (self (cdr l) (+ n 1))
-          n))
-    ,l 0))
+18) pallindromep - see if a list is the same forwards and backwards
+-------------------------------------------------------------------
+
+(defmacro pallindromep (l)
+  `(equal l (reverse l)))
 
 Examples:
 
-    (length ()) => 0
-    (length `(1 2 3)) => 3
-    (length `((1 2 3) a b c)) => 4
+    (pallindromep `(1 2 3)) => ()
+    (pallindromep `(1 2 3 2 1)) => t
 
-;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+19) list - create a proper list of all arguments
+------------------------------------------------
+
+(defmacro list (&rest rest)
+  `(lambda (rest)
+     rest) ,@rest)
+
+Examples:
+
+    (list `a `b `c) => (a b c)
+    (list 1 2 3) => (1 2 3)
+
+20) member - see if something is in a list
+------------------------------------------
+
+(defmacro member (x l &rest test)
+  `(let ((t (if ,test ,test eq)))
+     (lambda (x l)
+       (if l
+           (if (t x (car l))
+               l
+               (self x (cdr l)))
+           ())) ,x ,l))
+
+Examples:
+
+    (member 1 `(1 2 3)) => (1 2 3)
+    (member 3 `(1 2 3)) => (3)
+    (member 4 `(1 2 3)) => ()
+    (member `(1 2 3) `(a b c (1 2 3))) => ()
+    (member `(1 2 3) `(a b c (1 2 3)) equal) => ((1 2 3))  
+
+
+21) filter - remove elements from a list based on a predicate
+-------------------------------------------------------------
+
+(defun filter (f l)
+  `((lambda (l a)
+      (if l
+          (if (,f (car l))
+              (self (cdr l) (cons (car l) a))
+              (self (cdr l) a))
+          (reverse a))) ,l))
+
+Examples:
+
+    (filter (lambda (x) (eq x 1)) `(1 2 3)) => (2 3)
+    (filter (lambda (x) (or (eq x 1) (eq x 3)) `(1 2 3)) => (2)
+
+            
+22) rm - remove a symbol from the environment
+---------------------------------------------
+
+Examples:
+
+    (set `x 1) => 1 ; define a symbol in the environment
+    x => 1
+    (rm `x) => 1 ; returns the old value of x
+    x => ; Error, undefined symbol
+
+23) rmf - remove a macro from the function environment
+------------------------------------------------------
+
+Examples:
+
+    (defmacro double (x) `(+ ,x ,x)) => (macro (x) `(+ ,x ,x))
+    (double 2) => 4
+    (rmf `double) => (macro (x) `(+ ,x ,x))
+    (double 2) => ; Error, undefined function
 
 15) mapn - like map, but takes n lists as arguments
 ---------------------------------------------------
@@ -1162,105 +1291,6 @@ Examples:
     x => 2
     y => 3
 
-17) last - return the last element of a list
---------------------------------------------
-
-(defmacro last (l)
-  `((lambda (l)
-      (if (cdr l)
-          (self (cdr l))
-          (car l)))) ,l))
-
-Examples:
-
-(last `(1 2 3)) => 3
-
-18) nth - return the nth element of a list
-------------------------------------------
-
-(defmacro nth (n l)
-  `((lambda (n l)
-      (if (eq n 0)
-          l
-          (self (- n 1) (cdr l))))) ,n ,l)
-
-Examples:
-
-    (nth 0 `(1 2 3)) => 1
-    (nth 1 `(1 2 3)) => 2
-    (nth 2 `(1 2 3)) => 3
-
-19) equal - compare if two things are equal, including lists
-------------------------------------------------------------
-
-(defmacro equal (x y)
-  `((lambda (x y)
-      (cond
-        ((and (atom x) (atom y)) (eq x y))
-        ((and (null x) (null y)) t)
-        (t
-         (self (cdr x) (cdr y))))) ,x ,y))
-
-20) pallindromep - see if a list is the same forwards and backwards
--------------------------------------------------------------------
-
-(defmacro pallindromep (l)
-  `(equal l (reverse l)))
-
-Examples:
-
-    (pallindromep `(1 2 3)) => ()
-    (pallindromep `(1 2 3 2 1)) => t
-
-21) list - create a proper list of all arguments
-------------------------------------------------
-
-(defmacro list (&rest rest)
-  `(lambda (rest)
-     rest) ,@rest)
-
-Examples:
-
-    (list `a `b `c) => (a b c)
-    (list 1 2 3) => (1 2 3)
-
-22) member - see if something is in a list
-------------------------------------------
-
-(defmacro member (x l &rest test)
-  `(let ((t (if ,test ,test eq)))
-     (lambda (x l)
-       (if l
-           (if (t x (car l))
-               l
-               (self x (cdr l)))
-           ())) ,x ,l))
-
-Examples:
-
-    (member 1 `(1 2 3)) => (1 2 3)
-    (member 3 `(1 2 3)) => (3)
-    (member 4 `(1 2 3)) => ()
-    (member `(1 2 3) `(a b c (1 2 3))) => ()
-    (member `(1 2 3) `(a b c (1 2 3)) equal) => ((1 2 3))  
-
-
-23) filter - remove elements from a list based on a predicate
--------------------------------------------------------------
-
-(defun filter (f l)
-  `((lambda (l a)
-      (if l
-          (if (,f (car l))
-              (self (cdr l) (cons (car l) a))
-              (self (cdr l) a))
-          (reverse a))) ,l))
-
-Examples:
-
-    (filter (lambda (x) (eq x 1)) `(1 2 3)) => (2 3)
-    (filter (lambda (x) (or (eq x 1) (eq x 3)) `(1 2 3)) => (2)
-
 ;; TO BE CONTINUED
 
 rm
@@ -1275,23 +1305,6 @@ flatten
 sort
 defun(?)
 
-rm - remove a symbol from the environment
-
-Examples:
-
-    (set `x 1) => 1 ; define a symbol in the environment
-    x => 1
-    (rm `x) => 1 ; returns the old value of x
-    x => ; Error, undefined symbol
-
-rmf - remove a macro from the function environment
-
-Examples:
-
-    (defmacro double (x) `(+ ,x ,x)) => (macro (x) `(+ ,x ,x))
-    (double 2) => 4
-    (rmf `double) => (macro (x) `(+ ,x ,x))
-    (double 2) => ; Error, undefined function
 
 ===============================================================================
 ===============================================================================
