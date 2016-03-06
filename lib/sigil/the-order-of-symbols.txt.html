@@ -798,7 +798,18 @@ Examples:
 </span>    (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3))) <span class="comment">; expand it
 </span>
 
-24) <span class="warning">=&gt; - evaluate JavaScript code</span>
+24) <span class="warning">eval - evaluate an expression</span>
+---------------------------------
+
+Sometimes you have a code in a form that you wish to evaluate.  You
+can do this by calling eval.
+
+Examples:
+
+    `(+ 1 2) =&gt; (+ 1 2) <span class="comment">; unevaluated code
+</span>    (eval `(+ 1 2)) =&gt; 3 <span class="comment">; calling eval on it gives the result
+</span>
+25) <span class="warning">=&gt; - evaluate JavaScript code</span>
 ---------------------------------
 
 Used to execute JavaScript code that can be built by concatenating symbols.
@@ -1118,14 +1129,16 @@ Examples:
 10) <span class="warning">unless - negative single branch conditional</span>
 ----------------------------------------------
 
-Like when, but the logical opposite. It runs its body of when test
+Like when, but the logical opposite. It runs its body of when its test
 returns ().
 
 (<span class="keyword">defmacro</span> <span class="function-name">unless</span> (test <span class="type">&amp;body</span> body)
-  (<span class="keyword">cond</span> ,test ,@body))
+  `(<span class="keyword">cond</span> ((not ,test) ,@body)))
 
 Examples:
 
+    (<span class="keyword">unless</span> t 1) =&gt; ()
+    (<span class="keyword">unless</span> () 1) =&gt; 1
     (<span class="keyword">unless</span> (eq t t) 1) =&gt; ()
     (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
 
@@ -1133,14 +1146,23 @@ Examples:
 11) <span class="warning">and - logical and</span>
 ---------------------
 
-(<span class="keyword">defmacro</span> <span class="function-name">and</span> (<span class="type">&amp;rest</span> args)
-  `((<span class="keyword">lambda</span> (args)
-      (<span class="keyword">if</span> args
-          (<span class="keyword">if</span> (eval (car args))
-              (self (cdr args))
-              ())
-          t)) <span class="warning">`,args))</span>
+'<span class="constant">and</span>' is another boolean function, one that returns true when all of
+its parameters are true.  Because of this property, if any of the
+values that it is passed returns false, you can assume the final value
+is false, so you can stop evaluating the arguments and just return
+false.  This behaviour is called 'short circuiting' and will be very
+useful in the future.
 
+(<span class="keyword">defmacro</span> <span class="function-name">and</span> (<span class="type">&amp;rest</span> args)
+  `((<span class="keyword">lambda</span> (args) <span class="comment">; an anonymous function
+</span>      (<span class="keyword">if</span> args <span class="comment">; if args is not ()
+</span>          (<span class="keyword">if</span> (eval (car args)) <span class="comment">; evaluate the argument
+</span>              (self (cdr args)) <span class="comment">; if true, continue with other arguments
+</span>              ()) <span class="comment">; evaluation returned false, so and is false
+</span>          t)) <span class="comment">; all evaluated args returned true, so return true
+</span>    `,args)) <span class="comment">; call anonymous function with args quoted,
+</span>             <span class="comment">; as we are evaluating them individually above
+</span>
 Examples:
 
     (and () ()) =&gt; ()
@@ -1148,9 +1170,15 @@ Examples:
     (and t ()) =&gt; ()
     (and t t) =&gt; t
     (and 1 1) =&gt; t
-
+    (and () (set `a 1)) =&gt; ()
+    a =&gt; <span class="comment">; error, undefined variable, set was not run due to short circuiting
+</span>
 12) <span class="warning">or - logicial or</span>
----------------------
+--------------------
+
+Similar to and, or returns true if any of its arguments are true.  We
+can also take advantage of this and 'short ciruit' on this behaviour
+as well.
 
 (<span class="keyword">defmacro</span> <span class="function-name">or</span> (<span class="type">&amp;rest</span> args)
   `((<span class="keyword">lambda</span> (args)
@@ -1167,8 +1195,14 @@ Examples:
     (or t ()) =&gt; t
     (or t t) =&gt; t
     (or 1 1) =&gt; t
+    (or t (set `a 1)) =&gt; ()
+    a =&gt; <span class="comment">; error, undefined variable, set was not run due to short circuiting</span><span class="comment">
+</span>
 
 13) <span class="warning">xor - logical exclusive or</span>
+------------------------------
+Similar to '<span class="constant">and</span>' and '<span class="constant">or</span>', '<span class="constant">xor</span>' returns true if one or the other of
+its arguments is true.
 
 (<span class="keyword">defmacro</span> <span class="function-name">xor</span> (x y)
   `(<span class="keyword">let</span> ((xe ,x)

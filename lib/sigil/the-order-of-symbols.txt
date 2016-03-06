@@ -671,7 +671,18 @@ Examples:
     (me (cadr `(1 2 3))) => (car (cdr `(1 2 3))) ; expand it
 
 
-24) => - evaluate JavaScript code
+24) eval - evaluate an expression
+---------------------------------
+
+Sometimes you have a code in a form that you wish to evaluate.  You
+can do this by calling eval.
+
+Examples:
+
+    `(+ 1 2) => (+ 1 2) ; unevaluated code
+    (eval `(+ 1 2)) => 3 ; calling eval on it gives the result
+
+25) => - evaluate JavaScript code
 ---------------------------------
 
 Used to execute JavaScript code that can be built by concatenating symbols.
@@ -991,14 +1002,16 @@ Examples:
 10) unless - negative single branch conditional
 ----------------------------------------------
 
-Like when, but the logical opposite. It runs its body of when test
+Like when, but the logical opposite. It runs its body of when its test
 returns ().
 
 (defmacro unless (test &body body)
-  (cond ,test ,@body))
+  `(cond ((not ,test) ,@body)))
 
 Examples:
 
+    (unless t 1) => ()
+    (unless () 1) => 1
     (unless (eq t t) 1) => ()
     (unless (eq t ()) 1) => 1
 
@@ -1006,13 +1019,22 @@ Examples:
 11) and - logical and
 ---------------------
 
+'and' is another boolean function, one that returns true when all of
+its parameters are true.  Because of this property, if any of the
+values that it is passed returns false, you can assume the final value
+is false, so you can stop evaluating the arguments and just return
+false.  This behaviour is called 'short circuiting' and will be very
+useful in the future.
+
 (defmacro and (&rest args)
-  `((lambda (args)
-      (if args
-          (if (eval (car args))
-              (self (cdr args))
-              ())
-          t)) `,args))
+  `((lambda (args) ; an anonymous function
+      (if args ; if args is not ()
+          (if (eval (car args)) ; evaluate the argument
+              (self (cdr args)) ; if true, continue with other arguments
+              ()) ; evaluation returned false, so and is false
+          t)) ; all evaluated args returned true, so return true
+    `,args)) ; call anonymous function with args quoted,
+             ; as we are evaluating them individually above
 
 Examples:
 
@@ -1021,9 +1043,15 @@ Examples:
     (and t ()) => ()
     (and t t) => t
     (and 1 1) => t
+    (and () (set `a 1)) => ()
+    a => ; error, undefined variable, set was not run due to short circuiting
 
 12) or - logicial or
----------------------
+--------------------
+
+Similar to and, or returns true if any of its arguments are true.  We
+can also take advantage of this and 'short ciruit' on this behaviour
+as well.
 
 (defmacro or (&rest args)
   `((lambda (args)
@@ -1040,8 +1068,14 @@ Examples:
     (or t ()) => t
     (or t t) => t
     (or 1 1) => t
+    (or t (set `a 1)) => ()
+    a => ; error, undefined variable, set was not run due to short circuiting
+
 
 13) xor - logical exclusive or
+------------------------------
+Similar to 'and' and 'or', 'xor' returns true if one or the other of
+its arguments is true.
 
 (defmacro xor (x y)
   `(let ((xe ,x)
