@@ -1321,6 +1321,7 @@ a '<span class="constant">deep</span>' comparison between 2 items, including lis
       (<span class="keyword">cond</span>
         ((and (atom a) (atom b)) (eq a b))
         ((and (null a) (null b)) t)
+        ((or (null a) (null b)) ())
         (t
          (self (cdr a) (cdr b))))) <span class="warning">,x ,y))</span>
 
@@ -1331,6 +1332,7 @@ Examples:
     (equal 1 1) =&gt; t
     (equal `(1 2 3) `(1 2 3)) =&gt; t
     (equal `((1 2 3 (x y z)) a b c) `((1 2 3 (x y z)) a b c)) =&gt; t
+    (equal `(1 2 3) `(1 2)) =&gt; ()
     (<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
       `(<span class="keyword">let</span> ((le ,l))
          (equal le (reverse le))))

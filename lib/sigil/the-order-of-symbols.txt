@@ -1194,6 +1194,7 @@ a 'deep' comparison between 2 items, including lists.
       (cond
         ((and (atom a) (atom b)) (eq a b))
         ((and (null a) (null b)) t)
+        ((or (null a) (null b)) ())
         (t
          (self (cdr a) (cdr b))))) ,x ,y))
 
@@ -1204,6 +1205,7 @@ Examples:
     (equal 1 1) => t
     (equal `(1 2 3) `(1 2 3)) => t
     (equal `((1 2 3 (x y z)) a b c) `((1 2 3 (x y z)) a b c)) => t
+    (equal `(1 2 3) `(1 2)) => ()
     (defmacro pallindromep (l)
       `(let ((le ,l))
          (equal le (reverse le))))
