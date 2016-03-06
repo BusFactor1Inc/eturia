@@ -1367,8 +1367,6 @@ Examples:
     (<span class="flyspell-duplicate-0002">pallindromep</span> `(1 2 3 4)) =&gt; ()
     (<span class="flyspell-duplicate-0002">pallindromep</span> `(1 2 3 4 3 2 1)) =&gt; t
 
-<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
-</span>
 19) <span class="warning">member - find if something is in a list</span>
 -------------------------------------------
 
@@ -1380,7 +1378,7 @@ value is the contents of the list up to the item found, else () if the
 '<span class="constant">thing</span>' is not found in the '<span class="constant">list</span>'.
 
 (<span class="flyspell-duplicate-0005">defmacro</span> <span class="function-name">member</span> (thing list <span class="type">&amp;rest</span> test)
-  `(<span class="keyword">let</span> ((t (<span class="flyspell-duplicate-0002">aif</span> test it <span class="flyspell-duplicate-0002">eq</span>)))
+  `(<span class="keyword">let</span> ((t (<span class="flyspell-duplicate-0002">aif</span> ,(car test) it <span class="flyspell-duplicate-0002">eq</span>)))
      ((<span class="keyword">lambda</span> (x l)
         (<span class="keyword">if</span> l
             (<span class="keyword">if</span> (t x (car l))
@@ -1398,16 +1396,21 @@ Examples:
     (member `(1 2 3) `(a b c (1 2 3)) equal) =&gt; ((1 2 3))  
 
 
-21) <span class="warning">filter - remove elements from a list based on a predicate</span>
--------------------------------------------------------------
+21) <span class="warning">filter - remove elements from a list</span>
+----------------------------------------
 
-(<span class="flyspell-incorrect-0010">defun</span> <span class="function-name">filter</span> (f l)
+'<span class="constant">filter</span>' is like map, in that it is a higher order function.  It takes
+a predicate and a list, building a new list by running the predicate
+over the list and including the members for which the predicate
+returns true.
+
+(<span class="flyspell-incorrect-0010">de</span><span class="keyword">fmacro</span> <span class="function-name">filter</span> (f l)
   `((<span class="keyword">lambda</span> (l a)
       (<span class="keyword">if</span> l
           (<span class="keyword">if</span> (,f (car l))
               (self (<span class="flyspell-duplicate-0002">cdr</span> l) (cons (car l) a))
               (self (<span class="flyspell-duplicate-0002">cdr</span> l) a))
-          (reverse a))) <span class="warning">,l))</span>
+          (reverse a))) <span class="warning">,l ()))</span>
 
 Examples:
 
@@ -1415,6 +1418,8 @@ Examples:
     (filter (<span class="keyword">lambda</span> (x) (or (<span class="flyspell-duplicate-0002">eq</span> x 1) (<span class="flyspell-duplicate-0002">eq</span> x 3)) `(1 2 3)) =&gt; (2)
 
             
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
+</span>
 22) <span class="warning">rm - remove a symbol from the environment</span>
 ---------------------------------------------
 
