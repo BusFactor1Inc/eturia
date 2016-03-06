@@ -1282,6 +1282,48 @@ Examples:
             
 ;; WARNING: THE FOLLOWING CODE IS UNTESTED
 
+22) dolist - iterate over a list
+--------------------------------
+
+Often it is easier to create a shorthand for commonly done operations
+to make them both easier to read and to write.  In this case one of
+them will be iterating over a list. This macro is also anamorphic, as
+it always injects its first variable and sometimes, it's second.
+
+(defmacro dolist (v l &body body)
+  `((lambda (l)
+      (when l
+        (let ((`,v (car l))
+              ((if (atom `,l) `,l `it) l))
+          ,@body)
+        (self (cdr l)))) ,l))
+
+Examples:
+
+(let ((r 0))
+  (dolist (x `(1 2 3))
+    (set `r (+ x r)))
+  r) => 6
+(set `x `(1 2 3)) => (1 2 3)
+(let ((r ()))
+  (dolist (i x)
+    (set `r (cons (cons i x) r)))
+  r) => ((3 3)) (2 2 3) (1 1 2 3)) ???
+
+
+23) join - rebuild a split atom
+-------------------------------
+
+(defmacro join (ss &rest d)
+  `((lambda (ss d)
+      (let ((d (or (car ,d) `-))
+            (retval ||))
+        (dolist (s ss)
+          (set `retval (+ s (if (cdr ss) d ||))))))
+    ,ss ,d))
+
+
+
 22) rm - remove a symbol from the environment
 ---------------------------------------------
 
@@ -1301,6 +1343,13 @@ Examples:
 23) rmf - remove a macro from the function environment
 ------------------------------------------------------
 
+Identical to above, but works with the function environment rather
+than the variable environment.
+
+(defmacro rmf (x)
+  `(fenv (filter
+         (lambda (e)
+           (not (eq (car e) ,x))) (fenv))))
 Examples:
 
     (defmacro double (x) `(+ ,x ,x)) => (macro (x) `(+ ,x ,x))

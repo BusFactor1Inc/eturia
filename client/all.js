@@ -10879,6 +10879,7 @@ var Sigil = new Model({
     
     reset: function (env, fenv) {
         var _fenv = {
+            // TODO: don't bind the ones that don't need this
             'atom': this.batom.bind(this),
             'null': this.bnull.bind(this),
             'set': this.bset.bind(this),
@@ -10896,8 +10897,6 @@ var Sigil = new Model({
             'call': this.bcall.bind(this),
             'env': this.benv.bind(this),
             'fenv': this.bfenv.bind(this),
-            'rm': this.brm.bind(this),
-            'rmf': this.brmf.bind(this),
             '=>': this.bmagic.bind(this),
             'split': this.bsplit.bind(this),
         };
@@ -10921,20 +10920,6 @@ var Sigil = new Model({
         else
             return "";
     },
-
-    brm: function (args) {
-        var ret = this.env[args[0]];
-        delete this.env[args[0]];
-        return ret;
-    },
-
-    brmf: function (args) {
-        var ret = this.fenv[args[0]];
-        delete this.fenv[args[0]];
-        return ret;
-    },
-
-    
 
     _null: function(e) {
         //return (e === undefined || (Array.isArray(e) && e.length === 0)) && 't' || [];

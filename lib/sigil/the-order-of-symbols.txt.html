@@ -1431,6 +1431,48 @@ Examples:
             
 <span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
 </span>
+22) <span class="warning">dolist - iterate over a list</span>
+--------------------------------
+
+Often it is easier to create a shorthand for commonly done operations
+to make them both easier to read and to write.  In this case one of
+them will be iterating over a list. This macro is also anamorphic, as
+it always injects its first variable and sometimes, it's second.
+
+(<span class="keyword">defmacro</span> <span class="function-name">dolist</span> (v l <span class="type">&amp;body</span> body)
+  `((<span class="keyword">lambda</span> (l)
+      (<span class="keyword">when</span> l
+        (<span class="keyword">let</span> ((`,v (car l))
+              ((<span class="keyword">if</span> (atom `,l) `,l `it) l))
+          ,@body)
+        (self (cdr l)))) <span class="warning">,l))</span>
+
+Examples:
+
+(<span class="keyword">let</span> ((r 0))
+  (<span class="keyword">dolist</span> (x `(1 2 3))
+    (set `r (+ x r)))
+  r) <span class="warning">=&gt; 6</span>
+(set `x `(1 2 3)) =&gt; (1 2 3)
+(<span class="keyword">let</span> ((r ()))
+  (<span class="keyword">dolist</span> (i x)
+    (set `r (cons (cons i x) r)))
+  r) <span class="warning">=&gt; ((3 3)) (2 2 3) (1 1 2 3)) ???</span>
+
+
+23) <span class="warning">join - rebuild a split atom</span>
+-------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">join</span> (ss <span class="type">&amp;rest</span> d)
+  `((<span class="keyword">lambda</span> (ss d)
+      (<span class="keyword">let</span> ((d (or (car ,d) `-))
+            (retval ||))
+        (<span class="keyword">dolist</span> (s ss)
+          (set `retval (+ s (<span class="keyword">if</span> (cdr ss) d ||))))))
+    ,ss ,d))
+
+
+
 22) <span class="warning">rm - remove a symbol from the environment</span>
 ---------------------------------------------
 
@@ -1450,6 +1492,13 @@ Examples:
 23) <span class="flyspell-duplicate-0003">rmf</span><span class="warning"> - remove a macro from the function environment</span>
 ------------------------------------------------------
 
+Identical to above, but works with the function environment rather
+than the variable environment.
+
+(<span class="keyword">defmacro</span> <span class="function-name">rmf</span> (x)
+  `(fenv (filter
+         (<span class="keyword">lambda</span> (e)
+           (not (eq (car e) ,x))) <span class="warning">(fenv))))</span>
 Examples:
 
     (<span class="flyspell-duplicate-0005">defmacro</span> <span class="function-name">double</span> (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
