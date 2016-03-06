@@ -1,9 +1,12 @@
 ;; -*- mode: lisp -*-
 ;;
+;; WORK IN PROGRESS
+;;
+;; Pre-order the book here:
+;;
+;;    https://www.inkshares.com/books/the-order-of-symbols-9907
 ;;
 ;; Questions, comments or problems? Email root@busfactor1.ca
-;;
-;; WORK IN PROGRESS
 ;;
 
 ===============================================================================
@@ -981,7 +984,7 @@ Examples:
 
 
 9) last - return the last element of a list
---------------------------------------------
+-------------------------------------------
 
 Sometimes you want the last element of the list. This function shows
 recursing down a list until it reaches the end, when it return the
@@ -1163,29 +1166,7 @@ Examples:
 
 ;; WARNING: THE FOLLOWING CODE IS UNTESTED
 
-17) equal - compare if two things are equal, including lists
-------------------------------------------------------------
-
-(defmacro equal (x y)
-  `((lambda (x y)
-      (cond
-        ((and (atom x) (atom y)) (eq x y))
-        ((and (null x) (null y)) t)
-        (t
-         (self (cdr x) (cdr y))))) ,x ,y))
-
-18) pallindromep - see if a list is the same forwards and backwards
--------------------------------------------------------------------
-
-(defmacro pallindromep (l)
-  `(equal l (reverse l)))
-
-Examples:
-
-    (pallindromep `(1 2 3)) => ()
-    (pallindromep `(1 2 3 2 1)) => t
-
-19) list - create a proper list of all arguments
+17) list - create a proper list of all arguments
 ------------------------------------------------
 
 (defmacro list (&rest rest)
@@ -1197,7 +1178,32 @@ Examples:
     (list `a `b `c) => (a b c)
     (list 1 2 3) => (1 2 3)
 
-20) member - see if something is in a list
+
+18) equal - compare if two things are equal, including lists
+------------------------------------------------------------
+
+(defmacro equal (x y)
+  `((lambda (x y)
+      (cond
+        ((and (atom x) (atom y)) (eq x y))
+        ((and (null x) (null y)) t)
+        (t
+         (self (cdr x) (cdr y))))) ,x ,y))
+
+Examples:
+
+    (equal t t) => t
+    (equal () ()) => t
+    (equal 1 1) => t
+    (equal `(1 2 3) `(1 2 3)) => t
+    (equal `((1 2 3 (x y z)) a b c) `((1 2 3 (x y z)) a b c)) => t
+    (defmacro pallindromep (l)
+      `(equal l (reverse l))) => ...
+    (pallindromep `(1 2 3 4)) => ()
+    (pallindromep `(1 2 3 4 3 2 1)) => t
+
+
+19) member - see if something is in a list
 ------------------------------------------
 
 (defmacro member (x l &rest test)
@@ -1245,6 +1251,7 @@ Examples:
     (rm `x) => 1 ; returns the old value of x
     x => ; Error, undefined symbol
 
+
 23) rmf - remove a macro from the function environment
 ------------------------------------------------------
 
@@ -1254,6 +1261,7 @@ Examples:
     (double 2) => 4
     (rmf `double) => (macro (x) `(+ ,x ,x))
     (double 2) => ; Error, undefined function
+
 
 15) mapn - like map, but takes n lists as arguments
 ---------------------------------------------------
@@ -1266,6 +1274,7 @@ it recurses with the rest of the lists.  If you only have one list,
 'map' is faster to use computationally, although 'mapn' will work with
 a single list if needed.
 
+;; Note: this doesn't work yet
 (defmacro mapn (f &rest lists)
   `((lambda (xs a)
       (if xs

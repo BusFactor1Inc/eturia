@@ -127,10 +127,13 @@ span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretc
 
 <pre><span class="comment-delimiter">;; </span><span class="comment">-*- mode: lisp -*-
 </span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">Pre-order the book here:
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;;    </span><span class="comment">https://www.inkshares.com/books/the-order-of-symbols-9907
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span><span class="comment-delimiter">;; </span><span class="comment">Questions, comments or problems? Email root@busfactor1.ca
-</span><span class="comment-delimiter">;;</span><span class="comment">
-</span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS
 </span><span class="comment-delimiter">;;</span><span class="comment">
 </span>
 ===============================================================================
@@ -1108,7 +1111,7 @@ Examples:
 </span>
 
 9) <span class="warning">last - return the last element of a list</span>
---------------------------------------------
+-------------------------------------------
 
 Sometimes you want the last element of the list. This function shows
 recursing down a list until it reaches the end, when it return the
@@ -1290,29 +1293,7 @@ Examples:
 
 <span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
 </span>
-17) <span class="warning">equal - compare if two things are equal, including lists</span>
-------------------------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">equal</span> (x y)
-  `((<span class="keyword">lambda</span> (x y)
-      (<span class="keyword">cond</span>
-        ((and (atom x) (atom y)) (eq x y))
-        ((and (null x) (null y)) t)
-        (t
-         (self (cdr x) (cdr y))))) <span class="warning">,x ,y))</span>
-
-18) <span class="warning">pallindromep - see if a list is the same forwards and backwards</span>
--------------------------------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
-  `(equal l (reverse l)))
-
-Examples:
-
-    (pallindromep `(1 2 3)) =&gt; ()
-    (pallindromep `(1 2 3 2 1)) =&gt; t
-
-19) <span class="warning">list - create a proper list of all arguments</span>
+17) <span class="warning">list - create a proper list of all arguments</span>
 ------------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">list</span> (<span class="type">&amp;rest</span> rest)
@@ -1324,7 +1305,32 @@ Examples:
     (list `a `b `c) =&gt; (a b c)
     (list 1 2 3) =&gt; (1 2 3)
 
-20) <span class="warning">member - see if something is in a list</span>
+
+18) <span class="warning">equal - compare if two things are equal, including lists</span>
+------------------------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">equal</span> (x y)
+  `((<span class="keyword">lambda</span> (x y)
+      (<span class="keyword">cond</span>
+        ((and (atom x) (atom y)) (eq x y))
+        ((and (null x) (null y)) t)
+        (t
+         (self (cdr x) (cdr y))))) <span class="warning">,x ,y))</span>
+
+Examples:
+
+    (equal t t) =&gt; t
+    (equal () ()) =&gt; t
+    (equal 1 1) =&gt; t
+    (equal `(1 2 3) `(1 2 3)) =&gt; t
+    (equal `((1 2 3 (x y z)) a b c) `((1 2 3 (x y z)) a b c)) =&gt; t
+    (<span class="keyword">defmacro</span> <span class="function-name">pallindromep</span> (l)
+      `(equal l (reverse l))) <span class="warning">=&gt; ...</span>
+    (pallindromep `(1 2 3 4)) =&gt; ()
+    (pallindromep `(1 2 3 4 3 2 1)) =&gt; t
+
+
+19) <span class="warning">member - see if something is in a list</span>
 ------------------------------------------
 
 (<span class="keyword">defmacro</span> <span class="function-name">member</span> (x l <span class="type">&amp;rest</span> test)
@@ -1372,6 +1378,7 @@ Examples:
     (rm `x) =&gt; 1 <span class="comment">; returns the old value of x
 </span>    x =&gt; <span class="comment">; Error, undefined symbol
 </span>
+
 23) <span class="warning">rmf - remove a macro from the function environment</span>
 ------------------------------------------------------
 
@@ -1382,6 +1389,7 @@ Examples:
     (rmf `double) =&gt; (macro (x) `(+ ,x ,x))
     (double 2) =&gt; <span class="comment">; Error, undefined function</span><span class="comment">
 </span>
+
 15) <span class="warning">mapn - like map, but takes n lists as arguments</span>
 ---------------------------------------------------
 
@@ -1393,7 +1401,8 @@ it recurses with the rest of the lists.  If you only have one list,
 '<span class="constant">map</span>' is faster to use computationally, although '<span class="constant">mapn</span>' will work with
 a single list if needed.
 
-(<span class="keyword">defmacro</span> <span class="function-name">mapn</span> (f <span class="type">&amp;rest</span> lists)
+<span class="comment-delimiter">;; </span><span class="comment">Note: this doesn't work yet
+</span>(<span class="keyword">defmacro</span> <span class="function-name">mapn</span> (f <span class="type">&amp;rest</span> lists)
   `((<span class="keyword">lambda</span> (xs a)
       (<span class="keyword">if</span> xs
           (<span class="keyword">let</span> ((heads (map car xs)))
