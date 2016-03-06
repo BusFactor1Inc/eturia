@@ -101,13 +101,13 @@ var AppView = (function () {
                     this.clearScreen();
                 } else if(e.value.charCode === 48) {
                     this.cursorX(0);
-                } else if(e.value.charCode === 112) {
+                } /* else if(e.value.charCode === 112) {
                     this.previousHistory();
                 } else if(e.value.charCode === 110) {
                     this.nextHistory();
                 } else if(e.value.charCode === 68) {
                     this.deleteCoreEntry();
-                } else {
+                } */ else {
                     this.mode(e.value.charCode === 105);
                 } 
             } else {

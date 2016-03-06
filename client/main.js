@@ -367,5 +367,12 @@ $(document).ready(function () {
     $('body').keypress(function(e) {
         x.keyPress(e);
     });
+    // Fix backspace issue.
+    $('body').on('keydown', function() {
+        var key = event.keyCode || event.charCode;
+        
+        if( key == 8 || key == 46 )
+            return false;
+    });
 });
 x.registerApplication("skynet", Skynet);
