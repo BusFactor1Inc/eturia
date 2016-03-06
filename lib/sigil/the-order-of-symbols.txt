@@ -1119,6 +1119,8 @@ Examples:
     (length `(1 2 3)) => 3
     (length `((1 2 3) a b c)) => 4
 
+;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
+
 15) mapn - like map, but takes n lists as arguments
 ---------------------------------------------------
 
@@ -1134,16 +1136,14 @@ a single list if needed.
   `((lambda (xs a)
       (if xs
           (let ((heads (map car xs)))
-            (self (cdr xs) (cons (eval `(apply ,f ,@heads)) a)))
+            (self (cdr xs) (cons (apply ,f heads) a)))
         (reverse a)))
-    ,lists ()))
+    `,lists ()))
 
 Examples:
 
     (mapn (lambda (x y) (+ x y)) `(1 2 3) `(1 2 3)) => (2 4 6)
     (mapn (lambda (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) => (xa1 yb2 zc3)
-
-;; WARNING: THE FOLLOWING CODE IS ALL UNTESTED
 
 16) setq
 
