@@ -11352,7 +11352,7 @@ var Sigil = new Model({
     },
 
     bvalues: function(args) {
-        return { 'values': args };
+        return { 'values': this.evlis(args) };
     },
     
     bbind: function(exprs) {

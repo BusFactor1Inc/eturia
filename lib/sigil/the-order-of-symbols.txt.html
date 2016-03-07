@@ -198,7 +198,7 @@ Lisp, as Lisp is more of an idea than a concrete thing, with all
 dialects looking similar, but behaving, sometimes, very differently.
 And like any dialect of a language, it is malleable and modifiable,
 something which I will show you though this document as we build our
-language from base principals (axioms).
+language from base principals (axioms, here known as builtins).
 
 The following is meant to be both an introduction and reference to
 <span class="flyspell-duplicate-0002">Sigil</span>.  You will find an explanation of syntax, followed by a brief
@@ -225,7 +225,7 @@ down and preparing it.
 Burton <span class="flyspell-incorrect-0001">Samograd</span> &lt;root@busfactor1.ca&gt;
 Homepage: http://busfactor1.ca/old/old
 Facebook: https://www.facebook.com/KRUHFT-17546219842
-Twitter: https://twitter.com/kruhft (@kruhft)
+Twitter:  https://twitter.com/kruhft (@kruhft)
 
 Intended Audience
 -----------------
@@ -864,9 +864,9 @@ Examples:
 ========================================================================
 ========================================================================
 
-                             ============
-                             |The Basics|
-                             ============
+                           ================
+                           |Basic Training|
+                           ================
 
 
              <span class="string">&quot;...an individual's thoughts and actions are
@@ -1425,12 +1425,52 @@ returns true.
 
 Examples:
 
-    (filter (<span class="keyword">lambda</span> (x) (<span class="flyspell-duplicate-0002">eq</span> x 1)) `(1 2 3)) =&gt; (1)
-    (filter (<span class="keyword">lambda</span> (x) (or (<span class="flyspell-duplicate-0002">eq</span> x 1) (<span class="flyspell-duplicate-0002">eq</span> x 3)) `(1 2 3)) =&gt; (1 3)
+    (filter
+     (<span class="keyword">lambda</span> (x) 
+       (<span class="flyspell-duplicate-0002">eq</span> x 1))
+     `(1 2 3)) <span class="warning">=&gt; (1)</span>
+    (filter
+     (<span class="keyword">lambda</span> (x)
+       (or (<span class="flyspell-duplicate-0002">eq</span> x 1) (<span class="flyspell-duplicate-0002">eq</span> x 3)))
+     `(1 2 3)) <span class="warning">=&gt; (1 3)</span>
 
-            
-<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED
+22) <span class="warning">rm - remove a symbol from the environment</span>
+---------------------------------------------
+
+(<span class="keyword">defmacro</span> <span class="function-name">rm</span> (x)
+  `(env (filter
+         (<span class="keyword">lambda</span> (e)
+           (not (eq (car e) `,x))) <span class="warning">(env))))</span>
+
+Examples:
+
+    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
+</span>    x =&gt; 1
+    (rm x) =&gt; ... <span class="comment">; returns new environment
+</span>    x =&gt; <span class="comment">; Error, undefined symbol
 </span>
+
+23) <span class="warning">rmf - remove a macro from the function environment</span>
+------------------------------------------------------
+
+Identical to above, but works with the function environment rather
+than the variable environment.
+
+(<span class="keyword">defmacro</span> <span class="function-name">rmf</span> (x)
+  `(fenv (filter
+          (<span class="keyword">lambda</span> (e)
+            (not (eq (car e) `,x))) <span class="warning">(fenv))))</span>
+
+Examples:
+
+    (<span class="keyword">defmacro</span> <span class="function-name">double</span> (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
+    (double 2) =&gt; 4
+    (rmf double) =&gt; ...
+    (double 2) =&gt; <span class="comment">; Error, undefined function</span><span class="comment">
+</span>
+
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED AND/OR NOT WORKING
+</span>            
 22) <span class="warning">dolist - iterate over a list</span>
 --------------------------------
 
@@ -1449,63 +1489,36 @@ it always injects its first variable and sometimes, it's second.
 
 Examples:
 
-(<span class="keyword">let</span> ((r 0))
-  (<span class="keyword">dolist</span> (x `(1 2 3))
-    (set `r (+ x r)))
-  r) <span class="warning">=&gt; 6</span>
-(set `x `(1 2 3)) =&gt; (1 2 3)
-(<span class="keyword">let</span> ((r ()))
-  (<span class="keyword">dolist</span> (i x)
-    (set `r (cons (cons i x) r)))
-  r) <span class="warning">=&gt; ((3 3)) (2 2 3) (1 1 2 3)) ???</span>
-
+    (<span class="keyword">let</span> ((r 0))
+      (<span class="keyword">dolist</span> (x `(1 2 3))
+        (set `r (+ x r)))
+      r) <span class="warning">=&gt; 6</span>
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (<span class="keyword">let</span> ((r ()))
+      (<span class="keyword">dolist</span> (i x)
+        (set `r (cons (cons i x) r)))
+      r) <span class="warning">=&gt; ((3 3)) (2 2 3) (1 1 2 3)) ???</span>
+    
 
 23) <span class="warning">join - rebuild a split atom</span>
 -------------------------------
 
-(<span class="keyword">defmacro</span> <span class="function-name">join</span> (ss <span class="type">&amp;rest</span> d)
-  `((<span class="keyword">lambda</span> (ss d)
+Used when you would like to combine a list of atoms into a single
+atom, with an optional delimeter that defaults to '-'.
+
+(<span class="keyword">defmacro</span> <span class="function-name">join</span> (atoms <span class="type">&amp;rest</span> delim)
+  `((<span class="keyword">lambda</span> (as d)
       (<span class="keyword">let</span> ((d (or (car ,d) `-))
             (retval ||))
-        (<span class="keyword">dolist</span> (s ss)
-          (set `retval (+ s (<span class="keyword">if</span> (cdr ss) d ||))))))
-    ,ss ,d))
-
-
-
-22) <span class="warning">rm - remove a symbol from the environment</span>
----------------------------------------------
-
-(<span class="keyword">defmacro</span> <span class="function-name">rm</span> (x)
-  `(env (filter
-         (<span class="keyword">lambda</span> (e)
-           (not (eq (car e) ,x))) <span class="warning">(env))))</span>
+        (<span class="keyword">dolist</span> (s as)
+          (set `retval (+ s (<span class="keyword">if</span> (cdr as) d ||))))))
+    ,atoms ,delim))
 
 Examples:
 
-    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
-</span>    x =&gt; 1
-    (rm `x) =&gt; 1 <span class="comment">; returns the old value of x
-</span>    <span class="flyspell-duplicate-0002">x</span> =&gt; <span class="comment">; Error, undefined symbol
-</span>
+    (join `(a long atom)) =&gt; a-long-atom
+    (join `(a long atom) `/) =&gt; a/long/atom
 
-23) <span class="flyspell-duplicate-0003">rmf</span><span class="warning"> - remove a macro from the function environment</span>
-------------------------------------------------------
-
-Identical to above, but works with the function environment rather
-than the variable environment.
-
-(<span class="keyword">defmacro</span> <span class="function-name">rmf</span> (x)
-  `(fenv (filter
-         (<span class="keyword">lambda</span> (e)
-           (not (eq (car e) ,x))) <span class="warning">(fenv))))</span>
-Examples:
-
-    (<span class="flyspell-duplicate-0005">defmacro</span> <span class="function-name">double</span> (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
-    (double 2) =&gt; 4
-    (<span class="flyspell-duplicate-0002">rmf</span> `double) =&gt; (macro (x) `(+ ,x ,x))
-    (double 2) =&gt; <span class="comment">; Error, undefined function</span><span class="comment">
-</span>
 
 15) <span class="flyspell-duplicate-0003">mapn</span><span class="warning"> - like map, but takes n lists as arguments</span>
 ---------------------------------------------------
@@ -1661,33 +1674,49 @@ done n
 Mathematical Exercises 0 - <span class="flyspell-incorrect-0001">Mortage</span> Calculator
 =============================================
 
+I owe, I owe, it's of to work we go...
+
 ==============================
 Exercises 1 - Phrase Generator
 ==============================
+
+Building sentences using data driven design.
 
 ==============================================
 Mathematical Exercises 1 - <span class="flyspell-incorrect-0001">Probablistic</span> Primes
 ==============================================
 
+Introductory computation on the probabilistics of primality.
+
 =================================
 Exercises 2 - S-Expression Editor
 =================================
+
+An interesting aside into build a data structure editor.
 
 ==================
 Exercises 3 - Life
 ==================
 
+The classic game.
+
 ====================================
 <span class="flyspell-duplicate-0002">Mathmatical</span> Exercises 2 - Ray Tracer
 ====================================
+
+Practical, single core ray tracer and scene definition language.
 
 ==========================================
 Exercises 4 - <span class="flyspell-incorrect-0001">GPS</span> (General Problem Solver)
 ==========================================
 
+The GPS in Sigil.
+
 =======================================
 Exercises 5 - A (Simulated) Trading Bot
 =======================================
+
+A simulated FOREX market arbitrage trading bot.
 
 ========================================================================
 ========================================================================
@@ -1707,21 +1736,34 @@ Exercises 5 - A (Simulated) Trading Bot
 Exercises 6 - Boolean Propagator Networks
 =========================================
 
+Very useful for later '<span class="constant">Dream</span>' chapters.
+
 ============================================================
 Mathematical Exercises 3 - A Calculus Differentiation Engine
 ============================================================
+
+Do we really care about this?
 
 ======================================
 Exercises 7 - Fourth, a Stack Language
 ======================================
 
+TODO: Re-read chapter in LOL
+
 ======================================
 Exercises 8 - <span class="flyspell-incorrect-0001">Prolog</span>, a Logic Language
 ======================================
 
+This might come in handy later.
+
 ===============================================
 <span class="flyspell-duplicate-0002">Mathmatical</span> Exercises 4 - <span class="flyspell-duplicate-0002">Multi</span>-Core Ray Tracer
 ===============================================
+
+TODO: implement multi-core language operations in the browser using
+WebWorkers.
+
+Take the ray tracer from before and try to melt your cpu this time.
 
 ========================================================================
 ========================================================================
@@ -1741,21 +1783,31 @@ Exercises 8 - <span class="flyspell-incorrect-0001">Prolog</span>, a Logic Langu
 Exercise 9 - Genetic Programming
 ================================
 
-===================================
+TODO: find an interesting example, maybe from TLOL
+
+====================================
 Exercise 10 - A (Simulated) <span class="flyspell-duplicate-0002">RISC</span> CPU
-===================================
+====================================
+
+Always wanted to to do this.
 
 ==========================================================
 Exercise 11 - A Lisp Compiler for the (Simulated) <span class="flyspell-duplicate-0002">RISC</span> CPU
 ==========================================================
 
+Same.
+
 =====================================
 Exercises 12 - A (Simulated) Lisp CPU 
 =====================================
 
+Ditto.
+
 ================================================
 Exercises 13 - A <span class="flyspell-duplicate-0002">Multi</span>-Core (Simulated) Lisp CPU 
 ================================================
+
+Ahoy.
 
 --
 Copyright - 2016
