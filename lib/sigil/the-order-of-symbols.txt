@@ -1315,10 +1315,10 @@ Exercise:
 Identical to above, but works with the function environment rather
 than the variable environment.
 
-(defmacro rm (&rest xs)
+(defmacro rmf (&rest xs)
   `(fenv (filter
-         (lambda (e)
-           (not (member (car e) `,xs))) (fenv))))
+          (lambda (e)
+            (not (member (car e) `,xs))) (fenv))))
 
 Examples:
 
