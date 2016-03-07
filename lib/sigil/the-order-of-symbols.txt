@@ -1288,17 +1288,25 @@ Examples:
 22) rm - remove a symbol from the environment
 ---------------------------------------------
 
-(defmacro rm (x)
+(defmacro rm (&rest xs)
   `(env (filter
          (lambda (e)
-           (not (eq (car e) `,x))) (env))))
+           (not (member (car e) `,xs))) (env))))
 
 Examples:
 
     (set `x 1) => 1 ; define a symbol in the environment
+    (set `y 2) => 2 
     x => 1
-    (rm x) => ... ; returns new environment
+    y => 2
+    (rm x y) => ... ; returns new environment
     x => ; Error, undefined symbol
+    y => ; Error, undefined symbol
+
+Exercise:
+
+    1. Rewrite 'rm' so that it returns the last value(s) of the
+       symbol(s) that was/were deleted. [HARD]
 
 
 23) rmf - remove a macro from the function environment
@@ -1307,10 +1315,10 @@ Examples:
 Identical to above, but works with the function environment rather
 than the variable environment.
 
-(defmacro rmf (x)
+(defmacro rm (&rest xs)
   `(fenv (filter
-          (lambda (e)
-            (not (eq (car e) `,x))) (fenv))))
+         (lambda (e)
+           (not (member (car e) `,xs))) (fenv))))
 
 Examples:
 

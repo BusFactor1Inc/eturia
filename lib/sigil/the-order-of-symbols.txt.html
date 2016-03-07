@@ -1437,18 +1437,26 @@ Examples:
 22) <span class="warning">rm - remove a symbol from the environment</span>
 ---------------------------------------------
 
-(<span class="keyword">defmacro</span> <span class="function-name">rm</span> (x)
+(<span class="keyword">defmacro</span> <span class="function-name">rm</span> (<span class="type">&amp;rest</span> xs)
   `(env (filter
          (<span class="keyword">lambda</span> (e)
-           (not (eq (car e) `,x))) <span class="warning">(env))))</span>
+           (not (member (car e) `,xs))) <span class="warning">(env))))</span>
 
 Examples:
 
-    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
-</span>    x =&gt; 1
-    (rm x) =&gt; ... <span class="comment">; returns new environment
-</span>    x =&gt; <span class="comment">; Error, undefined symbol
+    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment</span><span class="comment">
+</span>    (set `y 2) =&gt; 2 
+    x =&gt; 1
+    y =&gt; 2
+    (rm x y) =&gt; ... <span class="comment">; returns new environment
+</span>    x =&gt; <span class="comment">; Error, undefined symbol</span><span class="comment">
+</span>    y =&gt; <span class="comment">; Error, undefined symbol</span><span class="comment">
 </span>
+Exercise:
+
+    1. Rewrite '<span class="constant">rm</span>' so that it returns the last value(s) of the
+       symbol(s) that was/were deleted. [HARD]
+
 
 23) <span class="warning">rmf - remove a macro from the function environment</span>
 ------------------------------------------------------
@@ -1456,10 +1464,10 @@ Examples:
 Identical to above, but works with the function environment rather
 than the variable environment.
 
-(<span class="keyword">defmacro</span> <span class="function-name">rmf</span> (x)
+(<span class="keyword">defmacro</span> <span class="function-name">rm</span> (<span class="type">&amp;rest</span> xs)
   `(fenv (filter
-          (<span class="keyword">lambda</span> (e)
-            (not (eq (car e) `,x))) <span class="warning">(fenv))))</span>
+         (<span class="keyword">lambda</span> (e)
+           (not (member (car e) `,xs))) <span class="warning">(fenv))))</span>
 
 Examples:
 
