@@ -1133,7 +1133,7 @@ as well.
   `((lambda (args)
       (if args
           (if (eval (car args))
-              t
+              (eval (cdr args)) ; See 'Note' below
               (self (cdr args)))
           ())) `,args))
 
@@ -1143,10 +1143,17 @@ Examples:
     (or () t) => t
     (or t ()) => t
     (or t t) => t
-    (or 1 1) => t
-    (or t (set `a 1)) => ()
+    (or 1 1) => 1
+    (or t (set `a 1)) => t
     a => ; error, undefined variable, 
          ; set was not run due to short circuiting
+
+Note: astute readers might look at this line and wonder, "Why are you
+not using aif here?".  Normally, this is an ideal place for aif, since
+we are evaluting the condition twice, but...there is a flaw in
+Sigil. 'self' is sometimes stolen by other macros, like 'let', that
+operate using the lambda operator, so we must be careful of this until
+I find a solution to this problem. ; FIXME
 
 16) xor - logical exclusive or
 ------------------------------
@@ -1328,8 +1335,6 @@ Examples:
     (double 2) => ; Error, undefined function
 
 
-;; WARNING: THE FOLLOWING CODE IS UNTESTED AND/OR NOT WORKING
-            
 22) dolist - iterate over a list
 --------------------------------
 
@@ -1338,27 +1343,32 @@ to make them both easier to read and to write.  In this case one of
 them will be iterating over a list. This macro is also anamorphic, as
 it always injects its first variable and sometimes, it's second.
 
-(defmacro dolist (v l &body body)
-  `((lambda (l)
-      (when l
-        (let ((`,v (car l))
-              ((if (atom `,l) `,l `it) l))
-          ,@body)
-        (self (cdr l)))) ,l))
+(defmacro dolist (vlr &body body)
+  (let ((var (first vlr))
+        (list (second vlr))
+        (ret (third vlr)))
+    `((lambda (l)
+        (when l
+          (let ((,var (car l))
+                (,(if (atom list) list `it) l))
+            ,@body)
+          (self (cdr l)))
+        ,ret) ,list)))
 
 Examples:
 
     (let ((r 0))
-      (dolist (x `(1 2 3))
-        (set `r (+ x r)))
-      r) => 6
+      (dolist (x `(1 2 3) r)
+        (set `r (+ x r)))) => 6
     (set `x `(1 2 3)) => (1 2 3)
     (let ((r ()))
       (dolist (i x)
         (set `r (cons (cons i x) r)))
-      r) => ((3 3)) (2 2 3) (1 1 2 3)) ???
+      r) => ((3 3)) (2 2 3) (1 1 2 3))
     
 
+;; WARNING: THE FOLLOWING CODE IS UNTESTED AND/OR NOT WORKING
+            
 23) join - rebuild a split atom
 -------------------------------
 
@@ -1367,11 +1377,9 @@ atom, with an optional delimeter that defaults to '-'.
 
 (defmacro join (atoms &rest delim)
   `((lambda (as d)
-      (let ((d (or (car ,d) `-))
-            (retval ||))
-        (dolist (s as)
-          (set `retval (+ s (if (cdr as) d ||))))))
-    ,atoms ,delim))
+      (let ((retval `||))
+          (set `retval (+ s (if (cdr as) d `||) retval)))))
+    `,(reverse (eval atoms)) ,(or (car delim) `-)))
 
 Examples:
 
