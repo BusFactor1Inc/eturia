@@ -1153,7 +1153,7 @@ not using aif here?".  Normally, this is an ideal place for aif, since
 we are evaluting the condition twice, but...there is a flaw in
 Sigil. 'self' is sometimes stolen by other macros, like 'let', that
 operate using the lambda operator, so we must be careful of this until
-I find a solution to this problem. ; FIXME
+I find a solution to this problem. See Appendix A for a discussion. ; FIXME
 
 16) xor - logical exclusive or
 ------------------------------
@@ -1675,6 +1675,44 @@ Exercises 13 - A Multi-Core (Simulated) Lisp CPU
 ================================================
 
 Ahoy.
+
+=========================================
+Appendix A - The 'self' problem and 'let'
+=========================================
+
+'self' is used to in recursion to call the currently executing
+function.  'let' is implemented by binding variables using an
+anonymous function in a 'lambda'.  Using 'let' therefore will
+obliterate the 'self' of the currently executing function, therefore
+one cannot recurse inside of a 'let'.  This is an issue.
+
+There are a number of possible solutions to this problem:
+
+1. create 'nlambda' which doesn't bind 'self' and use that to implement 'let'
+2. rewrite 'let' to not use a 'lambda'
+3. make 'let' a builtin that doesn't bind 'self'
+4. something else I haven't thought of
+
+For 1, 'nlambda' should be simple enough to implement in Sigil and I
+think it's meaning is clear.  the 'n' in 'nlambda' means, 'no
+recursion' or 'non-recursive', but one has to wonder just how many
+times one is going to need to use it outside of just implmenting
+'let'.
+
+For 2, this may be a solution, but it would make the implementation of
+let more complicated and it would then have to be moved to later in
+the book for when the reader is ready to handle it.  Plus, it doesn't
+actually solve the problem, meaning we might just have to implement
+another solution (such as 1) as well later.
+
+For 3, we want to avoid adding builtins as much as possible, but this
+is an obvious and simple solution. Same issues as 2 as well, as in it
+doesn't solve the problem.
+
+And finally 4, some other idea.  I'll just think about this for a
+while and see what happens.
+
+For now, the most obvious of solutions is 1.
 
 --
 Copyright - 2016
