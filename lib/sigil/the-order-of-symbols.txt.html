@@ -1282,8 +1282,8 @@ as well.
   `((<span class="keyword">lambda</span> (<span class="flyspell-duplicate-0002">args</span>)
       (<span class="keyword">if</span> <span class="flyspell-duplicate-0002">args</span>
           (<span class="keyword">if</span> (<span class="flyspell-duplicate-0002">eval</span> (car <span class="flyspell-duplicate-0002">args</span>))
-              t
-              (self (<span class="flyspell-duplicate-0002">cdr</span> <span class="flyspell-duplicate-0002">args</span>)))
+              (eval (cdr args)) <span class="comment">; See '</span><span class="constant">Note</span><span class="comment">' below
+</span>              (self (<span class="flyspell-duplicate-0002">cdr</span> <span class="flyspell-duplicate-0002">args</span>)))
           ())) <span class="warning">`,</span><span class="flyspell-duplicate-0003">args</span><span class="warning">))</span>
 
 Examples:
@@ -1292,10 +1292,17 @@ Examples:
     (or () t) =&gt; t
     (or t ()) =&gt; t
     (or t <span class="flyspell-duplicate-0002">t</span>) =&gt; t
-    (or 1 1) =&gt; t
-    (or t (set `a 1)) =&gt; ()
+    (or 1 1) =&gt; 1
+    (or t (set `a 1)) =&gt; t
     a =&gt; <span class="comment">; error, undefined variable, </span><span class="comment">
 </span>         <span class="comment">; set was not run due to short circuitin</span><span class="comment">g</span><span class="comment">
+</span>
+Note: astute readers might look at this line and wonder, <span class="string">&quot;Why are you
+not using aif here?&quot;</span>.  Normally, this is an ideal place for aif, since
+we are evaluting the condition twice, but...there is a flaw in
+Sigil. '<span class="constant">self</span>' is sometimes stolen by other macros, like '<span class="constant">let</span>', that
+operate using the lambda operator, so we must be careful of this until
+I find a solution to this problem. <span class="comment">; FIXME
 </span>
 16) <span class="warning">xor - logical exclusive or</span>
 ------------------------------
@@ -1477,8 +1484,6 @@ Examples:
     (double 2) =&gt; <span class="comment">; Error, undefined function</span><span class="comment">
 </span>
 
-<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED AND/OR NOT WORKING
-</span>            
 22) <span class="warning">dolist - iterate over a list</span>
 --------------------------------
 
@@ -1487,27 +1492,32 @@ to make them both easier to read and to write.  In this case one of
 them will be iterating over a list. This macro is also anamorphic, as
 it always injects its first variable and sometimes, it's second.
 
-(<span class="keyword">defmacro</span> <span class="function-name">dolist</span> (v l <span class="type">&amp;body</span> body)
-  `((<span class="keyword">lambda</span> (l)
-      (<span class="keyword">when</span> l
-        (<span class="keyword">let</span> ((`,v (car l))
-              ((<span class="keyword">if</span> (atom `,l) `,l `it) l))
-          ,@body)
-        (self (cdr l)))) <span class="warning">,l))</span>
+(<span class="keyword">defmacro</span> <span class="function-name">dolist</span> (vlr <span class="type">&amp;body</span> body)
+  (<span class="keyword">let</span> ((var (first vlr))
+        (list (second vlr))
+        (ret (third vlr)))
+    `((<span class="keyword">lambda</span> (l)
+        (<span class="keyword">when</span> l
+          (<span class="keyword">let</span> ((,var (car l))
+                (,(<span class="keyword">if</span> (atom list) list `it) l))
+            ,@body)
+          (self (cdr l)))
+        ,ret) <span class="warning">,list)))</span>
 
 Examples:
 
     (<span class="keyword">let</span> ((r 0))
-      (<span class="keyword">dolist</span> (x `(1 2 3))
-        (set `r (+ x r)))
-      r) <span class="warning">=&gt; 6</span>
+      (<span class="keyword">dolist</span> (x `(1 2 3) r)
+        (set `r (+ x r)))) <span class="warning">=&gt; 6</span>
     (set `x `(1 2 3)) =&gt; (1 2 3)
     (<span class="keyword">let</span> ((r ()))
       (<span class="keyword">dolist</span> (i x)
         (set `r (cons (cons i x) r)))
-      r) <span class="warning">=&gt; ((3 3)) (2 2 3) (1 1 2 3)) ???</span>
+      r) <span class="warning">=&gt; ((3 3)) (2 2 3) (1 1 2 3))</span>
     
 
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED AND/OR NOT WORKING
+</span>            
 23) <span class="warning">join - rebuild a split atom</span>
 -------------------------------
 
@@ -1516,11 +1526,9 @@ atom, with an optional delimeter that defaults to '-'.
 
 (<span class="keyword">defmacro</span> <span class="function-name">join</span> (atoms <span class="type">&amp;rest</span> delim)
   `((<span class="keyword">lambda</span> (as d)
-      (<span class="keyword">let</span> ((d (or (car ,d) `-))
-            (retval ||))
-        (<span class="keyword">dolist</span> (s as)
-          (set `retval (+ s (<span class="keyword">if</span> (cdr as) d ||))))))
-    ,atoms ,delim))
+      (<span class="keyword">let</span> ((retval `||))
+          (set `retval (+ s (<span class="keyword">if</span> (cdr as) d `||) retval)))))
+    `,(reverse (eval atoms)) ,(or (car delim) `-)))
 
 Examples:
 
