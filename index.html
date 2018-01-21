@@ -2,28 +2,76 @@
   <head>
     <title>Eturia - An Open Computer for All</title>
     <style>
-      body { font-family: "monospace"; }
+      body { 
+      font-family: monospace;
+      }
+      .standout {
+      padding: 2em;
+      margin: 2em;
+      border: 3px solid black;
+      box-shadow: 0px 0px 8px blue;
+      }
     </style>
   </head>
-  <body style="background: black;">
+  <body style="background-image: url(http://img03.deviantart.net/7ed5/i/2015/044/e/d/x_11_by_burtonsamograd-d8hwm3j.jpg);">
     <center>
-      <div style="padding: 2em; border: 8px solid grey; border-radius: 8px; width: 50%; background: #F5F8FA">
-        <div style="width: 37em; border: 4px solid lightgrey; border-radius: 8px; padding: .5em; box-shadow: 2px 2px 4px grey; background: lightgrey">
-          <quote>
+      <div style="padding: 2em; border: 4px solid grey; border-radius: 8px; width: 30%; background: #F5F8FA; box-shadow: 0px 0px 16px grey;">
+        <div style="width: 37em; border: 4px solid lightgrey; border-radius: 8px; padding: .5em; box-shadow: 0px 0px 16px grey; background: lightgrey">
+          <h1>
             Eturia - A (Programmable) Computer For All for Education<p/>
+          </h1>
+
+          <h1><a href="client/dev.html">Click HERE to Run Eturia</a></h1>
+
+          <div class='standout'>
+            <h3>What is Eturia</h3>
             
-            The Eturia project, a browser based Personal Computer
-            designed to be free for all to use (and program) on the
-            Internet, is a course and tool for all to learn the
-            fundamentals of programming and the design and
-            implementation of programming languages.<p/>
+            Eturia is a computer for education.  It is designed to be
+            simple and limited in its interface, much like the classic
+            education computers of yore like the <b>Apple IIe</b> and the
+            original <b>Macintosh</b>, but not in its capabilities.  It is
+            anompanied by a book titled <b>The Order of Symbols</b>, a
+            course and tutorial on the language <b>Sigil</b> that runs in
+            Eturia.<p/>
+            
+            Sigil is a type of programming language known as a <b>Lisp</b>
+            which was created (or found) in the <b>1950's</b> by John
+            McCarthy.  It has a simple syntax that is easy for to
+            learn for beginners and to type in correctly.  It is
+            powerful, in that although it starts out simple, it is a
+            tool that is itself <b>programmable</b> in itself.  As the book
+            goes along, we build a <b>language</b> on top of Sigil using
+            Sigil itself.<p/>
+            
+            Currently, Eturia is implemented as a computer program
+            inside of a web browser and can be found at the following
+            URL:<p/>
+            
+            
+            <a href=http://busfactor1.ca/bin/eturia/client/dev.html>
+              http://busfactor1.ca/bin/eturia/client/dev.html</a><p/>
+            
+            Currently, the client is browser only and requires no
+            backend to operate other than a simple web server.  But,
+            there are future plans for a communication infrastructure
+            using an innovative back end technology known as Urbit.
+            The first communication technology to the system is going
+            to be some sort of <b>chat</b> program so that users of
+            Eturia will be able to interact with each other and form a
+            community. Future additions also include the ability to
+            load, save and collaborate cores (programs) with other
+            users, and the ability to turn the network of Eturia users
+            into a large, collaborative, distributed network computing
+            grid.<p/>
+
+            Burton Samograd - 12 Mar, 2016<p/>
+          </div>
+            
           </quote>
         </div><p/>
 
-        <h1><a href="client/dev.html">Click HERE to Run Eturia</a></h1>
-
         <!--
-        <button style='{font-family: "monospace"}'></button><p />
+        <button style=</b>{font-family: "monospace"}'></button><p />
         <h2>Eturia (formerly Skynet) - Demo 1</h2>
         <video width="320" height="240" controls>
           <source src="video/skynet--demo-1--2016.mkv">
@@ -47,6 +95,15 @@
       <p/>
       Burton Samograd &lt;root@busfactor1.ca&gt - 2016
     </center>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      
+      ga('create', 'UA-85054974-2', 'auto');
+      ga('send', 'pageview');
+    </script>
   </body>
 </html>
       

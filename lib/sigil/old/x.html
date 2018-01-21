@@ -1,0 +1,638 @@
+<p>;; -<em>- mode: lisp -</em>- ;; ;; WORK IN PROGRESS ;; ;; Pre-order the book here: ;; ;; https://www.inkshares.com/books/the-order-of-symbols-9907 ;; ;; Questions, comments or problems? Email root@busfactor1.ca ;;</p>
+<h1 id="section">===============================================================================</h1>
+<pre><code>                    ======================
+                    |The Order of Symbols|
+                    ======================
+
+      &quot;...there once existed a language which perfectly
+          and unambiguously expressed the essence of
+             all possible things and concepts...&quot;
+
+    -- Umberto Eco - /The Search for the Perfect Language/
+
+    &quot;Most good programmers do programming not because they
+      expect to get paid or get adulation by the public,
+              but because it is fun to program.&quot;
+
+                      -- Linus Torvalds
+
+        &quot;Computers are good at following instructions,
+                but not at reading your mind.&quot;
+
+                       -- Donald Knuth</code></pre>
+<h1 id="section-1">===============================================================================</h1>
+<h2 id="introduction">Introduction</h2>
+<p>Lisp as a computer programming language is as Latin is to English or modern day Italian. It is the second oldest high level computer language still in use, invented (or found) in the 1950's by John McCarthy and is the most powerful and expressive programming language there is [citation needed]. Lisp comes in many shapes and forms and Sigil, the Lisp used in Eturia, is no different. It is a 'dialect' of Lisp, as Lisp is more of an idea than a concrete thing, with all dialects looking similar, but behaving, sometimes, very differently. And like any dialect of a language, it is malleable and modifiable, something which I will show you though this document as we build our language from base principals (axioms).</p>
+<p>The following is meant to be both an introduction and reference to Sigil. You will find an explanation of syntax, followed by a brief explanation of Eturia, the Listener and Window Manager, followed by the list of builtins, and then a set of examples that can be followed along and typed into the Eturia Listener, which can be found at:</p>
+<pre><code>http://busfactor1.ca/bin/eturia/client/dev.html</code></pre>
+<p>This paper is intended to follow the ideas of Guy Steele in his talk/paper 'Growing a language':</p>
+<pre><code>https://www.cs.virginia.edu/~evans/cs655/readings/steele.pdf
+https://www.youtube.com/watch?v=_ahvzDzKdB0</code></pre>
+<p>All terms in the following text are (hopefully) defined before use.</p>
+<p>This material is the result of many years of study and research, of both myself and others. It's opinions are all mine, built apon those I have admired in the past, knowingly or unknowningly. I hope you find the material as useful and entertaining as I have writing it down and preparing it.</p>
+<p>Burton Samograd <script type="text/javascript">
+<!--
+h='&#98;&#x75;&#x73;&#102;&#x61;&#x63;&#116;&#x6f;&#114;&#x31;&#46;&#x63;&#x61;';a='&#64;';n='&#114;&#x6f;&#x6f;&#116;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#114;&#x6f;&#x6f;&#116;&#32;&#x61;&#116;&#32;&#98;&#x75;&#x73;&#102;&#x61;&#x63;&#116;&#x6f;&#114;&#x31;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x61;</noscript> Homepage: http://busfactor1.ca/old/old Facebook: https://www.facebook.com/KRUHFT-17546219842 Twitter: https://twitter.com/kruhft (<span class="citation">@kruhft</span>)</p>
+<h2 id="intended-audience">Intended Audience</h2>
+<p>This work is intended for both beginners and professionals alike. For beginners, if they work through the exercies, should gain an understanding for all of the code and exercises given, with a little thought. Professionals may benefit in the same way, finding the material refreshing over the typical code chaos one might see at work, while learning something new and, hopefully, interesting: programming language design and implementation.</p>
+<p>The main desire of the reader should be to learn to program. This is not a traditional programming course in any way and will teach you little on how to get a job as a programmer. But knowing what this course will teach you will benefit you for as long as you act as a programmer during your life [citation needed].</p>
+<p>This course assumes a basic understanding of arithmetic and algebra, along with the idea that a computer is something that simply follows the instructions that they are told, nothing more. As Picasso noted, &quot;Computers...they can only give you answers.&quot;</p>
+<h2 id="eturia">Eturia</h2>
+<p>Eturia is a (similated) computer for Computer Science Education. It is designed to be simple and limited, perfect for teaching and learning with few distractions. Although probably unfamiliar at first, it's spartan interface can be quickly learned by any newcomer with its few and simple commands. Finally, it runs in a Web browser, so it is accessable from any location with an internet connection.</p>
+<p>The current version of Eturia can always be found at:</p>
+<pre><code>http://busfactor1.ca/bin/eturia</code></pre>
+<p>along with videos and other information about the project.</p>
+<h2 id="the-listener">The Listener</h2>
+<p>There is no copy/pasting in Eturia. To enter the code, it must be typed manually into the 'Listener'. This way the code will go through your fingers and your brain, giving you a better chance of learning the concepts as you go along and build your own language in Sigil.</p>
+<p>This 'Listener' is like Like VI, but a bit different[1]:</p>
+<p>i - insert mode, allows you to type overwrite text in the buffer ? - command mode, allows you to execute the following commands and break out of insert mode hjkl - move the cursor left, down, up, or right (h,j,k,l) e - evaluate lisp code z - clear the screen np - previous/next in history (experimental)</p>
+<p>To type characters use 'insert' (overwrite) mode by pressing 'i'. You can tell when you are in 'insert' mode by the GREEN border around the console. To 'escape' out of insert mode, press '?'.</p>
+<p>REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE LISTENER.</p>
+<p>[1] VI and Emacs are programmers text editors. There has been a decades long debate over the merits and benfits of using each. Emacs is a modern day Lisp Machine, VI is akin to a Unix machine. I chose a VI-like editor interface for Eturia due to the simplicity of implementing it.</p>
+<h2 id="window-manager">Window Manager</h2>
+<pre><code>- click in title bar to focus window
+- click and drag in title bar to move window
+- middle click in title bar to remove window</code></pre>
+<p>====== Syntax ======</p>
+<p>The following is the syntax of Sigil:</p>
+<h2 id="numbers---a-string-of-digits">Numbers - a string of digits</h2>
+<p>A number can be used with mathematical functions and should be familiar to all that have taken introductory mathmatics.</p>
+<p>Examples:</p>
+<pre><code>1 is a number
+100 is a number
+3.141516 is a number
+-3 is a number</code></pre>
+<h2 id="symbol---a-string-of-characters">Symbol - a string of characters</h2>
+<p>A symbol is a string of characters not containing '(', or ')'.</p>
+<p>Examples:</p>
+<pre><code>x is a symbol
+abc is a symbol
+x123 is a symbol
+123x is a symbol
+a-longer-symbol is a symbol
+|a symbol with spaces| is a symbol</code></pre>
+<h2 id="comments---a-note-to-your-self">Comments - a note to your self</h2>
+<p>Comments can be important in programs as they are used to explain the purpose of the code you are writing.</p>
+<p>Examples:</p>
+<pre><code>; this is a comment</code></pre>
+<h2 id="quoting---stops-evaluation">Quoting - stops evaluation</h2>
+<p>Evaluation means to 'get the value of something'. Sometimes you want this to not happen and just get 'something'. Quoting is used for that and is an essential part of the following examples.</p>
+<p>Examples: 1 =&gt; 1 <code>1 =&gt; 1 x =&gt; ; Error, undefined symbol</code>x =&gt; x (1 2 3) =&gt; ; Error, undefined function: 1 `(1 2 3) =&gt; (1 2 3)</p>
+<h2 id="list---build-lists">List - build lists</h2>
+<p>Besides 'atoms' (numbers and symbols), Sigil also has 'lists'. A list is a collection of atoms or other lists, also known as an 'S-expression' for historical reasons.</p>
+<p>Examples:</p>
+<pre><code>`() =&gt; (); the empty list
+`(1) =&gt; (1) ; a &#39;proper&#39; list containing the digit 1
+`(1 . ()) =&gt; (1) ; a &#39;proper&#39; list containing the digit 1
+`(1 2 3) =&gt; (1 2 3) ; is a &#39;proper&#39; list of the digits 1 2 3
+`(1 2 3 . ()) =&gt; (1 2 3) ; is a &#39;proper&#39; list of the digits 1 2 3
+`(1 . 2) =&gt; (1 . 2) ; is an &#39;improper&#39; list of the digits 1 and 2
+`(x . y) =&gt; (x . y) ; is an &#39;improper&#39; list of the symbols x and y
+`(1 2 . (3 . (4 . ()))) =&gt; (1 2 3 4)</code></pre>
+<p>A proper list has () as its last element, and it is not normally shown. An improper list does not have () as it's last element, and this is shown by preceeding the last element with a dot.</p>
+<p>Note: even the code in Sigil is lists. This is a very iportant concept to remember, as Sigil is all about building and generating code using the functions we are going to be defining in the following chapters.</p>
+<h2 id="comma---evaulate-inside-of-a-quote">Comma ',' - evaulate inside of a quote</h2>
+<p>Sometimes you want to quote a list, but also want to include the values of other symbols inside of it. To perform this action, you use the comma operator inside of a quoted list.</p>
+<p>Examples:</p>
+<pre><code>(set `x 1) =&gt; 1
+x =&gt; 1
+`(x 2 3) =&gt; (x 2 3)
+`(,x 2 3) =&gt; (1 2 3)</code></pre>
+<h2 id="commaat---evaluate-a-list-inside-of-a-quote-and-splice-it">Commaat ',@' - evaluate a list inside of a quote, and splice it</h2>
+<p>Other times when building code, you want to embed the contents of a list inside of a quoted list. This is done with the commaat (,@) operator inside of a quoted list.</p>
+<p>Examples:</p>
+<pre><code>(set `x `(a b c))
+x =&gt; (a b c)
+`(x 1 2 3) =&gt; (x 1 2 3)
+`(,x 1 2 3) =&gt; ((a b c) 1 2 3)
+`(,@x 1 2 3) =&gt; (a b c 1 2 3)
+`(1 2 3 ,x) =&gt; (1 2 3 (a b c))
+`(1 2 3 ,@x) =&gt; (1 2 3 a b c)
+`(1 2 3 . ,@x) =&gt; ; error, no splicing after a dot</code></pre>
+<p>NOTE: SYMBOLS AND NUMBERS ARE ALSO KNOWN AS ATOMS.</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="right">Booleans - () is false, everything else is true |</td>
+</tr>
+</tbody>
+</table>
+<p>As in most languages, Sigil has the idea of booleans, true and false. In this case, the empty list, () is 'false' and everything else is 'true'. A special symbol 't' is defined to represent truth when needed, but is not required to be used.</p>
+<p>Functions that are meant to return either a true or false value are known as 'predicates'.</p>
+<h1 id="builtins">Builtins</h1>
+<p>The following are the builtin commands for Sigil. A builtin is a function that is available by default in the language and is always available.</p>
+<p>Note: in the Examples, '=&gt;' means 'evaulates to' or 'the value of'.</p>
+<h2 id="quote-unquote-unquote-splice---control-evaluation">0) quote, unquote, unquote-splice - control evaluation</h2>
+<p>Rather than use the shorthands described above, you can also call 'quote', 'unquote' and 'unquote-splice' directly to build lists and control evalutation within a quoted list.</p>
+<p>Examples:</p>
+<pre><code>1 =&gt; 1 ; &#39;give me the value of&#39; 1
+(quote 1) =&gt; 1 ; &#39;give me&#39; 1
+x =&gt; ; &#39;give me the value of&#39; x, error, as x has no value
+(quote x) =&gt; x ; &#39;give me&#39; x
+(quote (1 2 3)) =&gt; (1 2 3) ; give me the list of digits 1, 2 and 3
+
+;; longhand evaluation with &#39;,&#39; and splicing with &#39;,@&#39;
+(set (quote x) 1) =&gt; 1 ; give x the value 1
+(quote ((unquote x) 2 3) =&gt; (1 2 3) ; evaluate inside of quoted list as with &#39;,&#39;
+(quote ((unquote-splice x) 2 3) =&gt; ; error, cannot unquote-splice a non-list
+(set (quote x) (quote (1 2 3))) =&gt; (1 2 3) ; give x a value that is a list
+(quote ((quote x) 2 3)) =&gt; ((1 2 3) 2 3) ; unquote x with as with &#39;,&#39;
+(quote ((unquote-splice x) 2 3)) =&gt; (1 2 3 2 3) ; splice the list as with &#39;,@&#39;</code></pre>
+<p>Normally you would use the shorthands.</p>
+<h2 id="atom---a-predicate-to-test-if-its-argument-is-an-atom">1) atom - a predicate to test if its argument is an atom</h2>
+<p>Everything in Sigil is either an atom (symbol, number, or ()) or a list.</p>
+<p>Examples:</p>
+<pre><code>(atom t) =&gt; t
+(atom ()) =&gt; t
+(atom `x) =&gt; t
+(atom 1) =&gt; t
+(atom `(1 2 3)) =&gt; ()</code></pre>
+<h2 id="eq---equality">2) eq - equality</h2>
+<p>Atoms can be tested for equality using 'eq'.</p>
+<p>Examples:</p>
+<pre><code>(eq t t) =&gt; t
+(eq () ()) =&gt; t
+(eq t ()) =&gt; ()
+(eq `x `x) =&gt; t
+(eq `x `y) =&gt; ()
+(eq 1 1) =&gt; t
+(eq 1 2) =&gt; ()
+(eq `(1 2 3) `(1 2 3)) =&gt; () ; notice! see &#39;equal&#39;, below.</code></pre>
+<h2 id="cons---create-a-new-list-cell">3) cons - create a new list cell</h2>
+<p>A cons cell is a 2 element cell that has a head slot and an a tail slot. The 'cons' function allocates one of these cells and assigns the first argument to the head slot and the second argument to the tail slot.</p>
+<p>Examples:</p>
+<pre><code>(cons 1 ()) =&gt; (1) ; build a proper list with () at the tail
+(cons `x ()) =&gt; (x) ; build another proper list
+(cons () ()) =&gt; (()) ; again, but with () at the head
+(cons `x `y) =&gt; (x . y) ; notice! an improper list
+(cons 1 2) =&gt; (1 . 2) ; and again
+(cons (1 (cons 2 ()))) =&gt; (1 2) ; making a proper list</code></pre>
+<h2 id="car---return-the-first-element-of-a-list">4) car - return the first element of a list</h2>
+<p>Take a list and return the head slot of its first cell.</p>
+<p>Examples:</p>
+<pre><code>(car `(1 2 3)) =&gt; 1
+(car `((1 2 3) 2 3)) =&gt; (1 2 3)
+(car ()) =&gt; ()
+(car `x) =&gt; ; Error
+(car 1) =&gt; ; Error</code></pre>
+<h2 id="cdr---return-everything-but-the-first-element-of-a-list">5) cdr - return everything but the first element of a list</h2>
+<p>Take a list and return the tail slot of its first cell.</p>
+<p>Examples:</p>
+<pre><code>(cdr `(1 2 3)) =&gt; (2 3)
+(cdr `((1 2 3) 2 3)) =&gt; (2 3)
+(cdr ()) =&gt; ()
+(cdr `x) =&gt; ; Error
+(cdr 1) =&gt; ; Error</code></pre>
+<h2 id="cond---conditional-statement-execute-tests-until-one-returns-not-and-then-execute-the-following-statement">6) cond - conditional statement, execute tests until one returns not (), and then execute the following statement</h2>
+<p>Cond is used to make decisions on what statements to execute. It goes through it's arguments, excuting the each test, the first element of the argument, until one of them returns not (), after which it then excutes the statements following the test and returns the value of the last one. You will often set 't' as the last test in a cond, meaning to always excute that set of statements if none of the previous tests pass.</p>
+<p>Examples:</p>
+<pre><code>(cond (t 1)) =&gt; 1
+(cond (() 1)) =&gt; ()
+(cond ((t 1) (t 2))) =&gt; 1
+(cond ((() 1) (t 2))) =&gt; 2
+(cond ((() 1) (() 2) (t 3))) =&gt; 3
+(cond ((() 1) (t 2) (t 3))) =&gt; 2
+(set `x ())
+(set `y t)
+(cond
+  (x `shouldnt-get-here)
+  (y `should-get-here)
+  (t `wont-get-here)) =&gt; should-get-here</code></pre>
+<h2 id="set---assign-a-symbol-a-value-variables">7) set - assign a symbol a value (variables)</h2>
+<p>Sometimes it is convenient to create a shortcut to certain values, known as a variable. 'set' can be used to create or change the values of symbols in the variable namespace.</p>
+<p>Examples:</p>
+<pre><code>(set `x 1) =&gt; 1 ; set single values
+x =&gt; 1
+(set `x 2) =&gt; 2
+x =&gt; 2
+(set `x `(1 2 3)) =&gt; (1 2 3)
+x =&gt; (1 2 3)
+(set `x 1 `y 2 `z 3) =&gt; 3 ; set multiple values at once</code></pre>
+<h2 id="lambda---create-a-function">8) lambda - create a function</h2>
+<p>A function is a set of bound variables and a series of statements, known as the body, that can be 'called', which assigns values to the variables and executes the statements of the body sequentially, until the value of the last evaluated expression is returned.</p>
+<p>Examples:</p>
+<pre><code>(lambda (x) x) =&gt; (lambda (x) x)
+((lambda (x) x) 1) =&gt; 1 ; call the function immediately
+(set `x 1) =&gt; 1
+((lambda (x) (+ x x)) 2) =&gt; 4 ; x is bound to 2 during the call
+x =&gt; 1 ; the value of x was not changed by calling the function
+((lambda (x) (set x 2))) ; set x in the function
+x =&gt; 1 ; the value of x is still unchanged
+((lambda (x y) (* x y)) 2 3) =&gt; 6 ; x is bound to 2, y is bound to 3
+(set `double (lambda (x) (+ x x))) =&gt; ... ; declare a named function
+(double 2) =&gt; 4 ; call declared function</code></pre>
+<p>We use the keyword 'lambda' to declare functions because of Lisp's close ties to what is known as the &quot;Lambda Calculus&quot;, discovered by Alonzo Church in the 1930's.</p>
+<h2 id="self---the-current-function-that-is-executing-used-for-recursion">9) self - the current function that is executing, used for recursion</h2>
+<p>&quot;To iterate is human, to recurse divine.&quot; -- L. Peter Deutsch</p>
+<p>Recursion is a fundamental concept used for looping, or doing something more than once in Sigil. To count the number of elements in a list, one can break the problem into counting the first element of the list, which is always 1, and adding that to the number of elements in the rest of the list. This can be done in a function by calling itself, or recursing, with the rest of the list until the empty list is found, meaning we are done and can return the computed length by adding all of the 1's together.</p>
+<p>Examples:</p>
+<pre><code>((lambda (l n) ; return the length of a list, recursively
+   (cond
+     ((cdr l)  ; if there are still elements in the list
+      (self (cdr l) (+ 1 n))) ; recurse with the tail of the list,
+                              ; and increment accumulator
+     (t ; there are no elements left in the list
+      n))) ; return accumulator
+  `(a b c) 0) =&gt; 3 
+
+((lambda (l) ; return the last element of the list, recursively
+   (cond
+     ((null (cdr l)) ; if the next element is ()
+      (car l)) ; return the head of the list
+     (t ; the next element is not ()
+       (self (cdr l))))) ; recurse down the list
+ `(1 2 3)) =&gt; 3</code></pre>
+<p>Recursion may be confusing at first. It is highly reccomended you take the time to step through the above examples so you can gain a solid understanding of recursion and how it works.</p>
+<h2 id="apply---call-a-function-with-a-list-of-arguments">10) apply - call a function with a list of arguments</h2>
+<p>Sometimes you want to call a function with a prepared list of arguments. The reason for this will become more apparent later as we work through the examples and projects.</p>
+<p>Examples:</p>
+<pre><code>(apply (lambda (x) (+ x x)) `(1)) =&gt; 2
+(apply (lambda (x y z) (+ x y z)) `(1 2 3)) =&gt; 6
+(apply double `(2)) =&gt; 4 ; using previously defined function in 9)</code></pre>
+<h2 id="values---return-multiple-values-from-a-function">11) values - return multiple values from a function</h2>
+<p>For when you want to return more than one value from a function. Notice how the multiple values are printed after evaulating a function returning them in the listener.</p>
+<p>Examples:</p>
+<pre><code>(values 1) =&gt; 1
+(values 1 2) =&gt; 1
+2
+((lambda (x) (values x)) 1) =&gt; 1
+((lambda (x y) (values x y)) 1 2) =&gt; 1
+2</code></pre>
+<h2 id="bind---bind-multiple-values-to-symbols">12) bind - bind multiple values to symbols</h2>
+<p>When a function returns more than one value, you can 'bind' the returned values to variables and excute the statements in the body using these bindings.</p>
+<p>Examples:</p>
+<pre><code>(set `multiple-values (lambda (x y) (values x y))) =&gt; ...
+(bind (a b) (multiple-values 1 2) (cons a b)) =&gt; (1 . 2)</code></pre>
+<h2 id="defmacro---define-a-macro">13) defmacro - define a macro</h2>
+<p>Macros are functions that return code that is executed immediately after. This is in contrary to regular functions that can return anything. Using macros we can build the our language from the primitives described in this section.</p>
+<p>Macros are a powerful tool that give Lisp it's power and are the reason for its form. There are many examples that follow that use defmacro, so study them carefully to understand it's use.</p>
+<h2 id="addition-sum">14) + - addition, sum</h2>
+<p>Mathematical addition, or sum with more than 2 arguments. Also used to concatenate symbols.</p>
+<p>Examples:</p>
+<pre><code>(+ 1 2) =&gt; 3 ; arithmeical addition of numbers
+(+ 1 2 3) =&gt; 6 ; sum of multiple numbers
+(+ `x `y) =&gt; xy ; concatenation of symbols</code></pre>
+<h2 id="subtraction-difference">15) - - subtraction, difference</h2>
+<p>Mathematical subtraction, or difference with more than 2 arguments.</p>
+<pre><code>(- 1 2) =&gt; -1 ; arithmetical subtraction
+(- 1 2 3) =&gt; -4 ; difference of multiple numbers</code></pre>
+<h2 id="multiply-product">16) * - multiply, product</h2>
+<p>Mathematical multiply, or product with more than 2 arguments.</p>
+<pre><code>(* 1 2) =&gt; 2 ; arithmetical multiplication
+(* 1 2 3) =&gt; 6 ; product of multiple numbers</code></pre>
+<h2 id="divide-quotient">17) / - divide, quotient</h2>
+<p>Mathematical divide, or quotient with more than 2 arguments.</p>
+<p>Examples:</p>
+<pre><code>(/ 1 2) =&gt; .5 ; arithmetical division
+(/ 1 2 3) =&gt; 0.1666... ; quotient of multiple numbers</code></pre>
+<h2 id="remainder-mod">18) % - remainder, mod</h2>
+<p>Mathematical remainder, or 'mod'.</p>
+<p>Examples:</p>
+<pre><code>(% 5 2) =&gt; 1 ; 1 is the remainder of dividing 5 by 2</code></pre>
+<ol start="19" style="list-style-type: decimal">
+<li>env - return the current environment</li>
+</ol>
+<p>Variables are defined in the 'variable namespace'. env is used to return this namespace for inspection and modification. If env is called with an argument, it will set the current 'variable namespace' to the argument given.</p>
+<p>Examples:</p>
+<pre><code> (env) =&gt; ((t . t) ...) ; return the current environment
+ (env (env)) =&gt; ... ; set the current environment</code></pre>
+<ol start="20" style="list-style-type: decimal">
+<li>fenv - return the current function environment</li>
+</ol>
+<p>Functions are defined in the 'function namespace'. fenv is used to return this namespace for inspection and modification. If fenv is called with an argument, it will set the current 'variable namespace' to the argument given.</p>
+<p>Examples:</p>
+<pre><code>(fenv) =&gt; ((set . builtin) (cons . builtin) ...)
+(fenv (fenv)) =&gt; ... ; set the current function environment</code></pre>
+<h2 id="save---save-the-current-environments">21) save - save the current environments</h2>
+<p>The environment where you store your variables and macros can be saved to local storage in your browser using the 'save' command.</p>
+<p>(save) =&gt; ; default /core is saved (save /backup) =&gt; ; saved to /backup in local storage</p>
+<ol start="22" style="list-style-type: decimal">
+<li>load - load a core into the current environment</li>
+</ol>
+<p>The environment can be loaded from local storage using the 'load' command.</p>
+<p>THIS FEATURE IS CURRENTLY NOT IMPLMENTED.</p>
+<h2 id="me---macro-expand">23) me - macro expand</h2>
+<p>Expand macros in the code given as an argument. Helpful for debugging.</p>
+<p>Examples:</p>
+<pre><code>(defmacro cadr (l) `(car (cdr ,l)) ; define the macro cadr
+(me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3))) ; expand it</code></pre>
+<h2 id="eval---evaluate-an-expression">24) eval - evaluate an expression</h2>
+<p>Sometimes you have a code in a form that you wish to evaluate. You can do this by calling eval.</p>
+<p>Examples:</p>
+<pre><code>`(+ 1 2) =&gt; (+ 1 2) ; unevaluated code
+(eval `(+ 1 2)) =&gt; 3 ; calling eval on it gives the result</code></pre>
+<h2 id="evaluate-javascript-code">25) =&gt; - evaluate JavaScript code</h2>
+<p>Used to execute JavaScript code that can be built by concatenating symbols.</p>
+<p>Examples:</p>
+<pre><code>(=&gt; |1 + 1|) =&gt; 2
+(=&gt; |console.log(&quot;Testing&quot;)|) =&gt; ; prints Testing in the JavaScript console</code></pre>
+<p>This builtin allows for the interaction between Sigil and the underlying web browser. It is an advanced operation that will be used to build Eturia as a Lisp Machine from within Sigil itself. Eturia is written in JavaScript, but the goal of the system is to modify the JavaScript code as little as possible from outside of it.</p>
+<h1 id="section-2">===============================================================================</h1>
+<pre><code>                         ============
+                         |The Basics|
+                         ============
+
+
+         &quot;...an individual&#39;s thoughts and actions are
+                determined by the language...&quot;
+
+                -- The Sapir-Whorf Hypothesis
+
+        &quot;Lisp is a programmable programming language.&quot;
+
+                       -- John Foderaro
+
+              &quot;Talk is cheap. Show me the code.&quot;
+
+                      -- Linus Torvalds</code></pre>
+<h1 id="section-3">===============================================================================</h1>
+<p>The following exercies build upon the primitive builtins defined previously and are meant to be typed into the Eturia 'Listener' console. The 'Examples' can be used as test cases to ensure the correctness of your inputs.</p>
+<h2 id="first-second-third-rest-...---shortcuts">0) first, second, third, rest, ... - shortcuts</h2>
+<p>These first code examples show the most basic of macro, the shortcut.</p>
+<p>(defmacro first (x) `(car ,x))</p>
+<p>(defmacro second (x) `(car (cdr ,x)))</p>
+<p>(defmacro third (x) `(car (cdr (cdr ,x))))</p>
+<p>(defmacro rest (x) `(cdr ,x))</p>
+<p>(defmacro caar (x) `(car (car ,x)))</p>
+<p>(defmacro cadr (x) ; same a second `(car (cdr ,x)))</p>
+<p>(defmacro cdar (x) `(cdr (car ,x)))</p>
+<p>(defmacro cddr (x) `(cdr (cdr ,x)))</p>
+<p>As you can see, the above macros return non-evaluated 'code'. This 'code' is then executed immediately after the macro is called with arguments, as the following examples show.</p>
+<p>Examples:</p>
+<pre><code>(first `(1 2 3)) =&gt; 1 ; expands to (car `(1 2 3))
+(me (first `(1 2 3))) =&gt; (car `(1 2 3))
+(second `(1 2 3)) =&gt; 2 ; expands to (car (cdr `(1 2 3)))
+(me (second `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
+(third `(1 2 3)) =&gt; 3 ; expands to (car (cdr (cdr `(1 2 3))))
+(me (third `(1 2 3))) =&gt; (car (cdr (cdr `(1 2 3))))
+(rest `(1 2 3)) =&gt; (2 3) ; expands to (cdr `(1 2 3))
+(me (rest `(1 2 3))) =&gt; (cdr `(1 2 3))
+(caar `((1 2 3) 2 3)) =&gt; 1
+(cdar `((1 2 3) 2 3)) =&gt; (2 3)
+(cadr `(1 (1 2 3) 2 3)) =&gt; (1 2 3)
+(cddr `(1 2 3)) =&gt; (3)</code></pre>
+<p>The final 4 shortcuts above show how the names 'car' and 'cdr' can be combined into terse, longer combinations to allow for selection into more complex list structures.</p>
+<p>Spend some time to fully understand what is happening here when these macros are defined and run.</p>
+<p>Exercise: write 'fourth', and 'fifth'.</p>
+<pre><code>(fourth `(1 2 3 4 5 6)) =&gt; 4
+(fifth `(1 2 3 4 5 6)) =&gt; 5</code></pre>
+<h2 id="if---tradional-conditional">1) if - tradional conditional</h2>
+<p>cond is a general purpose conditional, but sometimes it can be clearer to use more a traditional conditional construct known as 'if'. It takes a test, evaluates it and if it is true, runs the second statement, and when not, it runs the second statement.</p>
+<p>(defmacro if (test true false) `(cond (,test ,true) ; check test, evaulate true if not () (t ,false))) ; else, evaluate false</p>
+<p>Examples:</p>
+<pre><code>(if t 1 2) =&gt; 1
+(if () 1 2) =&gt; 2
+(if (eq t t) 1 2) =&gt; 1
+(if (eq t ()) 1 2) =&gt; 2</code></pre>
+<h2 id="when---single-branch-conditional">2) when - single branch conditional</h2>
+<p>Sometimes you don't need both branches of an if statement and just want to perform and action when the test is true. This is when you use when. This macro makes use of &amp;body in the argument list, which means to take all of the arguments following as a list and bind them to the variable name following &amp;body in the arugument list.</p>
+<p>(defmacro when (test &amp;body body) `(cond (,test ,<span class="citation">@body</span>)))</p>
+<p>Examples:</p>
+<pre><code>(when t 1) =&gt; 1
+(when () 1) =&gt; ()
+(when (eq t t) 1) =&gt; 1
+(when (eq t ()) 1) =&gt; ()</code></pre>
+<h2 id="reverse---reverse-a-list">3) reverse - reverse a list</h2>
+<p>Reverse a list by building a new list in opposite order using cons'ing. Building a list this way is an important idiom to understand, and thanfully this function is quite simple because the lists built using cons'ing are in 'reverse' order, that is, items are added to the front rather than the back of the list.</p>
+<p>(defmacro reverse (l) `((lambda (l2 a) ; an anonymous function (if l2 ; if l2 is not null (self (cdr l2) (cons (car l2) a)) ; recurse a)) ; else return a, the accumlator ,l ())) ; call the anonymous function immediately</p>
+<p>Examples:</p>
+<pre><code>(reverse `(1 2 3)) =&gt; (3 2 1)
+(reverse `((1 2 3) a b c)) =&gt; (c b a (1 2 3))</code></pre>
+<p>Exercises:</p>
+<pre><code>1. Will reverse work with improper lists?  Why not?</code></pre>
+<h2 id="map---build-a-list-by-running-a-function-over-another-list">4) map - build a list by running a function over another list</h2>
+<p>'map' is what is known as a higher order function, that is, one which takes a function as an argument. In this case the function given is 'run over' the second argument, a list. The function is called with every element of the list, and a new list is built using the results.</p>
+<p>(defmacro map (f l) `((lambda (l2 a) ; delcare an anonymous function (if l2 ; if l2 is not null (self (cdr l2) (cons (,f (car l2)) a)) ; recurse (reverse a))) ; return the accumlator, reversed ,l ())) ; call the anonymous function, evaulating l ; and passing () for a</p>
+<p>Examples:</p>
+<pre><code>(map (lambda (x) (+ x x)) `(1 2 3)) =&gt; (2 4 6)
+(map car `((1 a) (2 b) (3 c))) =&gt; (1 2 3)
+(map second `((1 a) (2 b) (3 c))) =&gt; (a b c)</code></pre>
+<p>Exercises:</p>
+<pre><code>1. Write a map statement that takes a list `(1 2 3) and
+   returns `(3 6 9).</code></pre>
+<h2 id="ls---show-the-current-environment">5) ls - show the current environment</h2>
+<p>'env' is a useful function but it's output can be a bit verbose. 'ls' is a macro that returns you just the variables that are defined in the environment but not their values, making for less output to that you have to parse mentally.</p>
+<p>(defmacro ls () `(map car (env)))</p>
+<p>Examples:</p>
+<pre><code>(ls) =&gt; (t nil)
+(set `x 1) =&gt; 1
+(ls) =&gt; (t nil x)</code></pre>
+<h2 id="lsf---show-the-current-function-environment">5) lsf - show the current function environment</h2>
+<p>Like 'ls', but shows the names of the functions and macros that have been defined.</p>
+<p>(defmacro lsf () `(map car (fenv)))</p>
+<p>Examples:</p>
+<pre><code>(lsf) =&gt; (atom null ...  ls lsf)
+(defmacro f (x) x) =&gt; (macro (x) x)
+(lsf) =&gt; (atom null ... lsf f)</code></pre>
+<h2 id="let---declare-local-variables">6) let - declare local variables</h2>
+<p>Often you need to use additional temporary variables when performing a computation. 'let' can be used to create these temporaries, cleaning them up after the body of the form is completed, returning the value of the last executed statement.</p>
+<p>(defmacro let (args &amp;body body) ((lambda (vars values) ; notice! we are processing the arguments to let `((lambda ,vars ,<span class="citation">@body</span>) ,<span class="citation">@args</span>)) ; notice! this is the code that ; is returned by let (map car args) ; argument 1 above, vars (map cadr args))) ; argument 2 above, values</p>
+<p>Examples:</p>
+<pre><code>(map car `((a 1) (b 2))) =&gt; (a b) ; like vars, above
+(map cadr `((a 1) (b 2))) =&gt; (1 2) ; like values, above
+(let ((a 1) (b 2)) (+ a b)) =&gt; 3
+a =&gt; ; error, undefined symbol
+b =&gt; ; error, undefined symbol</code></pre>
+<h2 id="aif---anamorphic-if">7) aif - anamorphic if</h2>
+<p>Since () is always false and anything else is true, sometimes we may want to know the value that is returned by the test that is passed to 'if'. This can be done by saving the value in the environment for the body of the 'if', which we are going to call 'it'. You can then reference the value of 'it' anywhere in the body of the 'if' statement.</p>
+<p>(defmacro aif (test true false) `(let ((it ,test)) (if it ,true ,false)))</p>
+<p>Examples:</p>
+<pre><code>(aif 1 it ()) =&gt; 1
+(aif (car `(1 2 3)) it 2) =&gt; 1
+(aif (car `(() 2 3)) it 2) =&gt; 2</code></pre>
+<p>Note: the injection of variables that can be used in the body of a macro makes the macro 'anamorphic'. For a further explanation of this concept, see &quot;On Lisp&quot;, chapter 14.</p>
+<h2 id="awhen---anamorphic-when">8) awhen - anamorphic when</h2>
+<p>Like 'aif', but with when.</p>
+<p>(defmacro awhen (test &amp;body body) `(let ((it ,test)) (when it ,<span class="citation">@body</span>)))</p>
+<p>Examples:</p>
+<pre><code>(awhen 1 it) =&gt; 1
+(awhen () it) =&gt; () ; notice! awhen by default returns ()</code></pre>
+<h2 id="last---return-the-last-element-of-a-list">9) last - return the last element of a list</h2>
+<p>Sometimes you want the last element of the list. This function shows recursing down a list until it reaches the end, when it return the last element.</p>
+<p>(defmacro last (l) `((lambda (l) (if (cdr l) (self (cdr l)) (car l)))) ,l))</p>
+<p>Examples:</p>
+<pre><code>(last `(1 2 3)) =&gt; 3</code></pre>
+<h2 id="length---return-the-length-of-a-list">10) length - return the length of a list</h2>
+<p>Knowing the length of a list is generally very useful during computations. Here is a macro that recursively computes it given a list using an accumulator.</p>
+<p>(defmacro length (l) `((lambda (l n) (if l (self (cdr l) (+ n 1)) n)) ,l 0))</p>
+<p>Examples:</p>
+<pre><code>(length ()) =&gt; 0
+(length `(1 2 3)) =&gt; 3
+(length `((1 2 3) a b c)) =&gt; 4</code></pre>
+<h2 id="nth---return-the-nth-element-of-a-list">11) nth - return the nth element of a list</h2>
+<p>Although macros like 'first', 'second' and 'third' are useful, you often want a general purpose way of getting a certain element from a list. 'nth' is designed to perform that operation, given a list and an integer.</p>
+<p>(defmacro nth (n l) `((lambda (n l) (if (eq n 0) (car l) (self (- n 1) (cdr l)))) ,n ,l))</p>
+<p>Examples:</p>
+<pre><code>(nth 0 `(1 2 3)) =&gt; 1
+(nth 1 `(1 2 3)) =&gt; 2
+(nth 2 `(1 2 3)) =&gt; 3</code></pre>
+<h2 id="not---logical-compliment">12) not - logical compliment</h2>
+<p>When using boolean values, sometimes you want the opposite of the value you have. In this case you use 'not', which returns the compliment of any value, logically.</p>
+<p>(defmacro not (x) `((lambda (v) (cond ((null v) t) ; check for (), if so, return t (t ()))) ; else return () for everything else ,x)) ; evaulate the argument x</p>
+<p>Examples:</p>
+<pre><code>(not ()) =&gt; t
+(not t) =&gt; ()
+(not 1) =&gt; ()</code></pre>
+<h2 id="unless---negative-single-branch-conditional">13) unless - negative single branch conditional</h2>
+<p>Like when, but the logical opposite. It runs its body of when its test returns ().</p>
+<p>(defmacro unless (test &amp;body body) `(cond ((not ,test) ,<span class="citation">@body</span>)))</p>
+<p>Examples:</p>
+<pre><code>(unless t 1) =&gt; ()
+(unless () 1) =&gt; 1
+(unless (eq t t) 1) =&gt; ()
+(unless (eq t ()) 1) =&gt; 1</code></pre>
+<h2 id="and---logical-and">14) and - logical and</h2>
+<p>'and' is another boolean function, one that returns true when all of its parameters are true. Because of this property, if any of the values that it is passed returns false, you can assume the final value is false, so you can stop evaluating the arguments and just return false. This behaviour is called 'short circuiting' and will be very useful in the future.</p>
+<p>(defmacro and (&amp;rest args) <code>((lambda (args) ; an anonymous function       (if args ; if args is not ()           (if (eval (car args)) ; evaluate the argument               (self (cdr args)) ; if true, continue with other args               ()) ; evaluation returned false, so and is false           t)) ; all evaluated args returned true, so return true</code>,args)) ; call anonymous function with args quoted, ; as we are evaluating them individually above</p>
+<p>Examples:</p>
+<pre><code>(and () ()) =&gt; ()
+(and () t) =&gt; ()
+(and t ()) =&gt; ()
+(and t t) =&gt; t
+(and 1 1) =&gt; t
+(and () (set `a 1)) =&gt; ()
+a =&gt; ; error, undefined variable,
+     ; set was not run due to short circuiting</code></pre>
+<h2 id="or---logicial-or">15) or - logicial or</h2>
+<p>Similar to and, or returns true if any of its arguments are true. We can also take advantage of this and 'short ciruit' on this behaviour as well.</p>
+<p>(defmacro or (&amp;rest args) <code>((lambda (args)       (if args           (if (eval (car args))               t               (self (cdr args)))           ()))</code>,args))</p>
+<p>Examples:</p>
+<pre><code>(or () ()) =&gt; ()
+(or () t) =&gt; t
+(or t ()) =&gt; t
+(or t t) =&gt; t
+(or 1 1) =&gt; t
+(or t (set `a 1)) =&gt; ()
+a =&gt; ; error, undefined variable, 
+     ; set was not run due to short circuiting</code></pre>
+<h2 id="xor---logical-exclusive-or">16) xor - logical exclusive or</h2>
+<p>Similar to 'and' and 'or', 'xor' returns true if one or the other of its arguments is true. You will notice that we are use 'let' to hold the value of our evaluated arguments. You generally only want to evaluate the arguments you are passed once. This is because the evaluation of certain arguments may cause 'side effects', and evaluating them more than once may cause unintended conciquences and should be avoided.</p>
+<p>(defmacro xor (x y) `(let ((xe ,x) ; evaluate x once (ye ,y)) ; evaluate y once (and (or xe ye) (not (and xe ye)))))</p>
+<p>Examples:</p>
+<pre><code>(xor () ()) =&gt; ()
+(xor t ()) =&gt; t
+(xor () t) =&gt; t
+(xor t t) =&gt; ()</code></pre>
+<h2 id="list---create-a-proper-list-of-all-arguments">17) list - create a proper list of all arguments</h2>
+<p>Creating lists with cons can often be tedious, so lets define a macro to make it easier. This example shows how to use the underlying lisp to build the list and evaluate the arguments.</p>
+<p>(defmacro list (&amp;rest rest) `((lambda (&amp;rest rest) rest) ,<span class="citation">@rest</span>))</p>
+<p>Examples:</p>
+<pre><code>(list `a `b `c) =&gt; (a b c)
+(list 1 2 3) =&gt; (1 2 3)</code></pre>
+<h2 id="equal---compare-if-two-things-are-equal-including-lists">18) equal - compare if two things are equal, including lists</h2>
+<p>If you recall from the discussion of 'eq', it does not compare the equality of lists, just atoms. The following is a function that does a 'deep' comparison between 2 items, including lists. If you want, you can always use 'equal' instead of 'eq', but 'equal' is slower than using just 'eq' when you know you are dealing with only atoms.</p>
+<p>(defmacro equal (x y) `((lambda (a b) ; anonymous function (cond ; 2 atoms, test with eq ((and (atom a) (atom b)) (eq a b)) ; both lists null, must be equal ((and (null a) (null b)) t) ; one list is null, cannot be equal ((or (null a) (null b)) ()) ; one is an atom, the other not, so not equal ((or (atom a) (atom b)) ()) ; if the heads are equal ((equal (car a) (car b)) (self (cdr a) (cdr b))))) ; return () if none of the above are true ,x ,y)) ; call anonymous function with evaluated arguments</p>
+<p>Examples:</p>
+<pre><code>(equal t t) =&gt; t
+(equal () ()) =&gt; t
+(equal 1 1) =&gt; t
+(equal `(1 2 3) `(1 2 3)) =&gt; t
+(equal `((1 2 3 (x y z)) a b c) `((1 2 3 (x y z)) a b c)) =&gt; t
+(equal `(1 2 3) `(1 2)) =&gt; ()
+(defmacro pallindromep (l)
+  `(let ((le ,l))
+     (equal le (reverse le))))
+(pallindromep `(1 2 3 4)) =&gt; ()
+(pallindromep `(1 2 3 4 3 2 1)) =&gt; t</code></pre>
+<p>;; WARNING: THE FOLLOWING CODE IS UNTESTED</p>
+<h2 id="member---find-if-something-is-in-a-list">19) member - find if something is in a list</h2>
+<p>Often you want to search a list to see if an item is contained in it. 'member' takes a 'thing', a 'list' and a 'test'. The 'test', if omitted, defaults to 'eq', can be any predicate, and normally is given as 'equals' so that you can search for lists within lists. The return value is the contents of the list up to the item found, else () if the 'thing' is not found in the 'list'.</p>
+<p>(defmacro member (thing list &amp;rest test) `(let ((t (aif test it eq))) ((lambda (x l) (if l (if (t x (car l)) l (self x (cdr l))) ())) ,thing ,list)))</p>
+<p>Examples:</p>
+<pre><code>(member 1 `(1 2 3)) =&gt; (1 2 3)
+(member 3 `(1 2 3)) =&gt; (3)
+(member 4 `(1 2 3)) =&gt; ()
+(member `(1 2 3) `(a b c (1 2 3))) =&gt; ()
+(member `(1 2 3) `(a b c (1 2 3)) equal) =&gt; ((1 2 3))  </code></pre>
+<h2 id="filter---remove-elements-from-a-list-based-on-a-predicate">21) filter - remove elements from a list based on a predicate</h2>
+<p>(defun filter (f l) `((lambda (l a) (if l (if (,f (car l)) (self (cdr l) (cons (car l) a)) (self (cdr l) a)) (reverse a))) ,l))</p>
+<p>Examples:</p>
+<pre><code>(filter (lambda (x) (eq x 1)) `(1 2 3)) =&gt; (2 3)
+(filter (lambda (x) (or (eq x 1) (eq x 3)) `(1 2 3)) =&gt; (2)</code></pre>
+<h2 id="rm---remove-a-symbol-from-the-environment">22) rm - remove a symbol from the environment</h2>
+<p>Examples:</p>
+<pre><code>(set `x 1) =&gt; 1 ; define a symbol in the environment
+x =&gt; 1
+(rm `x) =&gt; 1 ; returns the old value of x
+x =&gt; ; Error, undefined symbol</code></pre>
+<h2 id="rmf---remove-a-macro-from-the-function-environment">23) rmf - remove a macro from the function environment</h2>
+<p>Examples:</p>
+<pre><code>(defmacro double (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
+(double 2) =&gt; 4
+(rmf `double) =&gt; (macro (x) `(+ ,x ,x))
+(double 2) =&gt; ; Error, undefined function</code></pre>
+<h2 id="mapn---like-map-but-takes-n-lists-as-arguments">15) mapn - like map, but takes n lists as arguments</h2>
+<p>'mapn' is like 'map', in that it runs a function to create a new list, but it can take multiple lists, and therefore, functions of multiple arguments. 'mapn' iterates down the lists in parallel, calling the function f with the first elements of each of the lists, after which it recurses with the rest of the lists. If you only have one list, 'map' is faster to use computationally, although 'mapn' will work with a single list if needed.</p>
+<p>;; Note: this doesn't work yet (defmacro mapn (f &amp;rest lists) <code>((lambda (xs a)       (if xs           (let ((heads (map car xs)))             (self (cdr xs) (cons (eval</code>(,f ,<span class="citation">@heads</span>) a))) (reverse a))) `,lists ()))</p>
+<p>Examples:</p>
+<pre><code>(mapn (lambda (x y) (+ x y)) `(1 2 3) `(1 2 3)) =&gt; (2 4 6)
+(mapn (lambda (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) =&gt; (xa1 yb2 zc3)</code></pre>
+<ol start="16" style="list-style-type: decimal">
+<li>setq</li>
+</ol>
+<p>(defmacro setq (&amp;rest rest) (lambda (vars values) `(mapn (lambda (var value) (set var value)) ,vars ,values) (map car vars) (map cadr vars)))</p>
+<p>Examples:</p>
+<pre><code>(setq x 1) =&gt; 1
+x =&gt; 1
+(setq x 2 y 3) =&gt; 3
+x =&gt; 2
+y =&gt; 3</code></pre>
+<p>;; TO BE CONTINUED</p>
+<h2 id="push---add-an-element-to-a-list">push - add an element to a list</h2>
+<p>'push' is used to insert elements onto the head of a list.</p>
+<p>(defmacro push (x l) `(let ((xe ,x)) (set xe (cons xe l)))) pop shift unshift rotate n assoc flatten sort</p>
+<h1 id="section-4">===============================================================================</h1>
+<pre><code>                          ==========
+                          |THE MIDS|
+                          ==========
+
+   &quot;Because language is the carrier of ideas, it is easy to</code></pre>
+<p>believe that it should be very little else than such a carrier.&quot;</p>
+<pre><code>                       -- Louise Bogan
+
+      &quot;Lisp isn&#39;t a language, it&#39;s a building material.&quot;
+
+                          - Alan Kay</code></pre>
+<h1 id="section-5">===============================================================================</h1>
+<p>======================= Exercises 0 - TODO List ======================= push pop <em>todo</em> todo remove done n</p>
+<p>============================================= Mathematical Exercises 0 - Mortage Calculator =============================================</p>
+<p>============================== Exercises 1 - Phrase Generator ==============================</p>
+<p>============================================== Mathematical Exercises 1 - Probablistic Primes ==============================================</p>
+<p>================================= Exercises 2 - S-Expression Editor =================================</p>
+<p>================== Exercises 3 - Life ==================</p>
+<p>==================================== Mathmatical Exercises 2 - Ray Tracer ====================================</p>
+<p>========================================== Exercises 4 - GPS (General Problem Solver) ==========================================</p>
+<p>================================================= Exercises 5 - A (Simulated) Arbitrage Trading Bot =================================================</p>
+<h1 id="section-6">===============================================================================</h1>
+<pre><code>                        ==============
+                        |THE ADVANCED|
+                        ==============
+
+                &quot;Language disguises thought.&quot;
+
+                    -- Ludwig Wittgenstein</code></pre>
+<h1 id="section-7">===============================================================================</h1>
+<p>========================================= Exercises 6 - Boolean Propagator Networks =========================================</p>
+<p>============================================================ Mathematical Exercises 3 - A Calculus Differentiation Engine ============================================================</p>
+<p>====================================== Exercises 7 - Fourth, a Stack Language ======================================</p>
+<p>====================================== Exercises 8 - Prolog, a Logic Language ======================================</p>
+<p>=============================================== Mathmatical Exercises 4 - Multi-Core Ray Tracer ===============================================</p>
+<h1 id="section-8">===============================================================================</h1>
+<pre><code>                           ========
+                           |DREAMS|
+                           ========
+
+                      &quot;Mind has no end.&quot;
+
+                     -- K. David Harrison</code></pre>
+<h1 id="section-9">===============================================================================</h1>
+<p>=================================== Exercise 9 - A (Simulated) RISC CPU ===================================</p>
+<p>========================================================== Exercise 10 - A Lisp Compiler for the (Simulated) RISC CPU ==========================================================</p>
+<p>===================================== Exercises 10 - A (Simulated) Lisp CPU =====================================</p>
+<p>================================================ Exercises 11 - A Multi-Core (Simulated) Lisp CPU ================================================</p>
+<p>-- Copyright - 2016</p>
+<p>All rights reserved.</p>
+<p>If you wish to reproduce this work, please ask my permission first. Fair use provisions apply. The computer code contained in this document can be used for any purpose without restriction.</p>

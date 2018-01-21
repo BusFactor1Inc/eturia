@@ -1302,7 +1302,7 @@ not using aif here?&quot;</span>.  Normally, this is an ideal place for aif, sin
 we are evaluting the condition twice, but...there is a flaw in
 Sigil. '<span class="constant">self</span>' is sometimes stolen by other macros, like '<span class="constant">let</span>', that
 operate using the lambda operator, so we must be careful of this until
-I find a solution to this problem. <span class="comment">; FIXME
+I find a solution to this problem. See Appendix A for a discussion. <span class="comment">; FIXME
 </span>
 16) <span class="warning">xor - logical exclusive or</span>
 ------------------------------
@@ -1824,6 +1824,44 @@ Exercises 13 - A <span class="flyspell-duplicate-0002">Multi</span>-Core (Simula
 ================================================
 
 Ahoy.
+
+=========================================
+Appendix A - The '<span class="constant">self</span>' problem and '<span class="constant">let</span>'
+=========================================
+
+'<span class="constant">self</span>' is used to in recursion to call the currently executing
+function.  '<span class="constant">let</span>' is implemented by binding variables using an
+anonymous function in a '<span class="constant">lambda</span>'.  Using '<span class="constant">let</span>' therefore will
+obliterate the '<span class="constant">self</span>' of the currently executing function, therefore
+one cannot recurse inside of a '<span class="constant">let</span>'.  This is an issue.
+
+There are a number of possible solutions to this problem:
+
+1. create '<span class="constant">nlambda</span>' which doesn't bind '<span class="constant">self</span>' and use that to implement '<span class="constant">let</span>'
+2. rewrite '<span class="constant">let</span>' to not use a '<span class="constant">lambda</span>'
+3. make '<span class="constant">let</span>' a builtin that doesn't bind '<span class="constant">self</span>'
+4. something else I haven't thought of
+
+For 1, '<span class="constant">nlambda</span>' should be simple enough to implement in Sigil and I
+think it's meaning is clear.  the 'n' in '<span class="constant">nlambda</span>' means, 'no
+recursion' or '<span class="constant">non-recursive</span>', but one has to wonder just how many
+times one is going to need to use it outside of just implmenting
+'<span class="constant">let</span>'.
+
+For 2, this may be a solution, but it would make the implementation of
+let more complicated and it would then have to be moved to later in
+the book for when the reader is ready to handle it.  Plus, it doesn't
+actually solve the problem, meaning we might just have to implement
+another solution (such as 1) as well later.
+
+For 3, we want to avoid adding builtins as much as possible, but this
+is an obvious and simple solution. Same issues as 2 as well, as in it
+doesn't solve the problem.
+
+And finally 4, some other idea.  I'll just think about this for a
+while and see what happens.
+
+For now, the most obvious of solutions is 1.
 
 --
 Copyright - 2016

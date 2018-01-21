@@ -10867,6 +10867,22 @@ if (typeof module !== 'undefined') {
 if (typeof module !== 'undefined') {
     module.exports.View = View;
 };
+if (typeof require !== 'undefined') {
+    Model = require('./px2').Model;
+}
+
+function extend (target, source) {
+  target = target || {};
+  for (var prop in source) {
+    if (typeof source[prop] === 'object') {
+      target[prop] = extend(target[prop], source[prop]);
+    } else {
+      target[prop] = source[prop];
+    }
+  }
+  return target;
+}
+
 var Sigil = new Model({
     type: "Lisp",
     init: function (options) {
@@ -10906,8 +10922,8 @@ var Sigil = new Model({
         }; 
 
 
-        env = $.extend(_env, env);
-        fenv = $.extend(_fenv, fenv);
+        env = extend(_env, env);
+        fenv = extend(_fenv, fenv);
         console.log(_env, _fenv, env, fenv);
         this.env = env;
         this.fenv = fenv;
@@ -11638,7 +11654,7 @@ var Sigil = new Model({
 
     exec: function (string) {
         var code = this.readFromString(string);
-        this.add($.extend(true, [], code));
+        this.add(extend(true, [], code));
         var result = this.eval(code);
         this.bset(['*', [ result, []]]);
         return this.printToString(result);
@@ -11718,7 +11734,9 @@ var Sigil = new Model({
     }
 });
 
-//module.exports = Sigil;
+if(typeof module !== 'undefined') {
+    module.exports = Sigil;
+}
 
 console.log("Lisp is available.");
 var Styles = {

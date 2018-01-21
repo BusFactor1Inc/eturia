@@ -1,0 +1,45 @@
+1
+100
+3.141516
+-3
+x
+abc
+x123
+123x
+a-longer-symbol
+|a symbol with spaces|
+; this is an example comment
+(+ 1 1)	; add 1 and 1
+1
+`1
+x
+`x
+(1 2 3)
+`(1 2 3)
+`()
+`(1)
+`(1 . ())
+`(1 2 3)
+`(1 2 3 . ())
+`(1 .2)
+`(x . y)
+`(1 2 . (3 . (4 . ())))
+(set `x 1)
+`(x 2 3)p
+`(,x 2 3)
+(set `x `(a b c))
+x
+`(x 1 2 3)
+`(,x 1 2 3)
+`(,@x 1 2 3)
+`(1 2 3 ,x)
+`(1 2 3 ,@x)
+`(1 2 3 . ,@x)
+(quote x)
+(quote (1 2 3))
+(set (quote x) 1)
+(quote ((unquote x) 2 3)
+(quote ((unquote-splice x) 2 3)
+(set (quote x) (quote (1 2 3)))
+(quote ((quote x) 2 3))
+(quote ((unquote-splice x) 2 3))

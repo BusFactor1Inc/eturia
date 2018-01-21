@@ -1,1 +1,2462 @@
-../lib/sigil/the-order-of-symbols.txt.html
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>the-order-of-symbols.txt,3</title>
+<meta name="generator" content="emacs 26.0.50.1; htmlfontify 0.21" />
+<style type="text/css"><!-- 
+body { font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #f5f5f5;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.default   { font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #f5f5f5;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.default a { font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #f5f5f5;  background: #333333;  font-size: 10pt;  text-decoration: underline; }
+span.type   { color: #9370db;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.type a { color: #9370db;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: underline; }
+span.keyword   { color: #20b2aa;  font-weight: 700;  font-family: Menlo;  font-stretch: normal;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.keyword a { color: #20b2aa;  font-weight: 700;  font-family: Menlo;  font-stretch: normal;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: underline; }
+span.warning   { color: #ff69b4;  font-weight: 700;  font-family: Menlo;  font-stretch: normal;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.warning a { color: #ff69b4;  font-weight: 700;  font-family: Menlo;  font-stretch: normal;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: underline; }
+span.string   { color: #ffa07a;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.string a { color: #ffa07a;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: underline; }
+span.comment   { color: #cd853f;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.comment a { color: #cd853f;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: underline; }
+span.comment-delimiter   { color: #cd853f;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: none; }
+span.comment-delimiter a { color: #cd853f;  font-family: Menlo;  font-stretch: normal;  font-weight: 500;  font-style: normal;  background: #333333;  font-size: 10pt;  text-decoration: underline; }
+ --></style>
+
+    <script type="text/javascript"><!--
+  // this function is needed to work around
+  // a bug in IE related to element attributes
+  function hasClass(obj)
+  {
+      var result = false;
+      if (obj.getAttributeNode("class") != null)
+      {
+          result = obj.getAttributeNode("class").value;
+      }
+      return result;
+  }
+
+  function stripe(id)
+  {
+      // the flag we'll use to keep track of
+      // whether the current row is odd or even
+      var even = false;
+
+      // if arguments are provided to specify the colors
+      // of the even & odd rows, then use the them;
+      // otherwise use the following defaults:
+      var evenColor = arguments[1] ? arguments[1] : "#fff";
+      var oddColor  = arguments[2] ? arguments[2] : "#ddd";
+
+      // obtain a reference to the desired table
+      // if no such table exists, abort
+      var table = document.getElementById(id);
+      if (! table) { return; }
+
+      // by definition, tables can have more than one tbody
+      // element, so we'll have to get the list of child
+      // &lt;tbody&gt;s
+      var tbodies = table.getElementsByTagName("tbody");
+
+      // and iterate through them...
+      for (var h = 0; h < tbodies.length; h++)
+      {
+          // find all the &lt;tr&gt; elements...
+          var trs = tbodies[h].getElementsByTagName("tr");
+
+          // ... and iterate through them
+          for (var i = 0; i < trs.length; i++)
+          {
+              // avoid rows that have a class attribute
+              // or backgroundColor style
+              if (! hasClass(trs[i]) &&
+                  ! trs[i].style.backgroundColor)
+              {
+                  // get all the cells in this row...
+                  var tds = trs[i].getElementsByTagName("td");
+
+                  // and iterate through them...
+                  for (var j = 0; j < tds.length; j++)
+                  {
+                      var mytd = tds[j];
+
+                      // avoid cells that have a class attribute
+                      // or backgroundColor style
+                      if (! hasClass(mytd) &&
+                          ! mytd.style.backgroundColor)
+                      {
+                          mytd.style.backgroundColor =
+                            even ? evenColor : oddColor;
+                      }
+                  }
+              }
+              // flip from odd to even, or vice-versa
+              even =  ! even;
+          }
+      }
+  }
+
+  function toggle_invis( name )
+  {
+      var filter =
+        { acceptNode:
+          function( node )
+          { var classname = node.id;
+            if( classname )
+            { var classbase = classname.substr( 0, name.length );
+              if( classbase == name ) { return NodeFilter.FILTER_ACCEPT; } }
+            return NodeFilter.FILTER_SKIP; } };
+      var walker = document.createTreeWalker( document.body           ,
+                                              NodeFilter.SHOW_ELEMENT ,
+                                              filter                  ,
+                                              false                   );
+      while( walker.nextNode() )
+      {
+          var e = walker.currentNode;
+          if( e.style.display == "none" ) { e.style.display = "inline"; }
+          else                            { e.style.display = "none";   }
+      }
+  }
+--> </script>
+  </head>
+  <body onload="stripe('index'); return true;">
+
+<pre><span class="comment-delimiter">;; </span><span class="comment">-*- mode: lisp -*-
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">WORK IN PROGRESS
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span><span class="comment-delimiter">;; </span><span class="comment">Questions, comments or problems? Email root@busfactor1.ca
+</span><span class="comment-delimiter">;;</span><span class="comment">
+</span>
+========================================================================
+========================================================================
+
+                        ======================
+                        |The Order of Symbols|
+                        ======================
+
+          <span class="string">&quot;...there once existed a language which perfectly
+              and unambiguously expressed the essence of
+                 all possible things and concepts...&quot;</span>
+
+                       -- Umberto Eco [6TSFTPL]
+
+        <span class="string">&quot;Most good programmers do programming not because they
+          expect to get paid or get adulation by the public,
+                  but because it is fun to program.&quot;</span>
+
+                          -- Linus Torvalds
+
+            <span class="string">&quot;Computers are good at following instructions,
+                    but not at reading your mind.&quot;</span>
+
+                       -- Donald Knuth [7TAOCP]
+
+========================================================================
+========================================================================
+
+Introduction
+------------
+
+Lisp as a computer programming language is as Latin is to English or
+modern day Italian.  It is the second oldest high level computer
+language still in use, invented (or found) in the 1950's by John
+McCarthy and is the most powerful and expressive programming language
+there is [citation needed].  Lisp comes in many shapes and forms and
+Sigil, the Lisp used in Eturia, is no different.  It is a 'dialect' of
+Lisp, as Lisp is more of an idea than a concrete thing, with all
+dialects looking similar, but behaving, sometimes, very differently.
+And like any dialect of a language, it is malleable and modifiable,
+something which I will show you though this document we build our
+language from base principals (axioms, here known as builtins).
+
+The following is meant to be both an introduction and reference to
+Sigil.  You will find an explanation of syntax, followed by a brief
+explanation of Eturia, the Listener and Window Manager, followed by
+the list of builtins, and then a set of examples that can be followed
+along and typed into the Eturia Listener, which can be found at:
+
+    http://busfactor1.ca/bin/eturia/client/dev.html
+
+This paper is intended to follow the ideas of Guy Steele in his
+talk/paper 'Growing a language':
+
+    https://www.cs.virginia.edu/~evans/cs655/readings/steele.pdf
+    https://www.youtube.com/watch?v=_ahvzDzKdB0
+
+All terms in the following text are (hopefully) defined before use.
+
+This material is the result of many years of study and research, of
+both myself and others.  It's opinions are all mine, built upon
+those I have admired in the past, knowingly or unknowingly. I hope
+you find the material as useful and entertaining as I have writing it
+down and preparing it.
+
+Burton Samograd &lt;root@busfactor1.ca&gt;
+Homepage: http://busfactor1.ca/old/old
+Facebook: https://www.facebook.com/KRUHFT-17546219842
+Twitter:  https://twitter.com/kruhft (@kruhft)
+
+Intended Audience
+-----------------
+
+This work is intended for both beginners and professionals alike.  For
+beginners, if they work through the exercises, should gain an
+understanding for all of the code and exercises given, with a little
+thought.  Professionals may benefit in the same way, finding the
+material refreshing over the typical code chaos one might see at work,
+while learning something new and, hopefully, interesting: programming
+language design and implementation.
+
+The main desire of the reader should be to learn to program.  This is
+not a traditional programming course in any way and will teach you
+little on how to get a job as a programmer.  But knowing what this
+course will teach you will benefit you for as long as you act as a
+programmer during your life [citation needed].
+
+This course assumes a basic understanding of arithmetic and algebra,
+along with the idea that a computer is something that simply follows
+the instructions that they are told, nothing more.  As Picasso
+noted, <span class="string">&quot;Computers...they can only give you answers.&quot;</span>
+
+
+Eturia
+------
+
+Eturia is a (simulated) computer for Computer Science Education.  It
+is designed to be simple and limited, perfect for teaching and
+learning with few distractions.  Although probably unfamiliar at
+first, it's spartan interface can be quickly learned by any newcomer
+with its few and simple commands. Finally, it runs in a Web browser,
+so it is accessable from any location with an internet connection.
+
+The current version of Eturia can always be found at:
+
+    http://busfactor1.ca/bin/eturia
+
+along with videos and other information about the project.
+
+
+The Listener
+------------
+
+There is no copy/pasting in Eturia.  To enter the code, it must be
+typed manually into the 'Listener'.  This way the code will go through
+your fingers and your brain, giving you a better chance of learning
+the concepts as you go along and build your own language in Sigil.
+
+This 'Listener' is like VI, but a bit different[1]:
+
+i - insert mode, allows you to type overwrite text in the buffer
+? - command mode, allows you to execute the following commands
+    and break out of insert mode
+hjkl - move the cursor left, down, up, or right (h,j,k,l)
+e - evaluate lisp code
+z - clear the screen
+np - previous/next in history (experimental)
+
+To type characters use 'insert' (overwrite) mode by pressing 'i'. You
+can tell when you are in 'insert' mode by the GREEN border around the
+console.  To 'escape' out of insert mode, press '?'.
+
+REMEMBER TO CLICK IN THE WINDOW TITLE BEFORE TRYING TO TYPE IN THE
+LISTENER.
+
+[1] VI and Emacs are programmers text editors.  There has been a
+decades long debate over the merits and benfits of using each.  Emacs
+is a modern day Lisp Machine, VI is akin to a Unix machine.  I chose a
+VI-like editor interface for Eturia due to the simplicity of
+implementing it.
+
+Window Manager
+--------------
+
+    - click in title bar to focus window
+    - click and drag in title bar to move window
+    - middle click in title bar to remove window
+
+======
+Syntax
+======
+
+The following is the syntax of Sigil:
+
+Numbers - a string of digits
+----------------------------
+
+A number can be used with mathematical functions and should be
+familiar to all that have taken introductory mathematics.
+
+Examples:
+
+    1 is a number
+    100 is a number
+    3.141516 is a number
+    -3 is a number
+
+
+Symbol - a string of characters
+-------------------------------
+
+A symbol is a string of characters not containing '(', or ')'.
+
+Examples:
+
+    x is a symbol
+    abc is a symbol
+    x123 is a symbol
+    123x is a symbol
+    a-longer-symbol is a symbol
+    |a symbol with spaces| is a symbol
+
+
+Comments - a note to your self
+------------------------------
+
+Comments can be important in programs as they are used to explain the
+purpose of the code you are writing.
+
+Examples:
+
+    <span class="comment">; this is a comment
+</span>
+
+Quoting - stops evaluation
+--------------------------
+
+Evaluation means to 'get the value of something'.  Sometimes you want
+this to not happen and just get 'something'.  Quoting is used for that
+and is an essential part of the following examples.
+
+Examples:
+1 =&gt; 1
+`1 =&gt; 1
+x =&gt; <span class="comment">; Error, undefined symbol
+</span>`x =&gt; x
+(1 2 3) =&gt; <span class="comment">; Error, undefined function: 1
+</span>`(1 2 3) =&gt; (1 2 3)
+
+
+List - build lists
+------------------
+
+Besides 'atoms' (numbers and symbols), Sigil also has 'lists'.  A list
+is a collection of atoms or other lists, also known as an
+'S-expression' for historical reasons.
+
+Examples:
+
+    `() =&gt; ()<span class="comment">; the empty list
+</span>    `(1) =&gt; (1) <span class="comment">; a 'proper' list containing the digit 1
+</span>    `(1 . ()) =&gt; (1) <span class="comment">; a 'proper' list containing the digit 1
+</span>    `(1 2 3) =&gt; (1 2 3) <span class="comment">; is a 'proper' list of the digits 1 2 3
+</span>    `(1 2 3 . ()) =&gt; (1 2 3) <span class="comment">; is a 'proper' list of the digits 1 2 3
+</span>    `(1 . 2) =&gt; (1 . 2) <span class="comment">; is an 'improper' list of the digits 1 and 2
+</span>    `(x . y) =&gt; (x . y) <span class="comment">; is an 'improper' list of the symbols x and y
+</span>    `(1 2 . (3 . (4 . ()))) =&gt; (1 2 3 4)
+
+A proper list has () as its last element, and it is not normally
+shown.  An improper list does not have () as it's last element, and
+this is shown by preceeding the last element with a dot.
+
+Note: even the code in Sigil is lists.  This is a very important
+concept to remember, as Sigil is all about building and generating
+code using the functions we are going to be defining in the following
+chapters.
+
+
+Comma ',' - evaluate inside of a quote
+--------------------------------------
+
+Sometimes you want to quote a list, but also want to include the
+values of other symbols inside of it.  To perform this action, you use
+the comma operator inside of a quoted list.
+
+Examples:
+
+    (set `x 1) =&gt; 1
+    x =&gt; 1
+    `(x 2 3) =&gt; (x 2 3)
+    `(,x 2 3) =&gt; (1 2 3)
+
+
+Commaat ',@' - evaluate a list inside of a quote, and splice it
+----------------------------------------------------------------
+
+Other times when building code, you want to embed the contents of a
+list inside of a quoted list.  This is done with the commaat (,@)
+operator inside of a quoted list.
+
+Examples:
+
+    (set `x `(a b c))
+    x =&gt; (a b c)
+    `(x 1 2 3) =&gt; (x 1 2 3)
+    `(,x 1 2 3) =&gt; ((a b c) 1 2 3)
+    `(,@x 1 2 3) =&gt; (a b c 1 2 3)
+    `(1 2 3 ,x) =&gt; (1 2 3 (a b c))
+    `(1 2 3 ,@x) =&gt; (1 2 3 a b c)
+    `(1 2 3 . ,@x) =&gt; <span class="comment">; error, no splicing after a dot
+</span>
+
+NOTE: SYMBOLS AND NUMBERS ARE ALSO KNOWN AS ATOMS.
+
+ -------------------------------------------------
+| Booleans - () is false, everything else is true |
+ -------------------------------------------------
+
+As in most languages, Sigil has the idea of booleans, true and false.
+In this case, the empty list, () is 'false' and everything else is
+'true'.  A special symbol 't' is defined to represent truth when
+needed, but is not required to be used.
+
+Functions that are meant to return either a true or false value are
+known as 'predicates'.
+
+Builtins
+========
+
+The following are the builtin commands for Sigil.  A builtin is a
+function that is available by default in the language and is always
+available.
+
+Note: in the Examples, '=&gt;' means 'evaluates to' or 'the value of'.
+
+
+0) <span class="warning">quote, unquote, unquote-splice - control evaluation</span>
+------------------------------------------------------
+
+Rather than use the shorthands described above, you can also call
+'quote', 'unquote' and 'unquote-splice' directly to build lists and
+control evaluation within a quoted list.
+
+Examples:
+
+    1 =&gt; 1 <span class="comment">; 'give me the value of' 1
+</span>    (quote 1) =&gt; 1 <span class="comment">; 'give me' 1
+</span>    x =&gt; <span class="comment">; 'give me the value of' x, error, as x has no value
+</span>    (quote x) =&gt; x <span class="comment">; 'give me' x
+</span>    (quote (1 2 3)) =&gt; (1 2 3) <span class="comment">; give me the list of digits 1, 2 and 3
+</span>
+    <span class="comment-delimiter">;; </span><span class="comment">longhand evaluation with ',' and splicing with ',@'
+</span>    (set (quote x) 1) =&gt; 1 <span class="comment">; give x the value 1
+</span>    (quote ((unquote x) 2 3) =&gt; (1 2 3) <span class="comment">; evaluate inside of quoted list as with ','
+</span>    (quote ((unquote-splice x) 2 3) =&gt; <span class="comment">; error, cannot unquote-splice a non-list
+</span>    (set (quote x) (quote (1 2 3))) =&gt; (1 2 3) <span class="comment">; give x a value that is a list
+</span>    (quote ((quote x) 2 3)) =&gt; ((1 2 3) 2 3) <span class="comment">; unquote x with as with ','
+</span>    (quote ((unquote-splice x) 2 3)) =&gt; (1 2 3 2 3) <span class="comment">; splice the list as with ',@'
+</span>
+Normally you would use the shorthands.
+
+
+1) <span class="warning">atom - a predicate to test if its argument is an atom</span>
+--------------------------------------------------------
+
+Everything in Sigil is either an atom (symbol, number, or ()) or a
+list.
+
+Examples:
+
+    (atom t) =&gt; t
+    (atom ()) =&gt; t
+    (atom `x) =&gt; t
+    (atom 1) =&gt; t
+    (atom `(1 2 3)) =&gt; ()
+
+2) <span class="warning">eq - equality</span>
+----------------
+
+Atoms can be tested for equality using 'eq'.
+
+Examples:
+
+    (eq t t) =&gt; t
+    (eq () ()) =&gt; t
+    (eq t ()) =&gt; ()
+    (eq `x `x) =&gt; t
+    (eq `x `y) =&gt; ()
+    (eq 1 1) =&gt; t
+    (eq 1 2) =&gt; ()
+    (eq `(1 2 3) `(1 2 3)) =&gt; () <span class="comment">; notice! see 'equal', below.
+</span>
+3) <span class="warning">cons - create a new list cell</span>
+--------------------------------
+
+A cons cell is a 2 element cell that has a head slot and an a tail
+slot.  The 'cons' function allocates one of these cells and assigns
+the first argument to the head slot and the second argument to the
+tail slot.
+
+Examples:
+
+    (cons 1 ()) =&gt; (1) <span class="comment">; build a proper list with () at the tail
+</span>    (cons `x ()) =&gt; (x) <span class="comment">; build another proper list
+</span>    (cons () ()) =&gt; (()) <span class="comment">; again, but with () at the head
+</span>    (cons `x `y) =&gt; (x . y) <span class="comment">; notice! an improper list
+</span>    (cons 1 2) =&gt; (1 . 2) <span class="comment">; and again
+</span>    (cons (1 (cons 2 ()))) =&gt; (1 2) <span class="comment">; making a proper list
+</span>
+4) <span class="warning">car - return the first element of a list</span>
+-------------------------------------------
+
+Take a list and return the head slot of its first cell.
+
+Examples:
+
+    (car `(1 2 3)) =&gt; 1
+    (car `((1 2 3) 2 3)) =&gt; (1 2 3)
+    (car ()) =&gt; ()
+    (car `x) =&gt; <span class="comment">; Error
+</span>    (car 1) =&gt; <span class="comment">; Error
+</span>
+5) <span class="warning">cdr - return everything but the first element of a list</span>
+----------------------------------------------------------
+
+Take a list and return the tail slot of its first cell.
+
+Examples:
+
+    (cdr `(1 2 3)) =&gt; (2 3)
+    (cdr `((1 2 3) 2 3)) =&gt; (2 3)
+    (cdr ()) =&gt; ()
+    (cdr `x) =&gt; <span class="comment">; Error
+</span>    (cdr 1) =&gt; <span class="comment">; Error
+</span>
+6) <span class="warning">cond - conditional statement</span>
+-------------------------------
+
+Cond is used to make decisions on what statements to execute.  It goes
+through it's arguments, executing each test, until one of them returns
+true (not ()), after which it then executes the statements following
+the test and returns the value of the last one.  You will often set
+'t' as the last test in a cond, meaning to always execute that set of
+statements if none of the previous tests pass.
+
+Examples:
+
+    (<span class="keyword">cond</span> (t 1)) =&gt; 1
+    (<span class="keyword">cond</span> (() 1)) =&gt; ()
+    (<span class="keyword">cond</span> ((t 1) (t 2))) =&gt; 1
+    (<span class="keyword">cond</span> ((() 1) (t 2))) =&gt; 2
+    (<span class="keyword">cond</span> ((() 1) (() 2) (t 3))) =&gt; 3
+    (<span class="keyword">cond</span> ((() 1) (t 2) (t 3))) =&gt; 2
+    (set `x ())
+    (set `y t)
+    (<span class="keyword">cond</span>
+      (x `shouldnt-get-here)
+      (y `should-get-here)
+      (t `wont-get-here)) <span class="warning">=&gt; should-get-here</span>
+
+7) <span class="warning">set - assign a symbol a value (variables)</span>
+--------------------------------------------
+
+Sometimes it is convenient to create a shortcut to certain values,
+known as a variable. 'set' can be used to create or change the values
+of symbols in the variable namespace.
+
+Examples:
+
+    (set `x 1) =&gt; 1 <span class="comment">; set single values
+</span>    x =&gt; 1
+    (set `x 2) =&gt; 2
+    x =&gt; 2
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    x =&gt; (1 2 3)
+    (set `x 1 `y 2 `z 3) =&gt; 3 <span class="comment">; set multiple values at once
+</span>
+8) <span class="warning">lambda - create a function</span>
+-----------------------------
+
+A function is a set of bound variables and a series of statements,
+known as the body, that can be 'called', which assigns values to the
+variables and executes the statements of the body sequentially, until
+the value of the last evaluated expression is returned.
+
+Examples:
+
+    (<span class="keyword">lambda</span> (x) x) =&gt; (<span class="keyword">lambda</span> (x) x)
+    ((<span class="keyword">lambda</span> (x) x) 1) =&gt; 1 <span class="comment">; call the function immediately
+</span>    (set `x 1) =&gt; 1
+    ((<span class="keyword">lambda</span> (x) (+ x x)) 2) =&gt; 4 <span class="comment">; x is bound to 2 during the call
+</span>    x =&gt; 1 <span class="comment">; the value of x was not changed by calling the function
+</span>    ((<span class="keyword">lambda</span> (x) (set x 2))) <span class="comment">; set x in the function
+</span>    x =&gt; 1 <span class="comment">; the value of x is still unchanged
+</span>    ((<span class="keyword">lambda</span> (x y) (* x y)) 2 3) =&gt; 6 <span class="comment">; x is bound to 2, y is bound to 3
+</span>    (set `double (<span class="keyword">lambda</span> (x) (+ x x))) =&gt; ... <span class="comment">; declare a named function
+</span>    (double 2) =&gt; 4 <span class="comment">; call declared function
+</span>
+We use the keyword 'lambda' to declare functions because of Lisp's
+close ties to what is known as the <span class="string">&quot;Lambda Calculus&quot;</span>, discovered by
+Alonzo Church in the 1930's.
+
+
+9) <span class="warning">alambda - create an anonymous, recursive function</span>
+----------------------------------------------------
+
+Exactly the same as to lambda, but binds the variable named by 'self'
+to the defined function in its body, allowing for anonymous recursion.
+The 'a' in 'alambda' stands for 'anamorphic', a topic which is
+discussed later in this book.
+
+<span class="string">&quot;To iterate is human, to recurse divine.&quot;</span>
+  -- L. Peter Deutsch
+
+Recursion is a fundamental concept used for looping, or doing
+something more than once in Sigil.  To count the number of elements in
+a list, one can break the problem into counting the first element of
+the list, which is always 1, and adding that to the number of elements
+in the rest of the list.  This can be done in a function by calling
+itself, or recursing, with the rest of the list until the empty list
+is found, meaning we are done and can return the computed length by
+adding all of the 1's together.
+
+Examples:
+
+    ((alambda self (l n) <span class="comment">; return the length of a list, recursively
+</span>       (<span class="keyword">cond</span>
+         ((cdr l)  <span class="comment">; if there are still elements in the list
+</span>          (self (cdr l) (+ 1 n))) <span class="comment">; recurse with the tail of the list,
+</span>                                  <span class="comment">; and increment accumulator
+</span>         (t <span class="comment">; there are no elements left in the list
+</span>          n))) <span class="comment">; return accumulator
+</span>      `(a b c) 0) <span class="warning">=&gt; 3 </span>
+
+    ((alambda self (l) <span class="comment">; return the last element of the list, recursively
+</span>       (<span class="keyword">cond</span>
+         ((null (cdr l)) <span class="comment">; if the next element is ()
+</span>          (car l)) <span class="comment">; return the head of the list
+</span>         (t <span class="comment">; the next element is not ()
+</span>           (self (cdr l))))) <span class="comment">; recurse down the list
+</span>     `(1 2 3)) <span class="warning">=&gt; 3</span>
+
+Recursion may be confusing at first.  It is highly recommended you
+take the time to step through the above examples so you can gain a
+solid understanding of recursion and how it works.
+
+
+10) <span class="warning">apply - call a function with a list of arguments</span>
+----------------------------------------------------
+
+Sometimes you want to call a function with a prepared list of
+arguments.  The reason for this will become more apparent later as we
+work through the examples and projects.
+
+Examples:
+
+    (apply (<span class="keyword">lambda</span> (x) (+ x x)) `(1)) =&gt; 2
+    (apply (<span class="keyword">lambda</span> (x y z) (+ x y z)) `(1 2 3)) =&gt; 6
+    (apply double `(2)) =&gt; 4 <span class="comment">; using previously defined function in 9)
+</span>
+11) <span class="warning">values - return multiple values from a function</span>
+---------------------------------------------------
+
+For when you want to return more than one value from a function.
+Notice how the multiple values are printed after evaluating a function
+returning them in the listener.
+
+Examples:
+
+    (values 1) =&gt; 1
+    (values 1 2) =&gt; 1
+    2
+    ((<span class="keyword">lambda</span> (x) (values x)) 1) =&gt; 1
+    ((<span class="keyword">lambda</span> (x y) (values x y)) 1 2) =&gt; 1
+    2
+
+
+12) <span class="warning">bind - bind multiple values to symbols</span>
+------------------------------------------
+
+When a function returns more than one value, you can 'bind' the
+returned values to variables and execute the statements in the body
+using these bindings.
+
+Examples:
+
+    (set `multiple-values (<span class="keyword">lambda</span> (x y) (values x y))) =&gt; ...
+    (bind (a b) (multiple-values 1 2) (cons a b)) =&gt; (1 . 2)
+
+
+13) <span class="warning">define-macro - define a macro</span>
+---------------------------------
+
+Macros are functions that return code that is executed immediately
+after.  This is in contrary to regular functions that can return
+anything. Using macros we can build the our language from the
+primitives described in this section.
+
+Macros are a powerful tool that give Lisp it's power and are the
+reason for its form.  There are many examples that follow that use
+define-macro, so study them carefully to understand it's use.
+
+
+14) <span class="warning">+ - addition, sum</span>
+---------------------
+
+Mathematical addition, or sum with more than 2 arguments.  Also used
+to concatenate symbols.
+
+Examples:
+
+    (+ 1 2) =&gt; 3 <span class="comment">; arithmetical addition of numbers
+</span>    (+ 1 2 3) =&gt; 6 <span class="comment">; sum of multiple numbers
+</span>    (+ `x `y) =&gt; xy <span class="comment">; concatenation of symbols
+</span>
+
+15) <span class="warning">- - subtraction, difference</span>
+-------------------------------
+
+Mathematical subtraction, or difference with more than 2 arguments.
+
+    (- 1 2) =&gt; -1 <span class="comment">; arithmetical subtraction
+</span>    (- 1 2 3) =&gt; -4 <span class="comment">; difference of multiple numbers
+</span>
+
+16) <span class="warning">* - multiply, product</span>
+-------------------------
+
+Mathematical multiply, or product with more than 2 arguments.
+
+    (* 1 2) =&gt; 2 <span class="comment">; arithmetical multiplication
+</span>    (* 1 2 3) =&gt; 6 <span class="comment">; product of multiple numbers
+</span>
+
+17) <span class="warning">/ - divide, quotient</span>
+------------------------
+
+Mathematical divide, or quotient with more than 2 arguments.
+
+Examples: 
+
+    (/ 1 2) =&gt; .5 <span class="comment">; arithmetical division
+</span>    (/ 1 2 3) =&gt; 0.1666... <span class="comment">; quotient of multiple numbers
+</span>
+
+18) <span class="warning">% - remainder, mod</span>
+----------------------
+
+Mathematical remainder, or 'mod'.
+
+Examples:
+
+    (% 5 2) =&gt; 1 <span class="comment">; 1 is the remainder of dividing 5 by 2
+</span>
+
+19) <span class="warning">env - return the current environment</span>
+
+Variables are defined in the 'variable namespace'.  env is used to
+return this namespace for inspection and modification.  If env is
+called with an argument, it will set the current 'variable namespace'
+to the argument given.
+
+Examples:
+
+     (env) =&gt; ((t . t) ...) <span class="comment">; return the current environment
+</span>     (env (env)) =&gt; ... <span class="comment">; set the current environment
+</span>
+
+20) <span class="warning">fenv - return the current function environment</span>
+
+Functions are defined in the 'function namespace'.  fenv is used to
+return this namespace for inspection and modification.  If fenv is
+called with an argument, it will set the current 'variable namespace'
+to the argument given.
+
+Examples:
+
+    (fenv) =&gt; ((set . builtin) (cons . builtin) ...)
+    (fenv (fenv)) =&gt; ... <span class="comment">; set the current function environment
+</span>
+
+21) <span class="warning">save - save the current environments</span>
+----------------------------------------
+
+The environment where you store your variables and macros can be saved
+to local storage in your browser using the 'save' command.
+
+(save) =&gt; <span class="comment">; default /core is saved
+</span>(save /backup) =&gt; <span class="comment">; saved to /backup in local storage
+</span>
+
+22) <span class="warning">load - load a core into the current environment</span>
+
+The environment can be loaded from local storage using the 'load' command.
+
+THIS FEATURE IS CURRENTLY NOT IMPLEMENTED.
+
+
+23) <span class="warning">me - macro expand</span>
+---------------------
+
+Expand macros in the code given as an argument.  Helpful for
+debugging.
+
+Examples:
+
+    (<span class="keyword">define-macro</span> cadr (l) `(car (cdr ,l)) <span class="comment">; define the macro cadr
+</span>    (me (cadr `(1 2 3))) =&gt; (car (cdr `(1 2 3))) <span class="comment">; expand it
+</span>
+
+24) <span class="warning">eval - evaluate an expression</span>
+---------------------------------
+
+Sometimes you have a code in a form that you wish to evaluate.  You
+can do this by calling eval.
+
+Examples:
+
+    `(+ 1 2) =&gt; (+ 1 2) <span class="comment">; unevaluated code
+</span>    (eval `(+ 1 2)) =&gt; 3 <span class="comment">; calling eval on it gives the result
+</span>
+25) <span class="warning">=&gt; - evaluate JavaScript code</span>
+---------------------------------
+
+Used to execute JavaScript code that can be built by concatenating symbols.
+
+Examples:
+
+    (=&gt; |1 + 1|) =&gt; 2
+    (=&gt; |console.log(&quot;Testing&quot;)|) =&gt; <span class="comment">; prints Testing in the JavaScript console
+</span>
+This builtin allows for the interaction between Sigil and the
+underlying web browser. It is an advanced operation that will be used
+to build Eturia as a Lisp Machine from within Sigil itself.  Eturia is
+written in JavaScript, but the goal of the system is to modify the
+JavaScript code as little as possible from outside of it.
+
+26) <span class="warning">split - split an atom</span>
+-------------------------
+
+Used to break a symbol atom into a list of symbol pieces.  Takes an
+optional argument that specifies where to perform the split in the atom.
+
+Examples:
+
+    (split `a-long-atom) =&gt; (a long atom) <span class="comment">; default: '-'
+</span>    (split `a/long/atom `/) =&gt; (a long atom) <span class="comment">; specify: '/'
+</span>
+
+========================================================================
+========================================================================
+
+                           ================
+                           |Basic Training|
+                           ================
+
+
+             <span class="string">&quot;...an individual's thoughts and actions are
+                    determined by the language...&quot;</span>
+
+                    -- The Sapir-Whorf Hypothesis
+   
+            <span class="string">&quot;Lisp is a programmable programming language.&quot;</span>
+
+                           -- John Foderaro
+
+                  <span class="string">&quot;Talk is cheap. Show me the code.&quot;</span>
+
+                          -- Linus Torvalds
+
+
+========================================================================
+========================================================================
+
+
+The following exercises build upon the primitive builtins defined
+previously and are meant to be typed into the Eturia 'Listener'
+console.  The 'Examples' can be used as test cases to ensure the
+correctness of your inputs.
+
+0) <span class="warning">first, second, third, rest, ... - shortcuts</span>
+----------------------------------------------
+
+These first code examples show the most basic of macro, the shortcut.
+
+(<span class="keyword">define-macro</span> first (x)
+  `(car ,x))
+
+(<span class="keyword">define-macro</span> second (x)
+  `(car (cdr ,x)))
+
+(<span class="keyword">define-macro</span> third (x)
+  `(car (cdr (cdr ,x))))
+
+(<span class="keyword">define-macro</span> rest (x)
+  `(cdr ,x))
+
+(<span class="keyword">define-macro</span> caar (x)
+  `(car (car ,x)))
+
+(<span class="keyword">define-macro</span> cadr (x) <span class="comment">; same a second
+</span>  `(car (cdr ,x)))
+
+(<span class="keyword">define-macro</span> cdar (x)
+  `(cdr (car ,x)))
+
+(<span class="keyword">define-macro</span> cddr (x)
+  `(cdr (cdr ,x)))
+
+As you can see, the above macros return non-evaluated 'code'.  This
+'code' is then executed immediately after the macro is called with
+arguments, as the following examples show.
+
+Examples:
+
+    (first `(1 2 3)) =&gt; 1 <span class="comment">; expands to (car `(1 2 3))
+</span>    (me (first `(1 2 3))) =&gt; (car `(1 2 3))
+    (second `(1 2 3)) =&gt; 2 <span class="comment">; expands to (car (cdr `(1 2 3)))
+</span>    (me (second `(1 2 3))) =&gt; (car (cdr `(1 2 3)))
+    (third `(1 2 3)) =&gt; 3 <span class="comment">; expands to (car (cdr (cdr `(1 2 3))))
+</span>    (me (third `(1 2 3))) =&gt; (car (cdr (cdr `(1 2 3))))
+    (rest `(1 2 3)) =&gt; (2 3) <span class="comment">; expands to (cdr `(1 2 3))
+</span>    (me (rest `(1 2 3))) =&gt; (cdr `(1 2 3))
+    (caar `((1 2 3) 2 3)) =&gt; 1
+    (cdar `((1 2 3) 2 3)) =&gt; (2 3)
+    (cadr `(1 (1 2 3) 2 3)) =&gt; (1 2 3)
+    (cddr `(1 2 3)) =&gt; (3)
+    
+The final 4 shortcuts above show how the names 'car' and 'cdr' can be
+combined into terse, longer combinations to allow for selection into
+more complex list structures.
+
+Spend some time to fully understand what is happening here when these
+macros are defined and run.
+
+Exercise: write 'fourth', and 'fifth'.
+
+    (fourth `(1 2 3 4 5 6)) =&gt; 4
+    (fifth `(1 2 3 4 5 6)) =&gt; 5
+
+
+1) <span class="warning">if - tradional conditional</span>
+-----------------------------
+
+cond is a general purpose conditional, but sometimes it can be clearer
+to use more a traditional conditional construct known as 'if'.  It
+takes a test, evaluates it and if it is true, runs the second
+statement, and when not, it runs the second statement.
+
+(<span class="keyword">define-macro</span> if (test true false)
+  `(<span class="keyword">cond</span>
+     (,test ,true) <span class="comment">; check test, evaulate true if not ()
+</span>     (t ,false)))  <span class="comment">; else, evaluate false
+</span>    
+Examples: 
+
+    (<span class="keyword">if</span> t 1 2) =&gt; 1
+    (<span class="keyword">if</span> () 1 2) =&gt; 2
+    (<span class="keyword">if</span> (eq t t) 1 2) =&gt; 1
+    (<span class="keyword">if</span> (eq t ()) 1 2) =&gt; 2
+
+
+2) <span class="warning">when - single branch conditional</span>
+-----------------------------------
+
+Sometimes you don't need both branches of an if statement and just
+want to perform and action when the test is true.  This is when you
+use when.  This macro makes use of <span class="type">&amp;body</span> in the argument list, which
+means to take all of the arguments following as a list and bind them
+to the variable name following <span class="type">&amp;body</span> in the argument list.
+
+(<span class="keyword">define-macro</span> when (test <span class="type">&amp;body</span> body)
+  `(<span class="keyword">cond</span>
+     (,test ,@body)))
+
+Examples: 
+
+    (<span class="keyword">when</span> t 1) =&gt; 1
+    (<span class="keyword">when</span> () 1) =&gt; ()
+    (<span class="keyword">when</span> (eq t t) 1) =&gt; 1
+    (<span class="keyword">when</span> (eq t ()) 1) =&gt; ()
+
+
+3) <span class="warning">reverse - reverse a list</span>
+---------------------------
+
+Reverse a list by building a new list in opposite order using
+cons'ing.  Building a list this way is an important idiom to
+understand, and thankfully this function is quite simple because the
+lists built using cons'ing are in 'reverse' order, that is, items are
+added to the front rather than the back of the list.
+
+(<span class="keyword">define-macro</span> reverse (l)
+  `((alambda self (l2 a) <span class="comment">; an anonymous function
+</span>      (<span class="keyword">if</span> l2 <span class="comment">; if l2 is not null
+</span>          (self (cdr l2) (cons (car l2) a)) <span class="comment">; recurse
+</span>          a)) <span class="comment">; else return a, the accumlator
+</span>    ,l ())) <span class="comment">; call the anonymous function immediately
+</span>
+Examples: 
+
+    (reverse `(1 2 3)) =&gt; (3 2 1)
+    (reverse `((1 2 3) a b c)) =&gt; (c b a (1 2 3))
+
+Exercises:
+
+    1. Will reverse work with improper lists?  Why not?
+
+
+4) <span class="warning">map - build a list by running a function over another list</span>
+-------------------------------------------------------------
+
+'map' is what is known as a higher order function, that is, one which
+takes a function as an argument.  In this case the function given is
+'run over' the second argument, a list. The function is called with
+every element of the list, and a new list is built using the results.
+
+(<span class="keyword">define-macro</span> map (f l)
+  `((alambda self (l2 a) <span class="comment">; declare an anonymous function
+</span>      (<span class="keyword">if</span> l2 <span class="comment">; if l2 is not null
+</span>          (self (cdr l2) (cons (,f (car l2)) a)) <span class="comment">; recurse
+</span>          (reverse a))) <span class="comment">; return the acummulator, reversed
+</span>    ,l ())) <span class="comment">; call the anonymous function, evaluating l
+</span>            <span class="comment">; and passing () for a
+</span>
+Examples:
+
+    (map (<span class="keyword">lambda</span> (x) (+ x x)) `(1 2 3)) =&gt; (2 4 6)
+    (map car `((1 a) (2 b) (3 c))) =&gt; (1 2 3)
+    (map second `((1 a) (2 b) (3 c))) =&gt; (a b c)
+
+Exercises:
+
+    1. Write a map statement that takes a list `(1 2 3) and
+       returns `(3 6 9).
+
+5) <span class="warning">ls - show the current environment</span>
+------------------------------------
+
+'env' is a useful function but it's output can be a bit verbose.  'ls'
+is a macro that returns you just the variables that are defined in the
+environment but not their values, making for less output to that you
+have to parse mentally.
+
+(<span class="keyword">define-macro</span> ls ()
+  `(map car (env)))
+
+Examples:
+
+    (ls) =&gt; (t nil)
+    (set `x 1) =&gt; 1
+    (ls) =&gt; (t nil x)
+
+5) <span class="warning">lsf - show the current function environment</span>
+----------------------------------------------
+
+Like 'ls', but shows the names of the functions and macros that have
+been defined.
+
+(<span class="keyword">define-macro</span> lsf ()
+  `(map car (fenv)))
+
+Examples:
+
+    (lsf) =&gt; (atom null ...  ls lsf)
+    (<span class="keyword">define-macro</span> f (x) x) =&gt; (macro (x) x)
+    (lsf) =&gt; (atom null ... lsf f)
+
+6) <span class="warning">let - declare local variables</span>
+--------------------------------
+
+Often you need to use additional temporary variables when performing a
+computation. 'let' can be used to create these temporaries, cleaning
+them up after the body of the form is completed, returning the value
+of the last executed statement.
+
+(<span class="keyword">define-macro</span> let (args <span class="type">&amp;body</span> body)
+  ((<span class="keyword">lambda</span> (vars values) <span class="comment">; notice! we are processing the arguments to let
+</span>     `((<span class="keyword">lambda</span> ,vars ,@body) ,@args)) <span class="comment">; notice! this is the code that
+</span>                                      <span class="comment">; is returned by let
+</span>     (map car args) <span class="comment">; argument 1 above, vars
+</span>     (map cadr args))) <span class="comment">; argument 2 above, values
+</span>
+Examples:
+
+    (map car `((a 1) (b 2))) =&gt; (a b) <span class="comment">; like vars, above
+</span>    (map cadr `((a 1) (b 2))) =&gt; (1 2) <span class="comment">; like values, above
+</span>    (<span class="keyword">let</span> ((a 1) (b 2)) (+ a b)) =&gt; 3
+    a =&gt; <span class="comment">; error, undefined symbol
+</span>    b =&gt; <span class="comment">; error, undefined symbol
+</span>
+7) <span class="warning">aif - anamorphic if</span>
+----------------------
+
+Since () is always false and anything else is true, sometimes we may
+want to know the value that is returned by the test that is passed to
+'if'.  This can be done by saving the value in the environment for the
+body of the 'if', which we are going to call 'it'.  You can then
+reference the value of 'it' anywhere in the body of the 'if' statement.
+
+(<span class="keyword">define-macro</span> aif (test true false)
+  `(<span class="keyword">let</span> ((it ,test))
+     (<span class="keyword">if</span> it ,true ,false)))
+
+Examples:
+
+    (aif 1 it ()) =&gt; 1
+    (aif (car `(1 2 3)) it 2) =&gt; 1
+    (aif (car `(() 2 3)) it 2) =&gt; 2
+
+Note: the injection of variables that can be used in the body of a
+macro makes the macro 'anamorphic'.  For a further explanation of this
+concept, see <span class="string">&quot;On Lisp&quot;</span>, chapter 14.
+
+8) <span class="warning">awhen - anamorphic when</span>
+--------------------------
+
+Like 'aif', but with when.
+
+(<span class="keyword">define-macro</span> awhen (test <span class="type">&amp;body</span> body)
+  `(<span class="keyword">let</span> ((it ,test))
+     (<span class="keyword">when</span> it ,@body)))
+
+Examples:
+
+    (awhen 1 it) =&gt; 1
+    (awhen () it) =&gt; () <span class="comment">; notice! awhen by default returns ()
+</span>
+
+9) <span class="warning">last - return the last element of a list</span>
+-------------------------------------------
+
+Sometimes you want the last element of the list. This function shows
+recursing down a list until it reaches the end, when it return the
+last element.
+
+(<span class="keyword">define-macro</span> last (l)
+  `((alambda self (l)
+      (<span class="keyword">if</span> (cdr l)
+          (self (cdr l))
+          (car l))))
+  ,l))
+
+Examples:
+
+    (last `(1 2 3)) =&gt; 3
+
+
+10) <span class="warning">length - return the length of a list</span>
+----------------------------------------
+
+Knowing the length of a list is generally very useful during
+computations.  Here is a macro that recursively computes it given a
+list using an accumulator.
+
+(<span class="keyword">define-macro</span> length (l)
+  `((alambda self (l n)
+      (<span class="keyword">if</span> l
+          (self (cdr l) (+ n 1))
+          n))
+    ,l 0))
+
+Examples:
+
+    (length ()) =&gt; 0
+    (length `(1 2 3)) =&gt; 3
+    (length `((1 2 3) a b c)) =&gt; 4
+
+
+11) <span class="warning">nth - return the nth element of a list</span>
+------------------------------------------
+
+Although macros like 'first', 'second' and 'third' are useful, you
+often want a general purpose way of getting a certain element from a
+list.  'nth' is designed to perform that operation, given a list and
+an integer.
+
+(<span class="keyword">define-macro</span> nth (n l)
+  `((alambda self (n l)
+      (<span class="keyword">if</span> (eq n 0)
+          (car l)
+          (self (- n 1) (cdr l)))) <span class="warning">,n ,l))</span>
+
+Examples:
+
+    (nth 0 `(1 2 3)) =&gt; 1
+    (nth 1 `(1 2 3)) =&gt; 2
+    (nth 2 `(1 2 3)) =&gt; 3
+
+
+12) <span class="warning">not - logical compliment</span>
+----------------------------
+
+When using boolean values, sometimes you want the opposite of the
+value you have. In this case you use 'not', which returns the
+compliment of any value, logically.
+
+(<span class="keyword">define-macro</span> not (x)
+  `((alambda self (v)
+      (<span class="keyword">cond</span>
+        ((null v) t) <span class="comment">; check for (), if so, return t
+</span>        (t ()))) <span class="comment">; else return () for everything else
+</span>    ,x)) <span class="comment">; evaulate the argument x
+</span>
+Examples:
+
+    (not ()) =&gt; t
+    (not t) =&gt; ()
+    (not 1) =&gt; ()
+
+
+13) <span class="warning">unless - negative single branch conditional</span>
+----------------------------------------------
+
+Like when, but the logical opposite. It runs its body of when its test
+returns ().
+
+(<span class="keyword">define-macro</span> unless (test <span class="type">&amp;body</span> body)
+  `(<span class="keyword">cond</span> ((not ,test) ,@body)))
+
+Examples:
+
+    (<span class="keyword">unless</span> t 1) =&gt; ()
+    (<span class="keyword">unless</span> () 1) =&gt; 1
+    (<span class="keyword">unless</span> (eq t t) 1) =&gt; ()
+    (<span class="keyword">unless</span> (eq t ()) 1) =&gt; 1
+
+
+14) <span class="warning">and - logical and</span>
+---------------------
+
+'and' is another boolean function, one that returns true when all of
+its parameters are true.  Because of this property, if any of the
+values that it is passed returns false, you can assume the final value
+is false, so you can stop evaluating the arguments and just return
+false.  This behaviour is called 'short circuiting' and will be very
+useful in the future.
+
+(<span class="keyword">define-macro</span> and (<span class="type">&amp;rest</span> args)
+  `((alambda self (args) <span class="comment">; an anonymous function
+</span>      (<span class="keyword">if</span> args <span class="comment">; if args is not ()
+</span>          (<span class="keyword">if</span> (eval (car args)) <span class="comment">; evaluate the argument
+</span>              (self (cdr args)) <span class="comment">; if true, continue with other args
+</span>              ()) <span class="comment">; evaluation returned false, so and is false
+</span>          t)) <span class="comment">; all evaluated args returned true, so return true
+</span>    `,args)) <span class="comment">; call anonymous function with args quoted,
+</span>             <span class="comment">; as we are evaluating them individually above
+</span>
+Examples:
+
+    (and () ()) =&gt; ()
+    (and () t) =&gt; ()
+    (and t ()) =&gt; ()
+    (and t t) =&gt; t
+    (and 1 1) =&gt; t
+    (and () (set `a 1)) =&gt; ()
+    a =&gt; <span class="comment">; error, undefined variable,
+</span>         <span class="comment">; set was not run due to short circuiting
+</span>
+15) <span class="warning">or - logicial or</span>
+--------------------
+
+Similar to and, or returns true if any of its arguments are true.  We
+can also take advantage of this and 'short circuit' on this behaviour
+as well.
+
+(<span class="keyword">define-macro</span> or (<span class="type">&amp;rest</span> args)
+  `((alambda self (args)
+      (<span class="keyword">if</span> args
+          (aif (eval (car args))
+               it
+               (self (cdr args)))
+          ())) <span class="warning">`,args))</span>
+
+Examples:
+
+    (or () ()) =&gt; ()
+    (or () t) =&gt; t
+    (or t ()) =&gt; t
+    (or t t) =&gt; t
+    (or 1 1) =&gt; 1
+    (or t (set `a 1)) =&gt; t
+    a =&gt; <span class="comment">; error, undefined variable, 
+</span>         <span class="comment">; set was not run due to short circuiting
+</span>
+16) <span class="warning">xor - logical exclusive or</span>
+------------------------------
+
+Similar to 'and' and 'or', 'xor' returns true if one or the other of
+its arguments is true.  You will notice that we are use 'let' to hold
+the value of our evaluated arguments.  You generally only want to
+evaluate the arguments you are passed once. This is because the
+evaluation of certain arguments may cause 'side effects', and
+evaluating them more than once may cause unintended consiquences and
+should be avoided.
+
+(<span class="keyword">define-macro</span> xor (x y)
+  `(<span class="keyword">let</span> ((xe ,x) <span class="comment">; evaluate x once
+</span>         (ye ,y)) <span class="comment">; evaluate y once
+</span>     (and
+      (or xe ye)
+      (not (and xe ye)))))
+
+Examples:
+
+    (xor () ()) =&gt; ()
+    (xor t ()) =&gt; t
+    (xor () t) =&gt; t
+    (xor t t) =&gt; ()
+
+17) <span class="warning">list - create a proper list of all arguments</span>
+------------------------------------------------
+
+Creating lists with cons can often be tedious, so lets define a macro
+to make it easier.  This example shows how to use the underlying lisp
+to build the list and evaluate the arguments.
+
+(<span class="keyword">define-macro</span> list (<span class="type">&amp;rest</span> rest)
+  `((<span class="keyword">lambda</span> (<span class="type">&amp;rest</span> rest)
+     rest) <span class="warning">,@rest))</span>
+
+Examples:
+
+    (list `a `b `c) =&gt; (a b c)
+    (list 1 2 3) =&gt; (1 2 3)
+
+18) <span class="warning">equal - compare if two things are equal, including lists</span>
+------------------------------------------------------------
+
+If you recall from the discussion of 'eq', it does not compare the
+equality of lists, just atoms.  The following is a function that does
+a 'deep' comparison between 2 items, including lists.  If you want,
+you can always use 'equal' instead of 'eq', but 'equal' is slower than
+using just 'eq' when you know you are dealing with only atoms.
+
+(<span class="keyword">define-macro</span> equal (x y)
+  `((alambda self (a b) <span class="comment">; anonymous function
+</span>      (<span class="keyword">cond</span>
+        <span class="comment">; 2 atoms, test with eq
+</span>        ((and (atom a) (atom b)) (eq a b))
+        <span class="comment">; both lists null, must be equal
+</span>        ((and (null a) (null b)) t)
+        <span class="comment">; one list is null, cannot be equal
+</span>        ((or (null a) (null b)) ())
+        <span class="comment">; one is an atom, the other not, so not equal
+</span>        ((or (atom a) (atom b)) ())
+        <span class="comment">; if the heads are equal
+</span>        ((equal (car a) (car b))
+         (self (cdr a) (cdr b)))))
+    <span class="comment">; return () if none of the above are true
+</span>    ,x ,y)) <span class="comment">; call anonymous function with evaluated arguments
+</span>
+Examples:
+
+    (equal t t) =&gt; t
+    (equal () ()) =&gt; t
+    (equal 1 1) =&gt; t
+    (equal `(1 2 3) `(1 2 3)) =&gt; t
+    (equal `((1 2 3 (x y z)) a b c) `((1 2 3 (x y z)) a b c)) =&gt; t
+    (equal `(1 2 3) `(1 2)) =&gt; ()
+    (<span class="keyword">define-macro</span> pallindromep (l)
+      `(<span class="keyword">let</span> ((le ,l))
+         (equal le (reverse le))))
+    (pallindromep `(1 2 3 4)) =&gt; ()
+    (pallindromep `(1 2 3 4 3 2 1)) =&gt; t
+
+19) <span class="warning">member - find if something is in a list</span>
+-------------------------------------------
+
+Often you want to search a list to see if an item is contained in it.
+'member' takes a 'thing', a 'list' and a 'test'.  The 'test', if
+omitted, defaults to 'eq', can be any predicate, and normally is given
+as 'equals' so that you can search for lists within lists.  The return
+value is the contents of the list up to the item found, else () if the
+'thing' is not found in the 'list'.
+
+(<span class="keyword">define-macro</span> member (thing list <span class="type">&amp;rest</span> test)
+  `(<span class="keyword">let</span> ((t (aif ,(car test) it eq)))
+     ((alambda self (x l)
+        (<span class="keyword">if</span> l
+            (<span class="keyword">if</span> (t x (car l))
+                l
+                (self x (cdr l)))
+            ()))
+      ,thing ,list)))
+
+Examples:
+
+    (member 1 `(1 2 3)) =&gt; (1 2 3)
+    (member 3 `(1 2 3)) =&gt; (3)
+    (member 4 `(1 2 3)) =&gt; ()
+    (member `(1 2 3) `(a b c (1 2 3))) =&gt; ()
+    (member `(1 2 3) `(a b c (1 2 3)) equal) =&gt; ((1 2 3))  
+
+
+21) <span class="warning">filter - remove elements from a list</span>
+----------------------------------------
+
+'filter' is like map, in that it is a higher order function.  It takes
+a predicate and a list, building a new list by running the predicate
+over the list and including the members for which the predicate
+returns true.
+
+(<span class="keyword">define-macro</span> filter (f l)
+  `((alambda self (l a)
+      (<span class="keyword">if</span> l
+          (<span class="keyword">if</span> (,f (car l))
+              (self (cdr l) (cons (car l) a))
+              (self (cdr l) a))
+          (reverse a))) <span class="warning">,l ()))</span>
+
+Examples:
+
+    (filter
+     (<span class="keyword">lambda</span> (x) 
+       (eq x 1))
+     `(1 2 3)) <span class="warning">=&gt; (1)</span>
+    (filter
+     (<span class="keyword">lambda</span> (x)
+       (or (eq x 1) (eq x 3)))
+     `(1 2 3)) <span class="warning">=&gt; (1 3)</span>
+
+22) <span class="warning">rm - remove a symbol from the environment</span>
+---------------------------------------------
+
+(<span class="keyword">define-macro</span> rm (<span class="type">&amp;rest</span> xs)
+  `(env (filter
+         (<span class="keyword">lambda</span> (e)
+           (not (member (car e) `,xs))) <span class="warning">(env))))</span>
+
+Examples:
+
+    (set `x 1) =&gt; 1 <span class="comment">; define a symbol in the environment
+</span>    (set `y 2) =&gt; 2 
+    x =&gt; 1
+    y =&gt; 2
+    (rm x y) =&gt; ... <span class="comment">; returns new environment
+</span>    x =&gt; <span class="comment">; Error, undefined symbol
+</span>    y =&gt; <span class="comment">; Error, undefined symbol
+</span>
+Exercise:
+
+    1. Rewrite 'rm' so that it returns the last value(s) of the
+       symbol(s) that was/were deleted. [HARD]
+
+
+23) <span class="warning">rmf - remove a macro from the function environment</span>
+------------------------------------------------------
+
+Identical to above, but works with the function environment rather
+than the variable environment.
+
+(<span class="keyword">define-macro</span> rmf (<span class="type">&amp;rest</span> xs)
+  `(fenv (filter
+          (<span class="keyword">lambda</span> (e)
+            (not (member (car e) `,xs))) <span class="warning">(fenv))))</span>
+
+Examples:
+
+    (<span class="keyword">define-macro</span> double (x) `(+ ,x ,x)) =&gt; (macro (x) `(+ ,x ,x))
+    (double 2) =&gt; 4
+    (rmf double) =&gt; ...
+    (double 2) =&gt; <span class="comment">; Error, undefined function
+</span>
+
+22) <span class="warning">dolist - iterate over a list</span>
+--------------------------------
+
+Often it is easier to create a shorthand for commonly done operations
+to make them both easier to read and to write.  In this case one of
+them will be iterating over a list. This macro is also anamorphic, as
+it always injects its first variable and sometimes, it's second.
+
+(<span class="keyword">define-macro</span> dolist (vlr <span class="type">&amp;body</span> body)
+  (<span class="keyword">let</span> ((var (first vlr))
+        (list (second vlr))
+        (ret (third vlr)))
+    `((alambda self (l)
+        (<span class="keyword">when</span> l
+          (<span class="keyword">let</span> ((,var (car l))
+                (,(<span class="keyword">if</span> (atom list) list `it) l))
+            ,@body)
+          (self (cdr l)))
+        ,ret) <span class="warning">,list)))</span>
+
+Examples:
+
+    (<span class="keyword">let</span> ((r 0))
+      (<span class="keyword">dolist</span> (x `(1 2 3) r)
+        (set `r (+ x r)))) <span class="warning">=&gt; 6</span>
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (<span class="keyword">let</span> ((r ()))
+      (<span class="keyword">dolist</span> (i x)
+        (set `r (cons (cons i x) r)))
+      r) <span class="warning">=&gt; ((3 3)) (2 2 3) (1 1 2 3))</span>
+    
+
+<span class="comment-delimiter">;; </span><span class="comment">WARNING: THE FOLLOWING CODE IS UNTESTED AND/OR NOT WORKING
+</span>            
+23) <span class="warning">join - rebuild a split atom</span>
+-------------------------------
+
+Used when you would like to combine a list of atoms into a single
+atom, with an optional delimeter that defaults to '-'.
+
+(<span class="keyword">define-macro</span> join (atoms <span class="type">&amp;rest</span> delim)
+  `((<span class="keyword">lambda</span> (as d)
+      (<span class="keyword">let</span> ((retval `||))
+        (<span class="keyword">dolist</span> (s as retval)
+          (set `retval (+ s (<span class="keyword">if</span> (cdr as) d `||) retval)))))
+    `,(reverse (eval atoms)) ,(or (car delim) `-)))
+
+Examples:
+
+    (join `(a long atom)) =&gt; a-long-atom
+    (join `(a long atom) `/) =&gt; a/long/atom
+
+
+15) <span class="warning">mapn - like map, but takes n lists as arguments</span>
+---------------------------------------------------
+
+'mapn' is like 'map', in that it runs a function to create a new list,
+but it can take multiple lists, and therefore, functions of multiple
+arguments.  'mapn' iterates down the lists in parallel, calling the
+function f with the first elements of each of the lists, after which
+it recurses with the rest of the lists.  If you only have one list,
+'map' is faster to use computationally, although 'mapn' will work with
+a single list if needed.
+
+<span class="comment-delimiter">;; </span><span class="comment">Note: this doesn't work yet
+</span>(<span class="keyword">define-macro</span> mapn (f <span class="type">&amp;rest</span> lists)
+  `((<span class="keyword">lambda</span> (xs a)
+      (<span class="keyword">if</span> xs
+          (<span class="keyword">let</span> ((heads (map car xs)))
+            (self (cdr xs) (cons (eval `(,f ,@heads) a)))
+        (reverse a)))
+    `,lists ()))
+
+Examples:
+
+    (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(1 2 3) `(1 2 3)) =&gt; (2 4 6)
+    (mapn (<span class="keyword">lambda</span> (x y) (+ x y)) `(x y z) `(a b c) `(1 2 3)) =&gt; (xa1 yb2 zc3)
+
+16) <span class="warning">setq</span>
+
+(<span class="keyword">define-macro</span> setq (<span class="type">&amp;rest</span> rest)
+  (<span class="keyword">lambda</span> (vars values)
+    `(mapn (<span class="keyword">lambda</span> (var value)
+             (set var value)) <span class="warning">,vars ,values)</span>
+    (map car vars)
+    (map cadr vars)))
+
+Examples:
+
+    (setq x 1) =&gt; 1
+    x =&gt; 1
+    (setq x 2 y 3) =&gt; 3
+    x =&gt; 2
+    y =&gt; 3
+
+<span class="comment-delimiter">;; </span><span class="comment">TO BE CONTINUED
+</span>
+push - add an element to the head of a list
+-------------------------------------------
+
+'push' is used to insert elements onto the head of a list.
+
+(<span class="keyword">define-macro</span> push (x l)
+  `(<span class="keyword">let</span> ((xe ,x))
+     (set xe (cons xe l))))
+
+Examples:
+
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (push 0 x) =&gt; (0 1 2 3)
+    (push 0 `(1 2 3)) =&gt; <span class="comment">; error, list is not a symbol
+</span>
+pop - remove the head of a list
+-------------------------------
+
+'pop' is the compliment to 'push' and removes the head of the list
+that was (possibly) added last by pop.  With 'push' and 'pop' one can
+use a list as a 'stack', or a FIFO (first in first out) queue.
+
+(<span class="keyword">define-macro</span> pop (l)
+  `(<span class="keyword">let</span> ((le ,l))
+     ((<span class="keyword">lambda</span> (o)
+        (set ll (cdr le))
+        o) <span class="warning">(car le))))</span>
+
+Examples:
+
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (pop x) =&gt; 1
+    x =&gt; (2 3)
+
+shift - add an element to the tail of a list
+--------------------------------------------
+
+(<span class="keyword">define-macro</span> shift (x l)
+  `(<span class="keyword">let</span> ((le ,l))
+     (set le (reverse (cons ,x (reverse le))))))
+
+Examples:
+
+    (set `x `(1 2 3)) =&gt; (1 2 3)
+    (shift 4 x) =&gt; (1 2 3 4)
+
+unshift - remove an element from the tail of a list
+----------------------------------------------------
+
+(<span class="keyword">define-macro</span> unshift (l)
+  `(<span class="keyword">let</span> ((le ,l))
+     ((<span class="keyword">lambda</span> (o)
+        (set le (cdr (reverse le)))
+        o) <span class="warning">(car (reverse le)))))</span>
+
+Examples:
+
+(set `x `(1 2 3)) =&gt; (1 2 3)
+(unshift x) =&gt; 3
+x =&gt; (1 2)
+
+rotate - rotate a list
+----------------------
+
+(<span class="keyword">define-macro</span> rotate (l n))
+
+
+assoc - associative lookup
+--------------------------
+
+
+flatten - build a list from nested lists
+----------------------------------------
+
+sort - sort a list based on a predicate
+---------------------------------------
+
+random - generate a random number
+---------------------------------
+
+(<span class="keyword">define-macro</span> random ()
+  (=&gt; `|Math.random()|))
+
+<span class="comment-delimiter">;; </span><span class="comment">Interesting alternate implementation but we don't really have
+</span><span class="comment-delimiter">;; </span><span class="comment">integers in Sigil yet TODO: implement integers (big-nums) in Sigil
+</span>(set `*rand-max* 32767)
+(set `*random-seed* 31337)
+(<span class="keyword">define-macro</span> random (<span class="type">&amp;rest</span> random-seed)
+  `(<span class="keyword">let</span> ((seed ,(or random-seed *random-seed*)))
+     (set `*random-seed* (&amp; (/ (+ (* *random-seed* 1103515245) 12345) 65536) *rand-max*))))
+
+replace - replace an element at an index in a list
+--------------------------------------------------
+
+(<span class="keyword">define-macro</span> replace (l n v)
+  `((alambda 
+     self (l n2 a)
+     (<span class="keyword">if</span> l
+         (<span class="keyword">if</span> (= n2 0)
+             (self (cdr l) (- n2 1) (cons value a))
+             (self (cdr l) (- n2 1) (cons (car l) a)))
+         (reverse a)))))
+
+========================================================================
+========================================================================
+
+                              ==========
+                              |THE MIDS|
+                              ==========
+
+       <span class="string">&quot;Because language is the carrier of ideas, it is easy to
+   believe that it should be very little else than such a carrier.&quot;</span>
+
+                           -- Louise Bogan
+
+          <span class="string">&quot;Lisp isn't a language, it's a building material.&quot;</span>
+
+                              - Alan Kay
+
+========================================================================
+========================================================================
+
+=======================
+Exercises 0 - TODO List
+=======================
+
+THis exercise we will make a helpful utility, a set of functions to
+keep track of a TODO list.  It helps to think of the actions we want
+to do with a todo list: add items, remove items and prioritize items.
+
+First off, we are going to write a macro that will treat a list as a
+stack.  A stack is what's known as a FIFO, or 'First In, First Out'
+queue.  Meaning that you 'push' items onto a stack and they return in
+the same order as you 'pop' them off.
+
+(<span class="keyword">define-macro</span> push (x l)
+  `(setq ,l (cons ,x ,l)))
+
+Examples:
+
+    (setq x ()) =&gt; ()
+    (push 1 x) =&gt; 1
+    x =&gt; (1)
+    (push 2 x) =&gt; 2
+    x =&gt; (2 1)
+    
+(<span class="keyword">define-macro</span> pop (l)
+  `((<span class="keyword">lambda</span> (o)
+      (setq ,l (cdr ,l))
+      o) <span class="warning">,(car l)))</span>
+
+Examples:
+
+    (set x ()) =&gt; ()
+    (push `a x) =&gt; a
+    (push `b x) =&gt; b
+    (pop x) =&gt; b
+    (pop x) =&gt; a
+    (pop x) =&gt; ()
+    
+Now let's define a place to hold our todo list:
+
+    (setq *todo* ())
+
+Having to remember to quote things is sometimes frustrating, so we'll
+define a helper macro 'todo' that does it for us:
+
+(<span class="keyword">define-macro</span> todo (thing)
+  (push `,thing *todo*))
+
+Examples:
+
+    (todo finish-this-exercise!)
+
+For the last function 'done', it helps to write a generic helper
+function called 'remove', that removes elements from a list at a
+certain index:
+
+(<span class="keyword">define-macro</span> remove (l n)
+  `((alambda 
+     self (l2 n2 a)
+     (<span class="keyword">if</span> l2
+         (<span class="keyword">if</span> (eq n2 0)
+             (self n2 a)
+             (self (cdr l2) (- n2 1) (cons (car l2) a)))))
+    `,l ,n))
+
+Examples:
+
+    (setq x `(a b c 1 2 3))
+    (remove 4 x) =&gt; (a b c 1 3)
+    x =&gt; (a b c 1 2 3) <span class="comment">; x was not changed
+</span>
+Now we can easily write 'done':
+
+(<span class="keyword">define-macro</span> done (n)
+  (setq *todo* (remove *todo* n)))
+
+Examples:
+
+    (todo task-1) =&gt; task1
+    (todo task-2) =&gt; task2
+    *todo* =&gt; (task2 task1)
+    (done 1) =&gt; task1
+    *todo* =&gt; (task2)
+    (done 0) =&gt; task2
+    *todo* =&gt; ()
+
+But how about if we want to proritize the items to have one show up
+earlier in the list to attract our attention?
+
+(<span class="keyword">define-macro</span> swap (l m n)
+  `(<span class="keyword">let</span> ((m (<span class="keyword">if</span> (&lt; m n) m n)) <span class="comment">; sort m and n
+</span>         (n (<span class="keyword">if</span> (&lt; m n) n m)))
+     (<span class="keyword">let</span> ((va (nth l m))
+           (vb (nth l n)))
+       ((alambda
+         self (l2 m2 n2 a)
+         (<span class="keyword">if</span> l2
+             (<span class="keyword">if</span> (= m2 0)
+                 (self (cdr l2) (cons vb l2))
+                 (<span class="keyword">if</span> (= n2 0)
+                     (self (cdr l2) (cons va l2))
+                     (self (cdr l2) (cons l2 a))))
+             (reverse a)))))))
+
+(<span class="keyword">define-macro</span> prioritize (m n)
+  `(set *todo* (swap *todo* m n)))
+
+=================================
+Exercises 2 - S-Expression Editor
+=================================
+
+An interesting aside into building a data structure editor.
+
+==================
+Exercises 1 - Life
+==================
+
+The classic, and simple, 'game' discovered (or found) by John Conway
+in 1970 [WPCGOL].  It simulates a virtual 'world' that follows very
+simple mathematical rules to determine which individuals in the world
+life, breed and die.  It has been a greatly studied and analyzed game,
+and some of the forms that take shape in the world have names such as
+'gliders' and 'puffers', showing the rich variety that studiers of the
+game can see.
+
+Life is best watched as a graphical game, where you can see the
+interactions of the individuals in real time.  Eturia is capable of
+that from JavaScript, but we are going to want to do this from Sigil.
+This means we need to develop and 'interface' between Sigil and
+Eturia.  This will be acommonplished with some inline JavaScript code
+using the =&gt; builtin.
+
+(setq *terminal* `|notebook.app().terminal().|)
+
+(<span class="keyword">define-macro</span> terminal-clear-screen ()
+  `(=&gt; (+ *terminal* `|clearScreen()|)))
+
+(<span class="keyword">define-macro</span> terminal-on-character (x y)
+  `(=&gt; (+ *terminal* `|onCharacter(| ,x `|,| ,y `|)|)))
+
+(<span class="keyword">define-macro</span> terminal-off-character (x y)
+  `(=&gt; (+ *terminal* `|offCharacter(| ,x `|,| ,y `|)|)))
+
+(<span class="keyword">define-macro</span> terminal-is-character-on (x y)
+  `(=&gt; (+ *terminal* `|isCharacterOn(| ,x `|,| ,y `|)|)))
+
+(<span class="keyword">define-macro</span> terminal-rows ()
+  `(=&gt; (+ *terminal* `|rows()|)))
+  
+(<span class="keyword">define-macro</span> terminal-columns ()
+  `(=&gt; (+ *terminal* `|cols()|)))
+
+The Life world is going to be held in a grid the size of the console
+screen.  The next section is going to define a 'grid' type and some
+utility functions for dealing with its data.
+
+<span class="comment-delimiter">;; </span><span class="comment">First, we're going to define a helper function. The data in the
+</span><span class="comment-delimiter">;; </span><span class="comment">grid is going to be represented by a list, each containing a
+</span><span class="comment-delimiter">;; </span><span class="comment">specific value. To make things interesting, we are going to
+</span><span class="comment-delimiter">;; </span><span class="comment">evaluate the value argument each time we add an element to the
+</span><span class="comment-delimiter">;; </span><span class="comment">list; this is because we might be able to do some interesting
+</span><span class="comment-delimiter">;; </span><span class="comment">effects using functions that cause side effects in the future.
+</span>(<span class="keyword">define-macro</span> make-list (length value)
+  `((alambda 
+     self (n a)
+     (<span class="keyword">if</span> (and (eq n 0))
+         a
+         (self (- n 1) (cons (list (eval `,value)) a)))))
+    ,length ()))
+
+<span class="comment-delimiter">;; </span><span class="comment">Here we make a grid type.  Its internal representation is a list
+</span><span class="comment-delimiter">;; </span><span class="comment">consisting of the empty list as items, of length w * h.
+</span>(<span class="keyword">define-macro</span> make-grid (w h <span class="type">&amp;rest</span> data)
+  `(<span class="keyword">let</span> ((w ,w)
+         (h ,h))
+     (<span class="keyword">let</span> ((data (or ,data
+                     (make-list (* w h) ()))))
+       (list <span class="string">&quot;grid&quot;</span> w h data))))
+
+<span class="comment-delimiter">;; </span><span class="comment">Now, the regular predicate and data utility accessing functions.
+</span>(<span class="keyword">define-macro</span> is-grid (g) 
+  `(eq (car ,g) <span class="string">&quot;grid&quot;</span>))
+
+(<span class="keyword">define-macro</span> grid-width (g)
+  `(first (cdr ,g)))
+
+(<span class="keyword">define-macro</span> grid-height (g)
+  `(second (cdr ,g)))
+
+(<span class="keyword">define-macro</span> grid-data (g)
+  `(third (cdr ,g)))
+
+<span class="comment-delimiter">;; </span><span class="comment">Get the value at a grid x, y postiion.
+</span>(<span class="keyword">define-macro</span> grid-get (g x y)
+  `(<span class="keyword">let</span> ((g ,g)
+         (x ,x)
+         (y ,y))
+     (<span class="keyword">let</span> ((w (grid-width g)))
+       (nth (+ x (* w y))  (grid-data g)))))
+
+Now we see another opporunity to factor out some code redundancy.
+These macros we are defining above are actually 'functions', in that
+they are not doing anything interesting with the evaulation of their
+arguments. So we can create a helper macro called 'define-function'
+that will take care of evaulating the arguments for us:
+
+(<span class="keyword">define-macro</span> define-function (name args <span class="type">&amp;body</span> body)
+  (<span class="keyword">let</span> ((argse (map (<span class="keyword">lambda</span> (arg)
+                      (list arg `(eval arg))) <span class="warning">`,args)))</span>
+    `(<span class="keyword">define-macro</span> ,name ,args
+       (<span class="keyword">let</span> ,argse
+         ,@body))))
+
+Next is the redefining the above two macros that were defined as
+functions, using define-function, giving us some more brevity:
+
+(<span class="keyword">define-function</span> make-grid (w h <span class="type">&amp;rest</span> data)
+  (<span class="keyword">let</span> ((data (or ,data
+                  (make-list (* w h) ()))))
+    (list <span class="string">&quot;grid&quot;</span> w h data)))
+
+(<span class="keyword">define-function</span> grid-get (g x y)
+  (<span class="keyword">let</span> ((w (grid-width g)))
+    (nth (+ x (* w y))  (grid-data g))))
+
+After all of this practice writing macros, you now should have a very
+solid understanding of evaulation and when to evaluate your arguments.
+A macro is a special case of a function, where you want control over
+argument evaluation, but functions can be written more compactly since
+you are letting the computer do a task for you that is a common
+pattern.  From now on we will define functions using define-function
+and macros with define-macro.
+
+<span class="comment-delimiter">;; </span><span class="comment">Set a grid x, y position with value, returning a new grid with the
+</span><span class="comment-delimiter">;; </span><span class="comment">modifications.
+</span>(<span class="keyword">define-function</span> grid-set (g x y value)
+  (<span class="keyword">let</span> ((i (+ x (* y (grid-width g)))))
+    (make-grid (grid-width g) (grid-height g)
+               (replace (grid-data data) i value))))
+
+<span class="comment-delimiter">;; </span><span class="comment">Runs the function f, which takes 3 parameters, x, y and value, from
+</span><span class="comment-delimiter">;; </span><span class="comment">left to right, top to bottom over the data contained in the grid.
+</span>(<span class="keyword">define-function</span> grid-map (g f))
+
+====================================
+Mathmatical Exercises 2 - Ray Tracer
+====================================
+
+A ray tracer is a type of graphic generation program that attempt to
+simulate how light actually works when passing through a scene using
+individual 'beams' of light, known as rays.  This allows for the
+creation of high quality images at the expense of speed, due to the
+accuracy of the rendering process.
+
+First, we will define some mathematical utility functions:
+
+(<span class="keyword">define-macro</span> ^ (x to-the)
+  `((alambda self (to-the2 a)
+     (<span class="keyword">if</span> (= to-the2 0)
+         a
+         (self (- to-the2 1) (* a x))))
+    ,x ,to-the))
+
+(<span class="keyword">define-macro</span> square (x)
+  `(^ x 2))
+
+(<span class="keyword">define-macro</span> square-root (x)
+  `(=&gt; (+ `|Math.sqrt(| ,x `|)|)))
+
+(<span class="keyword">define-macro</span> round (x)
+  `(=&gt; (+ `|Math.round| ,x `|)|)))
+
+Next, a 'point structure' will be defined:
+
+(<span class="keyword">define-macro</span> make-point (x y z) `(list `point ,x ,y ,z))
+
+(<span class="keyword">define-macro</span> is-point (p) `(eq (car ,p `point)))
+
+(<span class="keyword">define-macro</span> point-x (p) `(first ,(cdr p)))
+(<span class="keyword">define-macro</span> point-y (p) `(second ,(cdr p)))
+(<span class="keyword">define-macro</span> point-z (p) `(third ,(cdr p)))
+
+And some helpful point structure mathematical utility functions:
+
+(<span class="keyword">define-macro</span> point-magnitude (p)
+  (square-root (+ (square (point-x p))
+                  (square (point-y p))
+                  (square (point-z p)))))
+
+<span class="comment-delimiter">;; </span><span class="comment">Compute the difference between 2 points, returning as multiple
+</span><span class="comment-delimiter">;; </span><span class="comment">values, dx, dy and dz.
+</span>(<span class="keyword">define-macro</span> point-difference (p1 p2)
+  `((<span class="keyword">lambda</span> ()
+      (values
+       (- (point-x p2) (point-x p1))
+       (- (point-y p2) (point-y p1))
+       (- (point-z p2) (point-z p1))))))
+
+<span class="comment-delimiter">;; </span><span class="comment">Find the distance between 2 points
+</span>(<span class="keyword">define-macro</span> point-distance (p1 p2)
+  `((<span class="keyword">lambda</span> ()
+      (point-magnitude (point-difference p1 p2)))
+    ,p1 ,p2))
+
+<span class="comment-delimiter">;; </span><span class="comment">Return a normalize point, which is one which all of its components
+</span><span class="comment-delimiter">;; </span><span class="comment">have been divided by its magnitude so that all of its components
+</span><span class="comment-delimiter">;; </span><span class="comment">are within the range of 0...1.
+</span>(<span class="keyword">define-macro</span> point-normalize (p)
+  `(<span class="keyword">let</span> ((m (point-magnitude ,p)))
+     (make-point (/ (point-x p) m)
+                 (/ (point-y p) m)
+                 (/ (point-z p) m))))
+
+Now a function helpful with finding roots of equations:
+
+<span class="comment-delimiter">;; </span><span class="comment">A function for comparing 2 numbers to see which is less than the
+</span><span class="comment-delimiter">;; </span><span class="comment">other.
+</span>(<span class="keyword">define-macro</span> &lt; (x y)
+  `(=&gt; (+ `|| ,x `|&lt;| ,y)))
+
+<span class="comment-delimiter">;; </span><span class="comment">Some helpful constants.
+</span>(<span class="keyword">define-macro</span> *FLOAT-MAX* (=&gt; `|Math.FLOAT_MAX|))
+(<span class="keyword">define-macro</span> *FLOAT-MIN* (=&gt; `|Math.FLOAT_MIN|))
+
+<span class="comment-delimiter">;; </span><span class="comment">Find the minimum of the arguments.
+</span>(<span class="keyword">define-macro</span> minimum (<span class="type">&amp;rest</span> args) 
+  `((alambda
+     self (l min)
+     (<span class="keyword">if</span> l
+         (aif (&lt; (eval (car l)) min)
+              (self (cdr l) it)
+              (self (cdr l) min))
+         min))
+    `,args *FLOAT-MAX*))
+                            
+<span class="comment-delimiter">;; </span><span class="comment">Find the maximum of the arguments
+</span>(<span class="keyword">define-macro</span> maximum (<span class="type">&amp;rest</span> args) 
+  `((alambda
+     self (l min)
+     (<span class="keyword">if</span> l
+         (aif (&gt; (eval (car l)) min)
+              (self (cdr l) it)
+              (self (cdr l) min))
+         min))
+    `,args *FLOAT-MIN*))
+
+One thing you might notice above is the similarity between minimum and
+maximum code wise.  When you see this, it is an opportunity to use
+another macro to encapulate the similarities between the functions,
+and use arguments to fill in the slots for the differences.  The
+following is a redefinition of the two above functions using a macro
+to factor out and hold the common code between them, after which the
+original functions are redefined using the newly created higher order
+function.
+
+<span class="comment-delimiter">;; </span><span class="comment">Run predicate over args using init as the initial value
+</span>(<span class="keyword">define-macro</span> accumulate-over-args (predicate init <span class="type">&amp;body</span> args) 
+  `((alambda
+     self (l a)
+     (<span class="keyword">if</span> l
+         (aif (,predicate (eval (car l)) a)
+              (self (cdr l) it)
+              (self (cdr l) a))
+         a))
+    `,args ,init))
+
+<span class="comment-delimiter">;; </span><span class="comment">Find the minimum of the args
+</span>(<span class="keyword">define-macro</span> minimum (<span class="type">&amp;rest</span> args)
+  `(accumulate-over-args `&lt; *FLOAT-MAX* ,@args))
+
+<span class="comment-delimiter">;; </span><span class="comment">Find the maximum of the args
+</span>(<span class="keyword">define-macro</span> maximum (<span class="type">&amp;rest</span> args)
+  `(accumulate-over-args `&gt; *FLOAT-MIN* ,@args))
+
+<span class="comment-delimiter">;; </span><span class="comment">Find the minimum root of the equation defined by a, b and c
+</span>(<span class="keyword">define-macro</span> mininum-root (a b c)
+  `((<span class="keyword">let</span> ((ae ,a)
+          (be ,b)
+          (ce ,c))
+      (<span class="keyword">if</span> (eq 0 ae)
+          (/ (- ac) ab)
+          (<span class="keyword">let</span> ((d (- (square be) (* 4 ae ce))))
+            (<span class="keyword">unless</span> (&lt; d 0)
+              (<span class="keyword">let</span> ((d2 (square-root d)))
+                (miniumum (/ (+ (- be) d2) (* 2 ae))
+                          (/ (- (- be) d2) (* 2 ae))))))))))
+
+And now for some raytracing functions:
+
+<span class="comment-delimiter">;; </span><span class="comment">Find the pixel color at x, y using the point eye as the source of
+</span><span class="comment-delimiter">;; </span><span class="comment">the rays.
+</span>(<span class="keyword">define-macro</span> raytracer-color-at (eye x y)
+  `(<span class="keyword">let</span> ((eyee ,eye)
+         (xe ,x)
+         (ye ,y))
+     (round (* (raytracer-send-ray eyee
+                                   (- xe (point-x eyee))
+                                   (- ye (point-y eyee))
+                                   (- 0 (point-z eyee)))))))
+
+<span class="comment-delimiter">;; </span><span class="comment">The background color index for the image.
+</span>(set `*raytracer-background-color-index* 0)
+
+<span class="comment-delimiter">;; </span><span class="comment">Cast a ray from point through rx, ry and rz, returning a color
+</span><span class="comment-delimiter">;; </span><span class="comment">index if an object is hit, or the background color otherwise.
+</span>(<span class="keyword">define-function</span> raytracer-send-ray (point rx ry rz)
+  `(bind (s int) (raytracer-first-hit point rx ry rz)
+         (<span class="keyword">if</span> s
+             (* (raytracer-lambert s int xr yr zr)
+                (surface-color s))
+             *raytracer-background-color-index*)))
+
+<span class="comment-delimiter">;; </span><span class="comment">Find the first object hit by the ray cast from point through xr, yr
+</span><span class="comment-delimiter">;; </span><span class="comment">and zr in the *raytracer-world*.
+</span>(<span class="keyword">define-function</span> raytracer-first-hit (point xr yr zr)
+  `(<span class="keyword">dolist</span> (s *raytracer-world*)
+     (<span class="keyword">let</span> ((h (raytracer-intersect s point rx ry rz)))
+       (<span class="keyword">when</span> a
+         (<span class="keyword">let</span> ((d (point-distance h point)))
+           (<span class="keyword">when</span> (or (null dist) (&lt; d dist))
+             (set `surface s `hit h `dist d))))))
+  (values surface hit))
+
+(<span class="keyword">define-function</span> raytracer-lambert (s int xr yr zr)
+  (<span class="keyword">let</span> ((n (raytracer-normal s int)))
+    (maximum 0 (+ (* xr (point-x n))
+                  (* yr (point-y n))
+                  (* zr (point-z n))))))
+
+
+Now define a sphere type that we can use to fill the world with:
+
+
+(<span class="keyword">define-macro</span> make-sphere (radius center-point color-index)
+  `(list `sphere ,radius ,center-point ,color-index))
+
+(<span class="keyword">define-macro</span> sphere-radius (s)
+  `(first ,(cdr s)))
+
+(<span class="keyword">define-macro</span> sphere-center-point (s)
+  `(second ,(cdr s)))
+
+(<span class="keyword">define-macro</span> sphere-color-index (s)
+  `(third ,(cdr s)))
+
+(<span class="keyword">define-macro</span> is-sphere (s)
+  `(eq (car ,s) `sphere))
+
+(<span class="keyword">define-macro</span> define-sphere (r p c)
+  `(push (make-sphere ,r ,p ,c) *raytracer-world*))
+  
+
+(<span class="keyword">define-function</span>
+    
+==========================================
+Exercises 4 - GPS (General Problem Solver)
+==========================================
+
+The GPS, or General Problem Solver was an early artificial
+intelligence program from 1959 [5PAIP, WPGPS].  It is an interesting and
+simple program that gave high hopes for early AI researchers, but was
+soon found rather limiting in it's 'generality' of problems it could
+solve.
+
+GPS is best described by what it does: it takes a start state, a goal
+state and a list of rules to change states.  So, for any start goal
+state and an appropriate set of rules, one should be able to solve the
+path from the start state to the end state using the transformation
+rules.  This approach can solve problems like 'getting milk from the
+store' to mazes, but falls over on what seem to be some very simple
+problems that were found after its discovery [WPSA].
+
+The reason we are implementing this is so we have a general 'search'
+function in Eturia.  Like everything we have done before, we are going
+to build on what is available in Eturia as much as possible to inprove
+the functionality and richness of our future programs to help break
+them out of the box.
+
+=======================================
+Exercises 5 - A (Simulated) Trading Bot
+=======================================
+
+A simulated FOREX market arbitrage trading bot.
+
+Possible other projects:
+
+Debt Repayment Calculator
+
+It's always good to be able to know how long it will be before you can
+pay off some of your essential debt, such as your mortgage.
+
+Phrase Generator
+
+Building sentences using data driven design.
+
+Probablistic Primes
+
+Introductory computation on the probabilistics of primality.
+
+========================================================================
+========================================================================
+
+                            ==============
+                            |THE ADVANCED|
+                            ==============
+
+                    <span class="string">&quot;Language disguises thought.&quot;</span>
+
+                        -- Ludwig Wittgenstein
+
+========================================================================
+========================================================================
+
+=========================================
+Exercises 6 - Boolean Propagator Networks
+=========================================
+
+This exerecise will be to build a language to compute boolean
+functions using what is known as a Propagator Network.  Propagators
+were credited to Gerald Jay Sussman and can be read more about in
+[2SICP] and [4TAOTP].
+
+What is interesting about propagator networks is that they can compute
+bi-directionally.  That is, once you define the network, they are
+capable of computing any of their variables when enough information is
+applied to the terminals to be able to know them.  In this way they
+are simple inferrence engines and allow for an interesting way to
+write and solve computational problems.
+
+Boolean logic is a simple yet versatile calulus that was found by
+George Boole in 1815 and can be the basis of all hardware
+computational engines and arithmetic.
+
+========================================
+Exercises 3 - Autograph, A Lazy Language
+========================================
+
+Sometimes it's interesting to think and program without thinking of
+limitations, also known as working with infinite data structures.
+There are many ways of implementing 'laziness', and we are going to
+take the direction of developing our own language, 'Autograph', that
+is in itself 'lazy', or has 'lazy evaluation'.
+
+Lazy evaluation is the opposite of strict evaluation.  With most
+languages, when a function is called, all of the arguments are
+evaluated in left to right order prior to calling the function. With
+macros, arguments are evaluated only when they are needed.  A lazy
+language automates this process by only evaulating values when they
+need to be evaluated for further processing.
+
+===============================================
+Mathmatical Exercises 4 - Multi-Core Ray Tracer
+===============================================
+
+A raytracer is a classic 'compuationally bound' problem in that it
+takes a long time not due to it's amount of input/output operations,
+but on it's actual CPU usage time.  It is also an 'embarassingly
+parallell' problem, in that it repeats a very simple algorithm a large
+number of times on identical data.  What this means is that we can
+take advantage of this nature and split the problem up on multiple CPU
+cores on your computer.
+
+Since Eturia is a computer that runs in a web browser, we will be
+taking advantage of WebWorkers to gain access to the additional cores
+on the machine that are not normally available to Sigil, due to its
+JavaScript nature.  Luckily, all that work has been done for you
+behind the scenes, and Sigil's multi-core support is realized using
+the following primitive operators:
+
+|| - the parallel operator
+
+Example:
+
+(|| (task) callback) <span class="comment">; start a task, calling callback when it has completed
+</span>(set `*results* ()) <span class="comment">; list to store results of completed tasks
+</span>(|| ((<span class="keyword">lambda</span> (x) (+ x x)) 4) <span class="comment">; computation task
+</span>    (<span class="keyword">lambda</span> (result) (push result *results*))) <span class="comment">; callback with result
+</span>
+TODO: implement multi-core language operations in the browser using
+WebWorkers.
+
+Take the ray tracer from before and try to melt your cpu this time.
+
+======================================
+Exercises 8 - Prolog, a Logic Language
+======================================
+
+With all the usefulness that comes fromt the GPS (General Problem
+Solver) <span class="warning">that was implemented earlier, it still has some very serious</span>
+flaws and problems, often very simple ones, that it is incapable of
+solving.  Prolog is a language that allows for the solution to
+problems in a similar way, and was touted by Sussman as being the
+elegant solution to the problems that GPS face.
+
+Prolog is a 'logic language' in that, you give it facts and rules and
+it logically infers solutions to the question, simply and succinctly
+with a 'yes' or 'no' answer.  This unique way of programming is really
+a very powerful database language and system, and in this chapter we
+are going to be implementing a Prolog interpreter and compiler for
+further use in our Eturia system.
+
+===============================
+Exercise 9 - A 'GPU' Ray Tracer
+===============================
+
+Take the multi-core raytracer and use WebGL to use the GPU for
+rendering.
+
+========================================================================
+========================================================================
+
+                               ========
+                               |DREAMS|
+                               ========
+
+                          <span class="string">&quot;Mind has no end.&quot;</span>
+
+                         -- K. David Harrison
+
+========================================================================
+========================================================================
+
+================================
+Exercise 10 - The 'Games' Problem
+================================
+
+The following MD5 sums and time lengths represent the checksums of a
+corresponding (2 channel) .WAV file:
+
+1. 0efb11a05d937c87a6823eebd8cded12 03:48
+https://kruhft.bandcamp.com/track/0efb11a05d937c87a6823eebd8cded12
+
+2. 2f139bfb26216eb48c1eb9c0bf0f4bd3 06:19	
+https://kruhft.bandcamp.com/track/2f139bfb26216eb48c1eb9c0bf0f4bd3
+
+3. 6c920420de5748f1da5a5bd1fc476bec 03:05	
+https://kruhft.bandcamp.com/track/6c920420de5748f1da5a5bd1fc476bec
+
+4. 9fb9456b7260d001d014413d3a62281c 01:58	
+https://kruhft.bandcamp.com/track/9fb9456b7260d001d014413d3a62281c
+
+5. 420d64b6dbcc779f9631f4599f4bb5dd 02:26	
+https://kruhft.bandcamp.com/track/420d64b6dbcc779f9631f4599f4bb5dd
+
+6. 422c8336d3e435ffe80d5f9e6a895154 03:55	
+https://kruhft.bandcamp.com/track/422c8336d3e435ffe80d5f9e6a895154
+
+7. 517f4c4e232319935b02fcfe006c30ec 03:40	
+https://kruhft.bandcamp.com/track/517f4c4e232319935b02fcfe006c30ec
+
+8. 6630d10982950b490c5a0c3bad1cdd0a 14:24	
+https://kruhft.bandcamp.com/track/6630d10982950b490c5a0c3bad1cdd0a
+
+9. e2b5363aa86ecdf78eedde1dfba9da23 04:56
+https://kruhft.bandcamp.com/track/e2b5363aa86ecdf78eedde1dfba9da23
+
+10. e37cb070c2cfabb9892ba1f540fdb08e 05:34
+https://kruhft.bandcamp.com/track/e37cb070c2cfabb9892ba1f540fdb08e
+
+11. e2b5363aa86ecdf78eedde1dfba9da23 06:36
+https://kruhft.bandcamp.com/track/e2b5363aa86ecdf78eedde1dfba9da23
+
+12. f44fab15d65679c91783580a82e76b18 05:00
+https://kruhft.bandcamp.com/track/f44fab15d65679c91783580a82e76b18
+
+13. fc917df3225544db59247e30fbf235d7 04:23
+https://kruhft.bandcamp.com/track/fc917df3225544db59247e30fbf235d7
+
+Problem: Rebuild the original .WAV files using the data given above.
+
+An MD5-Sum Propagator Network Calculator
+----------------------------------------
+
+Utilizing the Boolean Propagtor Network from Exercise 6, we are going
+to build a calculator for MD5 sums using such a network.  Due to the
+ability of the propagator network to compute both forwards and
+backwards, we are hoping that the network might contain some 'extra'
+information when we look inside of it with partial information given
+on its inputs and outputs.
+
+================================
+Exercise 11 - Genetic Programming
+================================
+
+TODO: find an interesting example, maybe from TLOL
+
+====================================
+Exercise 12 - A (Simulated) RISC CPU
+====================================
+
+Always wanted to to do this.
+
+==========================================================
+Exercise 13 - A Lisp Compiler for the (Simulated) RISC CPU
+==========================================================
+
+Same.
+
+=====================================
+Exercises 14 - A (Simulated) Lisp CPU 
+=====================================
+
+Ditto.
+
+================================================
+Exercises 15 - A Multi-Core (Simulated) Lisp CPU 
+================================================
+
+Ahoy.
+
+=================================
+Appendix 1 - A DSL For Javascript
+=================================
+
+==========
+References
+==========
+
+[1OL]
+Title: On Lisp
+Year: 1993
+Author: Paul Graham
+URL: http://www.paulgraham.com/onlisp.html
+
+[2SICP]
+Title: Structure and Interpretation of Computer Programs
+Year: 1979
+Author: Gerald Jay Sussman
+Author: Hal Abelson
+URL: https://mitpress.mit.edu/sicp/full-text/book/book.html
+
+[3ACL]
+Title: ASNI Common Lisp
+Year: 1995
+Author: Paul Graham
+URL: http://paulgraham.com/acl.html
+
+[4TAOTP]
+Title: The Art of the Propagator
+Year: 2009
+Author: Gerald Jay Sussman
+URL: https://dspace.mit.edu/handle/1721.1/44215
+
+[5PAIP]
+Title: Paradigms of Artificial Intelligence Programming
+Year: 1991
+Author: Peter Norvig
+URL: norvig.com/paip.html
+
+[6TSFTPL]
+Title: The Search for the Perfect Language
+Year: 1993
+Author: Umberto Eco
+URL: http://www.amazon.com/Search-Perfect-Language-Making-Europe/dp/0631205101
+
+[7TAOCP]
+Title: The Art of Computer Programming
+Year: 1962
+Author: Donald Knuth
+URL: https://www.amazon.ca/Computer-Programming-Volumes-1-4A-Boxed/dp/0321751043/
+
+[WPGPS]
+Title: General Problem Solver
+URL: https://en.wikipedia.org/wiki/General_Problem_Solver
+
+[WPSA]
+Title: Susman Anomoly
+URL: https://en.wikipedia.org/wiki/Sussman_Anomaly
+
+[WPCGOL]
+Title: Conway's Game of Life
+URL: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+
+--
+Copyright - 2016
+
+All rights reserved.  
+
+If you wish to reproduce this work, please ask my permission first.
+Fair use provisions apply.  The computer code contained in this
+document can be used for any purpose without restriction.
+
+<span class="string">&quot;Things don't have to change the world to be important.&quot;</span>
+
+  -- Steve Jobs
+</pre>
+
+ </body>
+</html>

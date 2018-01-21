@@ -71,7 +71,7 @@ x.runApplication({ app: "audioplayer",
 x.runApplication({ app: "iframe",
                    appOptions: {
                        title: "The Order of Symbols",
-                       uri: 'the-order-of-symbols.txt',
+                       uri: 'the-order-of-symbols.txt.html',
                    },
                    style: {
                        top: "100px",

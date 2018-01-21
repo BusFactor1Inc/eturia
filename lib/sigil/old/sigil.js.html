@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>sigil.js</title>
+<meta name="generator" content="emacs 25.0.50.4; htmlfontify 0.21" />
+<style type="text/css"><!-- 
+body { font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  color: #ffffff;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.default   { font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  color: #ffffff;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.default a { font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  color: #ffffff;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.comment   { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.comment a { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.comment-delimiter   { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.comment-delimiter a { color: #ff7f24;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.constant   { color: #7fffd4;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.constant a { color: #7fffd4;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.function-name   { color: #87cefa;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.function-name a { color: #87cefa;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.string   { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.string a { color: #ffa07a;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.type   { color: #98fb98;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.type a { color: #98fb98;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.variable-name   { color: #eedd82;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.variable-name a { color: #eedd82;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.keyword   { color: #00ffff;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: none; }
+span.keyword a { color: #00ffff;  font-family: monospace;  font-stretch: normal;  font-weight: 700;  font-style: normal;  background: #000000;  font-size: 10pt;  text-decoration: underline; }
+ --></style>
+
+    <script type="text/javascript"><!--
+  // this function is needed to work around
+  // a bug in IE related to element attributes
+  function hasClass(obj)
+  {
+      var result = false;
+      if (obj.getAttributeNode("class") != null)
+      {
+          result = obj.getAttributeNode("class").value;
+      }
+      return result;
+  }
+
+  function stripe(id)
+  {
+      // the flag we'll use to keep track of
+      // whether the current row is odd or even
+      var even = false;
+
+      // if arguments are provided to specify the colors
+      // of the even & odd rows, then use the them;
+      // otherwise use the following defaults:
+      var evenColor = arguments[1] ? arguments[1] : "#fff";
+      var oddColor  = arguments[2] ? arguments[2] : "#ddd";
+
+      // obtain a reference to the desired table
+      // if no such table exists, abort
+      var table = document.getElementById(id);
+      if (! table) { return; }
+
+      // by definition, tables can have more than one tbody
+      // element, so we'll have to get the list of child
+      // &lt;tbody&gt;s
+      var tbodies = table.getElementsByTagName("tbody");
+
+      // and iterate through them...
+      for (var h = 0; h < tbodies.length; h++)
+      {
+          // find all the &lt;tr&gt; elements...
+          var trs = tbodies[h].getElementsByTagName("tr");
+
+          // ... and iterate through them
+          for (var i = 0; i < trs.length; i++)
+          {
+              // avoid rows that have a class attribute
+              // or backgroundColor style
+              if (! hasClass(trs[i]) &&
+                  ! trs[i].style.backgroundColor)
+              {
+                  // get all the cells in this row...
+                  var tds = trs[i].getElementsByTagName("td");
+
+                  // and iterate through them...
+                  for (var j = 0; j < tds.length; j++)
+                  {
+                      var mytd = tds[j];
+
+                      // avoid cells that have a class attribute
+                      // or backgroundColor style
+                      if (! hasClass(mytd) &&
+                          ! mytd.style.backgroundColor)
+                      {
+                          mytd.style.backgroundColor =
+                            even ? evenColor : oddColor;
+                      }
+                  }
+              }
+              // flip from odd to even, or vice-versa
+              even =  ! even;
+          }
+      }
+  }
+
+  function toggle_invis( name )
+  {
+      var filter =
+        { acceptNode:
+          function( node )
+          { var classname = node.id;
+            if( classname )
+            { var classbase = classname.substr( 0, name.length );
+              if( classbase == name ) { return NodeFilter.FILTER_ACCEPT; } }
+            return NodeFilter.FILTER_SKIP; } };
+      var walker = document.createTreeWalker( document.body           ,
+                                              NodeFilter.SHOW_ELEMENT ,
+                                              filter                  ,
+                                              false                   );
+      while( walker.nextNode() )
+      {
+          var e = walker.currentNode;
+          if( e.style.display == "none" ) { e.style.display = "inline"; }
+          else                            { e.style.display = "none";   }
+      }
+  }
+--> </script>
+  </head>
+  <body onload="stripe('index'); return true;">
+
+<pre><span class="keyword">var</span> <span class="variable-name">Sigil</span> = <span class="keyword">new</span> <span class="type">Model</span>({
+    type: <span class="string">&quot;Lisp&quot;</span>,
+    <span class="function-name">init</span>: <span class="keyword">function</span> (<span class="variable-name">options</span>) {
+        options = options || {};
+        
+        <span class="constant">this</span>.reset();
+        
+        options.core &amp;&amp; <span class="constant">this</span>.loadCore(options.core);
+    },
+    
+    <span class="function-name">reset</span>: <span class="keyword">function</span> (<span class="variable-name">env</span>, <span class="variable-name">fenv</span>) {
+        <span class="keyword">var</span> <span class="variable-name">_fenv</span> = {
+            <span class="string">'atom'</span>: <span class="constant">this</span>.batom.bind(<span class="constant">this</span>),
+            <span class="string">'null'</span>: <span class="constant">this</span>.bnull.bind(<span class="constant">this</span>),
+            <span class="string">'set'</span>: <span class="constant">this</span>.bset.bind(<span class="constant">this</span>),
+            <span class="string">'car'</span>: <span class="constant">this</span>.bcar.bind(<span class="constant">this</span>),
+            <span class="string">'cdr'</span>: <span class="constant">this</span>.bcdr.bind(<span class="constant">this</span>),
+            <span class="string">'eq'</span>: <span class="constant">this</span>.beq.bind(<span class="constant">this</span>),
+            <span class="string">'cons'</span>: <span class="constant">this</span>.bcons.bind(<span class="constant">this</span>),
+            <span class="string">'+'</span>: <span class="constant">this</span>.bplus.bind(<span class="constant">this</span>),
+            <span class="string">'-'</span>: <span class="constant">this</span>.bminus.bind(<span class="constant">this</span>),
+            <span class="string">'*'</span>: <span class="constant">this</span>.btimes.bind(<span class="constant">this</span>),
+            <span class="string">'/'</span>: <span class="constant">this</span>.bdivide.bind(<span class="constant">this</span>),
+            <span class="string">'%'</span>: <span class="constant">this</span>.bmod.bind(<span class="constant">this</span>),
+            <span class="string">'apply'</span>: <span class="constant">this</span>.bapply.bind(<span class="constant">this</span>),
+            <span class="string">'eval'</span>: <span class="constant">this</span>.beval.bind(<span class="constant">this</span>),
+            <span class="string">'call'</span>: <span class="constant">this</span>.bcall.bind(<span class="constant">this</span>),
+            <span class="string">'env'</span>: <span class="constant">this</span>.benv.bind(<span class="constant">this</span>),
+            <span class="string">'fenv'</span>: <span class="constant">this</span>.bfenv.bind(<span class="constant">this</span>),
+            <span class="string">'rm'</span>: <span class="constant">this</span>.brm.bind(<span class="constant">this</span>),
+            <span class="string">'rmf'</span>: <span class="constant">this</span>.brmf.bind(<span class="constant">this</span>),
+            <span class="string">'=&gt;'</span>: <span class="constant">this</span>.bmagic.bind(<span class="constant">this</span>),
+        };
+        
+        <span class="keyword">var</span> <span class="variable-name">_env</span> = {
+            <span class="string">'t'</span>: <span class="string">'t'</span>
+        }; 
+
+
+        env = $.extend(_env, env);
+        fenv = $.extend(_fenv, fenv);
+        console.log(_env, _fenv, env, fenv);
+        <span class="constant">this</span>.env = env;
+        <span class="constant">this</span>.fenv = fenv;
+    },
+
+    <span class="function-name">bmagic</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">retval</span> = eval(args[0]);
+        <span class="keyword">if</span>(retval !== <span class="constant">undefined</span>)
+            <span class="keyword">return</span> retval;
+        <span class="keyword">else</span>
+            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;
+    },
+
+    <span class="function-name">brm</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">ret</span> = <span class="constant">this</span>.env[args[0]];
+        <span class="keyword">delete</span> <span class="constant">this</span>.env[args[0]];
+        <span class="keyword">return</span> ret;
+    },
+
+    <span class="function-name">brmf</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">ret</span> = <span class="constant">this</span>.fenv[args[0]];
+        <span class="keyword">delete</span> <span class="constant">this</span>.fenv[args[0]];
+        <span class="keyword">return</span> ret;
+    },
+
+    
+
+    <span class="function-name">_null</span>: <span class="keyword">function</span>(<span class="variable-name">e</span>) {
+        <span class="comment-delimiter">//</span><span class="comment">return (e === undefined || (Array.isArray(e) &amp;&amp; e.length === 0)) &amp;&amp; 't' || [];
+</span>        <span class="keyword">return</span> (Array.isArray(e) &amp;&amp; e.length === 0) &amp;&amp; <span class="string">'t'</span> || [];
+    },
+
+    <span class="function-name">each</span>: <span class="keyword">function</span>(<span class="variable-name">l</span>, <span class="variable-name">f</span>) {
+        <span class="keyword">if</span>(<span class="constant">this</span>._null(l) !== <span class="string">'t'</span>) {
+            <span class="keyword">if</span>(l.length === 3) {
+                f(l[0], <span class="constant">true</span>);
+                <span class="constant">this</span>.each(l.slice(1), f);
+            } <span class="keyword">else</span> {
+                f(l[0]);
+                <span class="keyword">if</span>(!(<span class="keyword">typeof</span> l === <span class="string">&quot;string&quot;</span> || <span class="keyword">typeof</span> l === <span class="string">&quot;number&quot;</span>))
+                    <span class="constant">this</span>.each(<span class="constant">this</span>.cdr(l), f);
+                <span class="keyword">else</span>
+                    f(l, <span class="constant">true</span>);
+            }
+        } <span class="keyword">else</span> {
+            f(l, <span class="constant">true</span>);
+        }
+    },
+
+    <span class="function-name">beq</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">x</span> = args[0];
+        <span class="keyword">var</span> <span class="variable-name">y</span> = args[1][0];
+        <span class="keyword">return</span> (x === y || (Array.isArray(x) &amp;&amp; Array.isArray(y) &amp;&amp;
+                            x.length === 0 &amp;&amp; y.length === 0)) &amp;&amp; <span class="string">'t'</span> || [];
+    },
+
+    <span class="function-name">bcond</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">while</span>(<span class="constant">this</span>._null(args) !== <span class="string">'t'</span>) {
+            <span class="keyword">var</span> <span class="variable-name">test</span> = args[0][0];
+            <span class="keyword">var</span> <span class="variable-name">body</span> = args[0][1];
+            <span class="keyword">var</span> <span class="variable-name">result</span> = <span class="constant">this</span>.eval(test);
+            
+            <span class="constant">this</span>.debug &amp;&amp; console.log(<span class="string">'sigil: bcond: test, body, result: '</span>, test, body, result);
+            <span class="keyword">if</span>(<span class="constant">this</span>._null(result) !== <span class="string">'t'</span>) {
+                <span class="keyword">return</span> <span class="constant">this</span>.progn(body);
+            }
+            args = args[1];
+        }
+        <span class="keyword">return</span> [];
+    },
+    
+    <span class="function-name">bnull</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">return</span> <span class="constant">this</span>._null(args[0]);
+    },
+
+    <span class="function-name">atom</span>: <span class="keyword">function</span> (<span class="variable-name">e</span>) {
+        <span class="keyword">return</span> (<span class="keyword">typeof</span> e === <span class="string">'string'</span> ||
+                <span class="keyword">typeof</span> e === <span class="string">'number'</span> ||
+                <span class="constant">this</span>._null(e) === <span class="string">'t'</span>) &amp;&amp; <span class="string">'t'</span> || []
+    },
+    
+    <span class="function-name">batom</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">return</span> <span class="constant">this</span>.atom(args[0]);
+    },
+    
+    <span class="function-name">bdivide</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">quotient</span> = args[0];
+        
+        <span class="constant">this</span>.each(args[1], <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(<span class="constant">this</span>._null(e) !== <span class="string">'t'</span>) {
+                quotient /= e;
+            }
+        }.bind(<span class="constant">this</span>));
+        
+        <span class="keyword">return</span> quotient;
+    },
+
+    <span class="function-name">bmod</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">x</span> = args[0];
+        <span class="keyword">var</span> <span class="variable-name">y</span> = args[1][0];
+
+        <span class="keyword">return</span> Math.floor(x) % Math.floor(y);
+    },
+
+    <span class="function-name">btimes</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">product</span> = args[0];
+        
+        <span class="constant">this</span>.each(args[1], <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(<span class="constant">this</span>._null(e) !== <span class="string">'t'</span>) {
+                product *= e;
+            }
+        }.bind(<span class="constant">this</span>));
+        
+        <span class="keyword">return</span> product;
+    },
+
+    <span class="function-name">bminus</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">difference</span> = args[0];
+        
+        <span class="constant">this</span>.each(args[1], <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(<span class="constant">this</span>._null(e) !== <span class="string">'t'</span>) {
+                difference -= e;
+            }
+        }.bind(<span class="constant">this</span>));
+        
+        <span class="keyword">return</span> difference;
+    },
+    
+    <span class="function-name">bplus</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">sum</span> = args[0];
+        
+        <span class="constant">this</span>.each(args[1], <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(<span class="constant">this</span>._null(e) !== <span class="string">'t'</span>) {
+                sum += e;
+            }
+        }.bind(<span class="constant">this</span>));
+        
+        <span class="keyword">return</span> sum;
+    },
+
+    <span class="function-name">car</span>: <span class="keyword">function</span> (<span class="variable-name">x</span>) {
+        <span class="keyword">var</span> <span class="variable-name">isnotnull</span> = <span class="constant">this</span>._null(x) !== <span class="string">'t</span><span class="string">'</span>;
+        <span class="keyword">if</span>(<span class="constant">this</span>.atom(x) === <span class="string">'t'</span> &amp;&amp; isnotnull) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;attempt to take the car of a symbol or number&quot;</span>);
+        } <span class="keyword">else</span> {
+            <span class="keyword">if</span>(!isnotnull) {
+                <span class="keyword">return</span> [];
+            } <span class="keyword">else</span> {
+                <span class="keyword">return</span> x[0];
+            }
+        }
+    },
+
+    <span class="function-name">bcar</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">return</span> <span class="constant">this</span>.car(args[0]);
+    },
+
+    <span class="function-name">cdr</span>: <span class="keyword">function</span> (<span class="variable-name">x</span>) {
+        <span class="keyword">var</span> <span class="variable-name">isnotnull</span> = <span class="constant">this</span>._null(x) !== <span class="string">'t</span><span class="string">'</span>;
+        <span class="keyword">if</span>(<span class="constant">this</span>.atom(x) === <span class="string">'t'</span> &amp;&amp; isnotnull) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;attempt to take the cdr of a symbol or number&quot;</span>);
+        } <span class="keyword">else</span> {
+            <span class="keyword">if</span>(!isnotnull) {
+                <span class="keyword">return</span> [];
+            } <span class="keyword">else</span> {
+                <span class="keyword">return</span> x[1];
+            }
+        }
+    },
+
+    <span class="function-name">bcdr</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">return</span> <span class="constant">this</span>.cdr(args[0]);
+    },
+
+    <span class="function-name">cons</span>: <span class="keyword">function</span>(<span class="variable-name">x</span>, <span class="variable-name">y</span>) {
+        <span class="keyword">return</span> [x, y];
+    },
+    
+    <span class="function-name">bcons</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">car</span> = args[0];
+        <span class="keyword">var</span> <span class="variable-name">cdr</span> = args[1][0];
+        <span class="keyword">return</span> [car, cdr];
+    },
+
+    <span class="function-name">bprogn</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">return</span> <span class="constant">this</span>.progn(args);
+    },
+    
+    <span class="function-name">progn</span>: <span class="keyword">function</span> (<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">result</span>;
+        <span class="keyword">while</span>(args.length &gt; 0) {
+            result = <span class="constant">this</span>.eval(args[0]);
+            args = args[1];
+        }
+        
+        <span class="keyword">return</span> result;
+    },
+
+    <span class="function-name">evlambda</span>: <span class="keyword">function</span> (<span class="variable-name">fun</span>, <span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">vars</span> = fun[1][0];
+        <span class="keyword">var</span> <span class="variable-name">saved</span> = {}
+        
+        <span class="comment-delimiter">// </span><span class="comment">save variables
+</span>        <span class="keyword">var</span> <span class="variable-name">flag</span>;
+        <span class="constant">this</span>.each(vars, <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(!last) {
+                <span class="keyword">if</span>(!flag) {
+	            <span class="keyword">if</span>(e !== <span class="string">'&amp;rest'</span> &amp;&amp; e !== <span class="string">'&amp;body'</span> &amp;&amp; <span class="constant">this</span>.env[e] !== <span class="constant">undefined</span>) {
+	                saved[e] = <span class="constant">this</span>.env[e];
+	            }
+	            <span class="keyword">if</span>(!Array.isArray(args[0]) &amp;&amp; args[0] &amp;&amp; args[0].values !== <span class="constant">undefined</span>) {
+	                <span class="constant">this</span>.env[e] = args[0].values[0];
+	            } <span class="keyword">else</span> {
+	                <span class="keyword">if</span>(e === <span class="string">'&amp;rest'</span> || e === <span class="string">'&amp;body'</span>) {
+                            flag = <span class="constant">true</span>;
+                            <span class="keyword">return</span>;
+	                } <span class="keyword">else</span>
+                            saved[e] = <span class="constant">this</span>.env[e];
+		            <span class="constant">this</span>.env[e] = args[0];
+	            }
+                    args = args[1];
+                } <span class="keyword">else</span> {
+                    saved[e] = <span class="constant">this</span>.env[e];
+		    <span class="constant">this</span>.env[e] = args;
+                }
+            }
+        }.bind(<span class="constant">this</span>));
+
+        <span class="keyword">var</span> <span class="variable-name">oldSelf</span> = <span class="constant">this</span>.fenv[<span class="string">'self'</span>];
+        <span class="constant">this</span>.fenv[<span class="string">'self'</span>] = fun;
+
+        <span class="keyword">var</span> <span class="variable-name">error</span>;
+        <span class="keyword">try</span> {
+            <span class="keyword">var</span> <span class="variable-name">result</span> = <span class="constant">this</span>.progn(fun[1][1]);
+        } <span class="keyword">catch</span>(e) {
+            error = e;
+        }
+        
+        <span class="constant">this</span>.each(vars, <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(!last) {
+	        <span class="keyword">if</span>(saved[e] !== <span class="constant">undefined</span>) {
+	            <span class="constant">this</span>.env[e] = saved[e];
+	        } <span class="keyword">else</span> {
+                    <span class="keyword">delete</span> <span class="constant">this</span>.env[e];
+                }
+            }
+        }.bind(<span class="constant">this</span>));
+        <span class="keyword">delete</span> <span class="constant">this</span>.fenv[<span class="string">'self'</span>]
+        <span class="keyword">if</span>(oldSelf)
+            <span class="constant">this</span>.fenv[<span class="string">'self'</span>] = oldSelf;
+        
+        <span class="keyword">if</span>(error)
+            <span class="keyword">throw</span> error;
+
+        <span class="keyword">return</span> result;
+    },
+
+    <span class="function-name">reverse</span>: <span class="keyword">function</span>(<span class="variable-name">l</span>) {
+        <span class="keyword">var</span> <span class="variable-name">result</span> = [];
+        <span class="constant">this</span>.each(l, <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(last) {
+                <span class="keyword">if</span>(<span class="constant">this</span>._null(e) !== <span class="string">'t'</span>) {
+                    <span class="keyword">if</span>(<span class="constant">this</span>._null(result) !== <span class="string">'t'</span>) {
+                        <span class="keyword">var</span> <span class="variable-name">result2</span> = result;
+                        <span class="keyword">while</span>(<span class="constant">this</span>._null(result2[1]) !== <span class="string">'t'</span>)
+                            result2 = result2[1];
+                        result2[1] = e;
+                    } <span class="keyword">else</span> {
+                        result = e;
+                    }
+                }
+            } <span class="keyword">else</span> {
+                result = [e, result];
+            }
+        }.bind(<span class="constant">this</span>));
+        <span class="keyword">return</span> result;
+    },
+
+    <span class="function-name">evlis</span>: <span class="keyword">function</span>(<span class="variable-name">l</span>) {
+        <span class="keyword">var</span> <span class="variable-name">result</span> = []
+        <span class="constant">this</span>.each(l, <span class="keyword">function</span> (<span class="variable-name">x</span>, <span class="variable-name">last</span>) {
+            <span class="keyword">if</span>(!last) {
+	        <span class="keyword">var</span> <span class="variable-name">tmp</span> = <span class="constant">this</span>.eval(x);
+	        <span class="keyword">if</span>(!Array.isArray(tmp) &amp;&amp; tmp !== <span class="constant">undefined</span> &amp;&amp; tmp.values !== <span class="constant">undefined</span>) {
+	            tmp = tmp.values[0];
+	        }
+	        result = [tmp, result]
+            }
+        }.bind(<span class="constant">this</span>));
+        <span class="keyword">return</span> <span class="constant">this</span>.reverse(result);
+    },
+
+    <span class="function-name">beval</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">expr</span> = args[0];
+        <span class="keyword">return</span> <span class="constant">this</span>.eval(expr);
+    },
+
+    <span class="function-name">bapply</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">fun</span> = args[0];
+        <span class="keyword">var</span> <span class="variable-name">args</span> = args[1][0];
+        <span class="keyword">return</span> <span class="constant">this</span>.apply(fun, args);
+    },
+    
+    <span class="function-name">apply</span>: <span class="keyword">function</span>(<span class="variable-name">fun</span>, <span class="variable-name">args</span>) {
+        <span class="keyword">if</span>(<span class="keyword">typeof</span> fun === <span class="string">&quot;string&quot;</span>) {
+	    <span class="keyword">var</span> <span class="variable-name">f</span> = <span class="constant">this</span>.fenv[fun];
+            <span class="comment-delimiter">/* </span><span class="comment">This allows removal of funcall.  If function is not found
+             * in the function environment, it is then looked up in the
+             * normal environment.  Might reduce confusion for new
+             * users? */</span>
+            <span class="keyword">if</span>(f === <span class="constant">undefined</span>) {
+                f = <span class="constant">this</span>.env[fun];
+            }
+            <span class="keyword">if</span>(f)
+                fun = f;
+        } 
+        
+        <span class="keyword">if</span>(Array.isArray(fun) &amp;&amp; fun[0] === <span class="string">'macro'</span>) {
+            <span class="keyword">var</span> <span class="variable-name">x</span> = <span class="constant">this</span>.evlambda(fun, args);
+	    <span class="keyword">return</span> <span class="constant">this</span>.eval(x);
+        } <span class="keyword">else</span> {
+	    <span class="keyword">var</span> <span class="variable-name">args</span> = <span class="constant">this</span>.evlis(args);
+	    <span class="keyword">if</span>(<span class="keyword">typeof</span> fun === <span class="string">&quot;function&quot;</span>) {
+	        <span class="keyword">return</span> fun(args);
+	    } <span class="keyword">else</span> <span class="keyword">if</span>(Array.isArray(fun) &amp;&amp; fun[0] === <span class="string">'lambda'</span>) {
+                <span class="keyword">return</span> <span class="constant">this</span>.evlambda(fun, args);
+	    } <span class="keyword">else</span> {
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;undefined function: &quot;</span> + fun);
+                <span class="keyword">return</span> fun;
+	    }
+        }
+        
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;apply: &quot;</span> + fun + <span class="string">&quot;: &quot;</span> + args);
+    },
+
+    <span class="function-name">bme</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">fun</span> = args[0][0];
+        <span class="keyword">var</span> <span class="variable-name">args</span> = args[0][1];
+        
+        <span class="keyword">return</span> <span class="constant">this</span>.evlambda(<span class="constant">this</span>.fenv[fun], args);
+    },
+
+    <span class="function-name">bset</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">v</span>, <span class="variable-name">retval</span>;
+        <span class="keyword">while</span>(<span class="constant">this</span>._null(args) !== <span class="string">'t'</span>) {
+            v = args[0];
+            <span class="keyword">var</span> <span class="variable-name">expr</span> = args[1][0];
+
+            <span class="keyword">if</span>(<span class="keyword">typeof</span> v === <span class="string">&quot;string&quot;</span>) {
+	        retval = <span class="constant">this</span>.env[v] = expr;
+            } <span class="keyword">else</span>
+	        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;attempt to set non-symbol value: &quot;</span> + v);
+
+            args = args[1][1];
+        }
+
+        <span class="keyword">return</span> retval;
+    },
+
+    <span class="function-name">benv</span>: <span class="keyword">function</span> () {
+        <span class="keyword">var</span> <span class="variable-name">retval</span> = [];
+        <span class="keyword">for</span>(i <span class="keyword">in</span> <span class="constant">this</span>.env) {
+            retval = <span class="constant">this</span>.cons(<span class="constant">this</span>.cons(i, <span class="constant">this</span>.env[i]), retval);
+        }
+        <span class="keyword">return</span> <span class="constant">this</span>.reverse(retval);
+    },
+
+    <span class="function-name">bfenv</span>: <span class="keyword">function</span> () {
+        <span class="keyword">var</span> <span class="variable-name">retval</span> = [];
+        <span class="keyword">for</span>(i <span class="keyword">in</span> <span class="constant">this</span>.fenv) {
+            retval = <span class="constant">this</span>.cons(<span class="constant">this</span>.cons(i, <span class="constant">this</span>.fenv[i]), retval);
+        }
+        <span class="keyword">return</span> <span class="constant">this</span>.reverse(retval);
+    },
+
+    <span class="function-name">bprint</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">expr</span> = args;
+        <span class="keyword">if</span>(!Array.isArray(expr) &amp;&amp; expr != <span class="constant">undefined</span> &amp;&amp; expr.values !== <span class="constant">undefined</span>) {
+            <span class="constant">this</span>.each(expr.values, <span class="keyword">function</span> (<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+                <span class="keyword">if</span>(!last)
+	            console.log(e);
+	    }.bind(<span class="constant">this</span>));
+        } <span class="keyword">else</span> {
+	    console.log(expr);
+        }
+    },
+
+    <span class="comment-delimiter">/* </span><span class="comment">xxx
+    bsetf: function(args) {
+        var type = args[0][0]
+        var value = this.eval(args[1][0]);
+        
+        switch(type) {
+        case 'symbol-function': {
+            var place = args[0][1][0];
+	    return this.fenv[place] = value;
+        }
+        default: {
+            var place = args[0];
+            return this.env[place[0]] = value;
+        }
+        }
+    }, */</span>
+
+<span class="comment-delimiter">/* </span><span class="comment">TODO: decide if want to remove */</span>
+    <span class="function-name">bcall</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">var</span> <span class="variable-name">fun</span> = args[0];
+        <span class="keyword">var</span> <span class="variable-name">args</span> = args[1];
+        
+        <span class="keyword">if</span>(<span class="keyword">typeof</span> fun === <span class="string">'string'</span>)
+            fun = <span class="constant">this</span>.env[fun];
+        
+        <span class="keyword">return</span> <span class="constant">this</span>.apply(fun, args);
+    },
+
+    <span class="function-name">bvalues</span>: <span class="keyword">function</span>(<span class="variable-name">args</span>) {
+        <span class="keyword">return</span> { <span class="string">'values'</span>: args };
+    },
+    
+    <span class="function-name">bbind</span>: <span class="keyword">function</span>(<span class="variable-name">exprs</span>) {
+        <span class="keyword">var</span> <span class="variable-name">args</span> = exprs[0];
+        <span class="keyword">var</span> <span class="variable-name">values</span> = <span class="constant">this</span>.eval(exprs[1][0]);
+        <span class="keyword">var</span> <span class="variable-name">body</span> = exprs[1][1];
+        
+        <span class="keyword">return</span> <span class="constant">this</span>.apply(<span class="constant">this</span>.blambda([args, body]), values.values);
+    },
+
+    <span class="function-name">bdefmacro</span>: <span class="keyword">function</span>(<span class="variable-name">expr</span>) {
+        <span class="keyword">var</span> <span class="variable-name">name</span> = expr[0];
+        <span class="keyword">var</span> <span class="variable-name">args</span> = expr[1][0];
+        <span class="keyword">var</span> <span class="variable-name">body</span> = expr[1][1];
+        
+        <span class="keyword">var</span> <span class="variable-name">macro</span> = [ <span class="string">'macro'</span>, [ args, body ]];
+        <span class="keyword">return</span> <span class="constant">this</span>.fenv[name] = macro;
+    },
+
+    <span class="function-name">blambda</span>: <span class="keyword">function</span> (<span class="variable-name">expr</span>) {
+        <span class="keyword">var</span> <span class="variable-name">args</span> = expr[0];
+        <span class="keyword">var</span> <span class="variable-name">body</span> = expr[1];
+        <span class="keyword">var</span> <span class="variable-name">lambda</span> = [ <span class="string">'lambda'</span>, [ args, body, []]];
+        <span class="keyword">return</span> lambda;
+    },
+
+    <span class="function-name">bquote</span>: <span class="keyword">function</span>(<span class="variable-name">arg</span>) {
+        <span class="keyword">var</span> <span class="variable-name">result</span> = [], <span class="variable-name">dotted</span> = <span class="constant">false</span>;
+        <span class="keyword">if</span>(Array.isArray(arg) &amp;&amp; (arg[0] !== <span class="string">'unquote'</span> &amp;&amp; arg[0] !== <span class="string">'unquote-splice'</span>)) {
+            <span class="constant">this</span>.each(arg, <span class="keyword">function</span>(<span class="variable-name">e</span>, <span class="variable-name">last</span>) {
+	        <span class="keyword">if</span>(Array.isArray(e) &amp;&amp; e[0] === <span class="string">'unquote'</span>) {
+	            result = [<span class="constant">this</span>.eval(e[1][0]), result];
+	        } <span class="keyword">else</span> <span class="keyword">if</span>(Array.isArray(e) &amp;&amp; e[0] === <span class="string">'unquote-splice'</span>) {
+                    <span class="keyword">var</span> <span class="variable-name">e2</span> = <span class="constant">this</span>.reverse(<span class="constant">this</span>.eval(e[1][0]));
+                    <span class="keyword">var</span> <span class="variable-name">e3</span> = e2;
+                    <span class="keyword">while</span>(<span class="constant">this</span>._null(e3[1]) !== <span class="string">'t'</span>)
+                        e3 = e3[1];
+                    e3[1] = result;
+                    result = e2;
+	        } <span class="keyword">else</span> <span class="keyword">if</span>((e &amp;&amp; e !== <span class="string">''</span> &amp;&amp; e !== 0) &amp;&amp; Array.isArray(e) &amp;&amp; e.length) {
+	            result = [<span class="constant">this</span>.bquote(e), result];
+	        } <span class="keyword">else</span> {
+                    <span class="keyword">if</span>(last &amp;&amp; <span class="constant">this</span>._null(e) !== <span class="string">'t'</span>) {
+                        <span class="keyword">if</span>(result.length) {
+                            result = <span class="constant">this</span>.reverse(result)
+                            <span class="keyword">var</span> <span class="variable-name">result2</span> = result;
+                            <span class="keyword">while</span>(<span class="constant">this</span>._null(result2[1]) !== <span class="string">'t'</span>)
+                                result2 = result2[1];
+                            result2[1] = <span class="constant">this</span>.bquote(e);
+                        } <span class="keyword">else</span> {
+                            result = e;
+                        }
+                        dotted = <span class="constant">true</span>;
+                    } <span class="keyword">else</span> {
+                        <span class="keyword">if</span>(e !== <span class="constant">undefined</span>)
+                            result = [e, result];
+                    }
+                }
+            }.bind(<span class="constant">this</span>));
+            
+            
+            <span class="keyword">if</span>(<span class="constant">this</span>._null(result[0]) === <span class="string">'t'</span> &amp;&amp; dotted) {
+                <span class="keyword">return</span> result[1];
+            } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="constant">this</span>._null(result[0]) === <span class="string">'t'</span>) {
+                <span class="keyword">return</span> <span class="constant">this</span>.reverse(result[1]);
+            }  <span class="keyword">else</span>
+                <span class="keyword">return</span> result;
+        } <span class="keyword">else</span> <span class="keyword">if</span>(arg[0] === <span class="string">'unquote'</span>) {
+            <span class="keyword">return</span> <span class="constant">this</span>.eval(arg[1][0]);
+        } <span class="keyword">else</span> <span class="keyword">if</span>(arg[0] === <span class="string">'unquote-splice'</span>) {
+            <span class="keyword">return</span> <span class="constant">this</span>.eval(arg[1][0]);
+        } <span class="keyword">else</span>
+            <span class="keyword">return</span> arg;
+    },
+
+    <span class="function-name">eval</span>: <span class="keyword">function</span>(<span class="variable-name">expr</span>) {
+        <span class="keyword">if</span>(Array.isArray(expr)) {
+            <span class="keyword">if</span>(expr.length === 0) {
+                <span class="keyword">return</span> []; <span class="comment-delimiter">// </span><span class="comment">nil
+</span>            }
+	    <span class="keyword">var</span> <span class="variable-name">car</span> = expr[0];
+	    <span class="keyword">var</span> <span class="variable-name">cdr</span> = expr[1];
+	    <span class="keyword">switch</span>(car) {
+	    <span class="keyword">case</span> <span class="string">'quote'</span>:
+	        <span class="keyword">return</span> <span class="constant">this</span>.bquote(cdr[0]);
+	    <span class="keyword">case</span> <span class="string">'cond'</span>:
+	        <span class="keyword">return</span> <span class="constant">this</span>.bcond(cdr);
+	    <span class="keyword">case</span> <span class="string">'lambda'</span>:
+	        <span class="keyword">return</span> <span class="constant">this</span>.blambda(cdr);
+	    <span class="comment-delimiter">/* </span><span class="comment">case 'setf':  xxx
+	        return this.bsetf(cdr); */</span>
+	    <span class="keyword">case</span> <span class="string">'values'</span>:
+	        <span class="keyword">return</span> <span class="constant">this</span>.bvalues(cdr);
+	    <span class="keyword">case</span> <span class="string">'bind'</span>:
+	        <span class="keyword">return</span> <span class="constant">this</span>.bbind(cdr);
+	    <span class="comment-delimiter">/* </span><span class="comment">case 'symbol-function': xxx
+	        return this.fenv[this.eval(cdr[0])]; */</span>
+	    <span class="keyword">case</span> <span class="string">'defmacro'</span>:
+	        <span class="keyword">return</span> <span class="constant">this</span>.bdefmacro(cdr);
+            <span class="keyword">case</span> <span class="string">'progn'</span>:
+                <span class="keyword">return</span> <span class="constant">this</span>.bprogn(cdr);
+            <span class="keyword">case</span> <span class="string">'me'</span>:
+                <span class="keyword">return</span> <span class="constant">this</span>.bme(cdr);
+	    <span class="keyword">default</span>:
+	        <span class="keyword">return</span> <span class="constant">this</span>.apply(car, cdr);
+	    }
+        } <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> expr === <span class="string">&quot;number&quot;</span>) {
+            <span class="keyword">return</span> expr;
+        } <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> expr === <span class="string">&quot;string&quot;</span>) {
+            <span class="keyword">var</span> <span class="variable-name">v</span> = <span class="constant">this</span>.env[expr];
+            <span class="keyword">if</span>(v === <span class="constant">undefined</span>)
+                v = <span class="constant">this</span>.fenv[expr]
+	    <span class="keyword">if</span>(v === <span class="constant">undefined</span>) {
+	        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;undefined symbol or function: &quot;</span> + expr);
+	    }
+	    <span class="keyword">return</span> v;
+        } <span class="keyword">else</span> {
+	    <span class="keyword">return</span> expr;
+        }
+        
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;eval error:&quot;</span> + expr);
+    },
+
+    <span class="function-name">readFromString</span>: <span class="keyword">function</span>(<span class="variable-name">string</span>) {
+        <span class="keyword">if</span>(!string.length) <span class="keyword">return</span>;
+        <span class="keyword">function</span> <span class="function-name">terminator</span>(<span class="variable-name">c</span>) {
+	    <span class="keyword">return</span> c === <span class="constant">undefined</span> ||
+	        c === <span class="string">' '</span> ||
+	        c === <span class="string">'\n'</span> ||
+	        c === <span class="string">'\r'</span> ||
+	        c === <span class="string">'('</span> ||
+	        c === <span class="string">')'</span>;
+        }
+
+        <span class="keyword">function</span> <span class="function-name">isNumberThing</span>(<span class="variable-name">c</span>, <span class="variable-name">i</span>, <span class="variable-name">l</span>) {
+            <span class="keyword">return</span> c === <span class="string">'0'</span> ||
+	        c === <span class="string">'1'</span> ||
+	        c === <span class="string">'2'</span> ||
+	        c === <span class="string">'3'</span> ||
+	        c === <span class="string">'4'</span> ||
+	        c === <span class="string">'5'</span> ||
+	        c === <span class="string">'6'</span> ||
+	        c === <span class="string">'7'</span> ||
+	        c === <span class="string">'8'</span> ||
+	        c === <span class="string">'9'</span> ||
+	        (c === <span class="string">'-'</span> &amp;&amp; i === 0 &amp;&amp; l &gt; 1) ||
+	        (c === <span class="string">'+'</span> &amp;&amp; i === 0 &amp;&amp; l &gt; 1) ||
+	        c === <span class="string">'.'</span>
+        }
+
+        <span class="keyword">function</span> <span class="function-name">readBar</span> (<span class="variable-name">string</span>) {
+            <span class="keyword">var</span> <span class="variable-name">symbol</span> = <span class="string">&quot;&quot;</span>;
+
+            <span class="keyword">while</span>(string[0] !== <span class="string">'|'</span>) {
+                symbol += string[0];
+                string.shift();
+            }
+            string.shift();
+            <span class="keyword">return</span> symbol;
+        }
+
+        <span class="keyword">function</span> <span class="function-name">readThing</span> (<span class="variable-name">string</span>) {
+	    <span class="keyword">var</span> <span class="variable-name">number</span> = <span class="string">&quot;&quot;</span>;
+	    <span class="keyword">var</span> <span class="variable-name">isNumber</span> = <span class="constant">true</span>;
+            <span class="keyword">var</span> <span class="variable-name">i</span> = 0;
+	    <span class="keyword">while</span>(!terminator(string[0])) {
+	        isNumber &amp;= isNumberThing(string[0], i, string.length);
+	        number += string[0];
+	        string.shift();
+                i++;
+	    }
+            <span class="keyword">if</span>(number[0] === <span class="string">'+'</span> ||
+               number[0] === <span class="string">'-'</span> &amp;&amp;
+               number.length === 1) {
+                isNumber = <span class="constant">false</span>;
+            }
+
+	    <span class="keyword">if</span>(isNumber)
+	        <span class="keyword">return</span> parseFloat(number);
+	    <span class="keyword">else</span>
+	        <span class="keyword">return</span> number;
+        }
+
+        <span class="keyword">var</span> <span class="variable-name">inBackquote</span> = <span class="constant">false</span>;
+
+        <span class="keyword">function</span> <span class="function-name">readSexpr</span>(<span class="variable-name">string</span>) {
+	    <span class="keyword">while</span>(string[0] != <span class="constant">undefined</span>) {
+	        <span class="keyword">var</span> <span class="variable-name">c</span> = string.shift();
+	        <span class="keyword">switch</span>(c) {
+	        <span class="keyword">case</span> <span class="string">' '</span>:
+	        <span class="keyword">case</span> <span class="string">'\n'</span>:
+	        <span class="keyword">case</span> <span class="string">'\t'</span>:
+		    <span class="keyword">continue</span>;
+
+                <span class="keyword">case</span> <span class="string">';'</span>: {
+                    <span class="keyword">var</span> <span class="variable-name">c</span>;
+                    <span class="keyword">do</span> {
+                        c = string.shift();
+                    } <span class="keyword">while</span>(c &amp;&amp; (c !== <span class="string">'\r'</span> &amp;&amp; c !== <span class="string">'\n'</span>));
+                    <span class="keyword">continue</span>;
+                }
+
+	        <span class="keyword">case</span> <span class="string">'`'</span>: {
+                    <span class="keyword">var</span> <span class="variable-name">oldInBackquote</span> = inBackquote;
+                    inBackquote = <span class="constant">true</span>;
+                    <span class="keyword">var</span> <span class="variable-name">e</span> = readSexpr.call(<span class="constant">this</span>, string);
+		    <span class="keyword">var</span> <span class="variable-name">retval</span> = [ <span class="string">'quote'</span>, [ e, []]];
+                    inBackquote = oldInBackquote;
+                    <span class="keyword">return</span> retval;
+                }
+                    
+	        <span class="keyword">case</span> <span class="string">','</span>:
+                    <span class="keyword">if</span>(!inBackquote)
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;comma not inside of backquote&quot;</span>);
+
+		    c = string.shift();
+		    <span class="keyword">if</span>(c == <span class="string">'@'</span>) {
+                        <span class="keyword">var</span> <span class="variable-name">e</span> = readSexpr.call(<span class="constant">this</span>, string);
+                        <span class="keyword">if</span> (<span class="constant">this</span>.batom([e]))
+                            e = [ e, []];
+		        <span class="keyword">return</span> [ <span class="string">'unquote-splice'</span>, e ];
+		    } <span class="keyword">else</span> {
+		        string.unshift(c);
+                        <span class="keyword">var</span> <span class="variable-name">e</span> = readSexpr.call(<span class="constant">this</span>, string);
+                        <span class="keyword">if</span> (<span class="constant">this</span>.batom([e]))
+                            e = [ e, []];
+		        <span class="keyword">return</span> [ <span class="string">'unquote'</span>, e ];
+		    }
+
+                <span class="keyword">case</span> <span class="string">'.'</span>:
+                    <span class="keyword">return</span> <span class="constant">undefined</span>;
+
+	        <span class="keyword">case</span> <span class="string">'('</span>: {
+		    <span class="keyword">var</span> <span class="variable-name">result</span> = [];
+                    <span class="keyword">var</span> <span class="variable-name">elt</span>, <span class="variable-name">c</span>;
+
+                    <span class="keyword">do</span> {
+                        elt = readSexpr.call(<span class="constant">this</span>, string);
+
+                        <span class="keyword">if</span>(elt === <span class="constant">undefined</span>) {
+                            <span class="keyword">debugger</span>
+                            <span class="keyword">var</span> <span class="variable-name">elt2</span> = readSexpr.call(<span class="constant">this</span>, string);
+                            <span class="keyword">var</span> <span class="variable-name">elt3</span> = readSexpr.call(<span class="constant">this</span>, string);
+                            <span class="keyword">if</span>(elt3 !== <span class="constant">null</span>) {
+                                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;error in s-expression (missing close paren?)&quot;</span>);
+                            }
+                            <span class="keyword">if</span>(Array.isArray(elt2) &amp;&amp; elt2[0] === <span class="string">'unquote-splice'</span>) {
+                                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;no splicing after a dot.&quot;</span>);
+                                
+                            }
+                            <span class="keyword">var</span> <span class="variable-name">result2</span> = <span class="constant">this</span>.reverse(result);
+                            <span class="keyword">var</span> <span class="variable-name">result3</span> = result2;
+                            <span class="keyword">while</span>(<span class="constant">this</span>._null(result2[1]) !== <span class="string">'t'</span>)
+                                result2 = result2[1];
+                            result2[1] = elt2;
+                            <span class="keyword">return</span> result3;
+                        } <span class="keyword">else</span> {
+                            <span class="keyword">if</span>(elt || elt === 0 || elt === <span class="string">''</span>)
+                                result = [ elt, result ];
+                        }
+                    } <span class="keyword">while</span>(elt || elt === 0 || elt === <span class="string">''</span>);
+                    
+		    <span class="keyword">return</span> <span class="constant">this</span>.reverse(result);
+	        }
+
+	        <span class="keyword">case</span> <span class="string">')'</span>:
+		    <span class="keyword">return</span> <span class="constant">null</span>;
+
+                <span class="keyword">case</span> <span class="string">'|'</span>:
+                    <span class="keyword">return</span> readBar(string);
+
+	        <span class="keyword">default</span>:
+		    string.unshift(c); 
+		    <span class="keyword">return</span> readThing(string);
+	        }
+	    }
+
+            <span class="keyword">if</span>(string.length)
+	        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">&quot;unterminated sexpr.&quot;</span>);
+        }
+
+        <span class="keyword">return</span> readSexpr.call(<span class="constant">this</span>, string.split(<span class="string">''</span>));
+    },
+
+    <span class="function-name">exec</span>: <span class="keyword">function</span> (<span class="variable-name">string</span>) {
+        <span class="keyword">var</span> <span class="variable-name">code</span> = <span class="constant">this</span>.readFromString(string);
+        <span class="constant">this</span>.add($.extend(<span class="constant">true</span>, [], code));
+        <span class="keyword">var</span> <span class="variable-name">result</span> = <span class="constant">this</span>.eval(code);
+        <span class="constant">this</span>.bset([<span class="string">'*'</span>, [ result, []]]);
+        <span class="keyword">return</span> <span class="constant">this</span>.printToString(result);
+    },
+
+    <span class="function-name">printToString</span>: <span class="keyword">function</span>(<span class="variable-name">expr</span>, <span class="variable-name">ugly</span>) {
+        <span class="keyword">var</span> <span class="variable-name">pretty</span> = !ugly;
+        <span class="keyword">var</span> <span class="variable-name">retval</span>;
+
+        <span class="keyword">function</span> <span class="function-name">removeParens</span>(<span class="variable-name">s</span>) {
+            s = s.slice(1);
+            <span class="keyword">return</span> s.slice(0, s.length-1);
+        }
+
+        <span class="keyword">if</span>(<span class="constant">this</span>._null(expr) === <span class="string">'t'</span>) {
+            retval = <span class="string">&quot;()&quot;</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span>(Array.isArray(expr)) {
+            retval = <span class="string">&quot;(&quot;</span>;
+            <span class="keyword">var</span> <span class="variable-name">closeParens</span> = <span class="string">&quot;)&quot;</span>;
+            <span class="keyword">var</span> <span class="variable-name">special</span> = <span class="constant">false</span>;
+            <span class="keyword">while</span>(<span class="constant">this</span>._null(expr) !== <span class="string">'t'</span>) {
+                <span class="keyword">var</span> <span class="variable-name">val</span> = expr[0];
+                <span class="keyword">if</span>(pretty &amp;&amp; Array.isArray(val) &amp;&amp; val[0] === <span class="string">&quot;unquote&quot;</span>) {
+                    retval += <span class="string">','</span> + removeParens(<span class="constant">this</span>.printToString(val[1])) + <span class="string">&quot; &quot;</span>;
+                    special = <span class="constant">true</span>;
+                } <span class="keyword">else</span> <span class="keyword">if</span>(pretty &amp;&amp; Array.isArray(val) &amp;&amp; val[0] === <span class="string">&quot;unquote-splice&quot;</span>) {
+                    retval += <span class="string">',@'</span> + removeParens(<span class="constant">this</span>.printToString(val[1])) + <span class="string">&quot; &quot;</span>;
+                    special = <span class="constant">true</span>;
+                } <span class="keyword">else</span> <span class="keyword">if</span>(pretty &amp;&amp; Array.isArray(val) &amp;&amp; val[0] === <span class="string">&quot;quote&quot;</span>) {
+                    retval += <span class="string">'`'</span> + removeParens(<span class="constant">this</span>.printToString(val[1])) + <span class="string">&quot; &quot;</span>;
+                    special = <span class="constant">true</span>;
+                } <span class="keyword">else</span> <span class="keyword">if</span>(<span class="constant">this</span>._null(val) !== <span class="string">'t'</span>) {
+                    retval += <span class="constant">this</span>.printToString(val) + (pretty &amp;&amp; <span class="string">&quot; &quot;</span> || <span class="string">&quot; . (&quot;</span>);
+                } 
+                closeParens += <span class="string">&quot;)&quot;</span>;
+                expr = expr[1];
+
+                <span class="keyword">if</span>(<span class="keyword">typeof</span> expr === <span class="string">&quot;string&quot;</span> || <span class="keyword">typeof</span> expr === <span class="string">&quot;number&quot;</span> || <span class="keyword">typeof</span> expr === <span class="string">&quot;function&quot;</span>) {
+                    retval += <span class="string">&quot;. &quot;</span> + <span class="constant">this</span>.printToString(expr);
+                    <span class="keyword">break</span>;
+                }
+            }
+
+            retval = retval + (pretty &amp;&amp; <span class="string">&quot;)&quot;</span> || closeParens);
+        } <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> expr === <span class="string">&quot;object&quot;</span> &amp;&amp; expr &amp;&amp; expr.values) {
+            <span class="keyword">for</span>(<span class="keyword">var</span> <span class="variable-name">i</span> <span class="keyword">in</span> expr.values) {
+                <span class="keyword">if</span>(expr.values[i])
+                    retval += <span class="constant">this</span>.printToString(expr.values[i]) + <span class="string">&quot;&lt;br/&gt;&quot;</span>;
+            }
+            
+        } <span class="keyword">else</span> { retval = expr } 
+        
+        <span class="keyword">return</span> retval;
+    },
+
+    <span class="function-name">saveCore</span>: <span class="keyword">function</span> (<span class="variable-name">path</span>) {
+        path = path || <span class="string">&quot;/core&quot;</span>;
+
+        <span class="keyword">var</span> <span class="variable-name">core</span> = JSON.stringify({ env: <span class="constant">this</span>.env, fenv: <span class="constant">this</span>.fenv });
+
+        console.log(<span class="string">'sigil: saveCore: '</span>, core.length);
+        <span class="constant">this</span>.debug &amp;&amp; console.log(<span class="string">'sigil: saveCore: '</span>, core);
+
+        localStorage.setItem(path, core);
+        <span class="keyword">return</span> <span class="constant">true</span>;
+    },
+
+    <span class="function-name">loadCore</span>: <span class="keyword">function</span> (<span class="variable-name">path</span>) {
+        path = path || <span class="string">&quot;/core&quot;</span>;
+
+        console.log(<span class="string">&quot;sigil: loadCore: Loading core:&quot;</span>, path);
+        <span class="keyword">var</span> <span class="variable-name">core</span> = JSON.parse(localStorage.getItem(path));
+
+        <span class="keyword">if</span>(core)
+            <span class="constant">this</span>.reset(core.env, core.fenv);
+        <span class="keyword">return</span> <span class="constant">true</span>;
+    }
+});
+
+<span class="comment-delimiter">//</span><span class="comment">module.exports = Sigil;
+</span>
+console.log(<span class="string">&quot;Lisp is available.&quot;</span>);
+</pre>
+
+ </body>
+</html>

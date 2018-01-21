@@ -1,3 +1,7 @@
+-- print symbols with spaces using enclosing ||'s, maybe
+
+-- change car,cdr to first, rest?
+
 -- add / separator for symbol name spaces
    -- document this
    -- alist referencing syntax?
