@@ -24,5 +24,12 @@ http://busfactor1.ca/bin/eturia/client/dev.html
 
 Currently, the client is browser only and requires no backend to operate other than a simple web server. But, there are future plans for a communication infrastructure using an innovative back end technology known as Urbit. The first communication technology to the system is going to be some sort of chat program so that users of Eturia will be able to interact with each other and form a community. Future additions also include the ability to load, save and collaborate cores (programs) with other users, and the ability to turn the network of Eturia users into a large, collaborative, distributed network computing grid.
 
+Media:
+==
+
+A Quick Introduction to Eturia: https://www.youtube.com/watch?v=ytxQynuaKiw
+
+Development Videos (formerly known as 'Skynet'): https://www.youtube.com/playlist?list=PLzTz7AF-PnvJITLYNcC4CcRXbbEpRcQip
+
 --
 Burton Samograd - 12 Mar, 2016
