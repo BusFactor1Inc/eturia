@@ -1,1 +1,0 @@
-rsync -avx ./ root@busfactor1.ca:html/bin/skynet/
