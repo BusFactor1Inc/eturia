@@ -9,6 +9,8 @@ Building:
 
 2) ./configure && make
 
+3) Open client/dev.html in your browser.
+
 Introduction
 ==
 
