@@ -14,8 +14,8 @@ var x2 = x.runApplication({
 x.placeWindow(x2, 100, 100);
 x.sizeWindow(x2, "320px", "240px");
 */
-/*
-var hello2 = x2.trigger('runApplication', { app: "hello",
+
+var hello = x.trigger('runApplication', { app: "hello",
                                             text: "Don't say goodbye 2.",
                                             style: {
                                                 top: "100px",
@@ -24,12 +24,7 @@ var hello2 = x2.trigger('runApplication', { app: "hello",
                                                 height: "320px",
                                                 border: "2px solid red",
                                             }});
-*/
-//x.placeWindow(hello2, "200px", "200px");
-//x.sizeWindow(hello2, "240px", "240px");
 
-//x.placeWindow(hello, 50, 50);
-//x.sizeWindow(hello, "128px", "128px");
 var notebook = x.runApplication({ app: "notebook",
                                   title: "Listener",
                                   height: "900px",
@@ -40,22 +35,11 @@ var notebook = x.runApplication({ app: "notebook",
                                   }
                                 });
 
-/*
 x.runApplication({app:"cell",
                   title: "Cell",
                   blink: true
                  });
-*/
-/*
-var terminal = x.runApplication({app:"terminal",
-                                 title: "Registry",
-                                 style: {
-                                     top: "300px",
-                                     left: "20px"
-                                 }
-                                });
-var y = terminal.grid().getColRow(0, 1, true).grid()
-*/
+
 x.current(notebook);
 x.runApplication({ app: "audioplayer",
                    appOptions: {
@@ -79,3 +63,37 @@ x.runApplication({ app: "iframe",
                    }
                  });
 
+/*
+
+var terminal = x.runApplication({app:"terminal",
+                                 title: "Registry",
+                                 style: {
+                                     top: "300px",
+                                     left: "20px"
+                                 }
+                                });
+var y = terminal.grid().getColRow(0, 1, true).grid()
+
+x.runApplication({ app: "image",
+                   appOptions: {
+		       title: "Chaos",
+                       uri: 'images/chaos.jpg'
+                   },
+                   style: {
+                       top: "100px",
+                       left: "845px"
+                   }
+                 });
+
+x.runApplication({ app: "image",
+                   appOptions: {
+		       title: "Chaos",
+                       uri: 'images/Ccg5WfWW8AAe3pz.jpg'
+                   },
+                   style: {
+                       top: "100px",
+                       left: "845px"
+                   }
+                 });
+
+*/

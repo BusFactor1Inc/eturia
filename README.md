@@ -3,11 +3,15 @@ ETURIA
 
 ![A Eturia Screenshot](https://github.com/BusFactor1Inc/eturia/blob/master/screenshot-1-3-2016.png)
 
-Building:
+
+Development
+---
+
+Eturia is a client only application.
 
 1) Install bower:
 
-https://bower.io
+   https://bower.io
 
 2) ./configure
 

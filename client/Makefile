@@ -14,8 +14,8 @@ apps/list/all.js	\
 apps/listener/all.js	\
 apps/notebook/all.js	\
 apps/terminal/all.js	\
-apps/audioplayer/all.js	
-
+apps/audioplayer/all.js	\
+boot.js
 
 	cat $^ > all.js
 
