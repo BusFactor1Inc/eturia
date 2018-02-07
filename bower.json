@@ -1,27 +1,27 @@
 {
-  "name": "tyler",
-  "authors": [
-    "Burton Samograd <burton.samograd@gmail.com>"
-  ],
-  "description": "Jack's other side.",
-  "main": "client/all.js",
-  "moduleType": [],
-  "keywords": [
-    "bios",
-    "gui",
-    "framework"
-  ],
-  "license": "MIT",
-  "homepage": "http://busfactor1.ca/tyler",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "jquery": "^2.2.0"
-  }
-}
+ "name": "tyler",
+ "authors": [
+	     "Burton Samograd <burton.samograd@gmail.com>"
+	     ],
+ "description": "Jack's other side.",
+ "main": "client/all.js",
+ "moduleType": [],
+ "keywords": [
+	      "bios",
+	      "gui",
+	      "framework"
+	      ],
+ "license": "MIT",
+ "homepage": "http://busfactor1.ca/tyler",
+ "private": true,
+ "ignore": [
+	    "**/.*",
+	    "node_modules",
+	    "bower_components",
+	    "test",
+	    "tests"
+	    ],
+ "dependencies": {
+		  "jquery": "^3.0.0"
+		  }
+ }
